@@ -1,2 +1,2 @@
 # SEM_2022
-R Code for SEM Course
+You can find the R Codes for PSY 758: Structural Equation Modeling here. 
