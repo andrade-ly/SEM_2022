@@ -1,0 +1,147 @@
+---
+title: "CFA with Continuation in R"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load library
+
+```{r}
+library(lavaan)
+```
+
+# Load dataset
+
+Note that we don't use all variables in this data set. To model what we did in Mplus (where we selected the variables that we will use in the analysis), we added syntax for creating a new data frame for the CFA. 
+
+You don't need to do this in R though; you can simply specify the variable names in the model section and lavaan will use those variables for the estimation. 
+
+```{r}
+
+cont85 <- read.table("continuation85.dat")
+
+colnames(cont85) <- c(
+  'id',
+  'tfscs1',
+  'tfscs2',
+  'tfscs3',
+  'tfscs4',
+  'tfscs5',
+  'tfscs6',
+  'tfscs7',
+  'tfscs8',
+  'tfscs9',
+  'tfscs10',
+  'tfscs11',
+  'tfscs12',
+  'tfscs13',
+  'tfscs14',
+  'tfscs15',
+  'tfscs16',
+  'tfscs17',
+  'tfscs18',
+  'tfscs19',
+  'tfscs20',
+  'tfscs21',
+  'tfscs22',
+  'tfscs23',
+  'tfscs24',
+  'tfscs25',
+  'tfscs26',
+  'tfscs27',
+  'tfscs28',
+  'tfscs29',
+  'tfscs30',
+  'tfscs31',
+  'tfscs32',
+  'tfscs33',
+  'tfscs34'
+)
+
+cfa_data <- cont85[,c(2, 4:5, 7, 10:13, 15:19, 22:25, 28:29, 32, 34)]
+```
+
+# Model specification
+
+```{r Specify the model}
+cfa_model <-
+  '
+  #Inhibition factor
+  inhib =~ 1*tfscs1 + tfscs10 + tfscs15 + 
+            tfscs17 + tfscs22 + tfscs23 + tfscs33
+  #initiation factor
+  init =~ 1*tfscs6 + tfscs11 + tfscs12 + 
+            tfscs18 + tfscs21 + tfscs24 + tfscs27
+  #continuation factor 
+  cont =~ 1*tfscs3 + tfscs4 + tfscs9 + tfscs14 + 
+            tfscs16 + tfscs28 + tfscs31'
+```
+
+# Fitting the model
+
+```{r Run the SEM}
+
+cfa_fit <- cfa(model = cfa_model,
+               data = cfa_data,
+               missing = "ml",
+               estimator = "ml",
+               #se = "boot", # you can request bootstrapped CIs
+               #bootstrap = 500, # the more samples, the longer it takes
+               control = list(iter.max = 1000)
+               )
+
+```
+
+# Output 
+
+## Model summary
+
+```{r}
+summary(cfa_fit, 
+        standardized = TRUE, 
+        rsquare = TRUE,
+        fit.measures = TRUE,
+        modindices = TRUE)
+```
+
+### Viewing specific modindices
+
+```{r}
+## You can request specific mod indices, such as the loadings
+mi_cfa <- modindices(cfa_fit)
+mi_cfa[mi_cfa$op == "=~",]
+```
+
+## Parameter estimates (alternative view)
+
+```{r}
+
+# Another way to view parameter estimates is with parameterEstimates(). 
+# This also provides confidence intervals for 
+# factor loadings, regression coefficients, 
+# means, and variances
+parameterEstimates(cfa_fit)
+```
+
+## Residual covariances and variances
+
+```{r}
+lavResiduals(cfa_fit)
+```
+
+## Troubleshooting Errors
+
+lavInspect() is equivalent to TECH1 in Mplus and is a helpful tool if you're getting error messages. It assigns numbers to parameters, which help you identify the source of difficulty in the model.  
+
+```{r}
+lavInspect(cfa_fit)
+```
+
+For a deeper understanding of the model estimated by lavaan, you can use ' r lavInspect(cfa_fit, what = "list")', which will list the fixed and free parameters, starting values, grouping, whether it's an endogenous or exogenous variable, and more. 
+
+```{r}
+lavInspect(cfa_fit, what = "list")
+```
