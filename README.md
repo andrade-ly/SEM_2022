@@ -1,2 +1,3 @@
 # SEM_2022
-You can find the R Codes for PSY 758: Structural Equation Modeling here. 
+You can find the R and Mplus codes for PSY 768: Structural Equation Modeling here. 
+Data files will be available on the course page in Sakai.
