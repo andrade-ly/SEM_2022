@@ -1,0 +1,393 @@
+Mplus VERSION 6.1
+MUTHEN & MUTHEN
+04/13/2016   3:13 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: HK Cancer Study
+      Latent Growth Curve Model 3;
+
+  DATA: file=hkcancer_red2.dat;
+
+  variable:
+  NAMES = AGE_GP SURG_TX mood2 mood3 mood4
+  socadj2 socadj3 socadj4 age age2 surg_tx2;
+
+  USEVARIABLES = mood2 mood3 mood4 socadj2
+  socadj3 socadj4;
+
+  MISSING IS *;
+  !telling Mplus how our missing data is identified;
+
+  Analysis:
+  estimator IS MLR;
+  !using MLR estimator - std. errors are robust -
+  !bc of missing data;
+
+  Model:
+
+  I1 by mood2@1 mood3@1 mood4@1;
+  !intercept for mood (I1) is measured by mood2 mood3 mood4;
+  S1 by mood2@0 mood3@1 mood4@2.33;
+  !slope for mood (I1) is measured by mood2 mood3 mood4;
+  I2 by socadj2@1 socadj3@1 socadj4@1;
+  !intercept for social adjustment (I2) is measured by
+  !socadj2 socadj3 socadj4
+  S2 by socadj2@0 socadj3@1 socadj4@2.33;
+  !slope for social adjustment (I2) is measured by
+  !socadj2 socadj3 socadj4
+
+  I1 with S1@0;
+  I2 with S2;
+  I2 with S1@0;
+  S2 with I1@0;
+  S2 with S1@0;
+  !intercept and slope factors covary
+  !this is a default in mplus (don't actually need to specify)
+  !bc mplus includes this as a default, we need to include
+  !the non-sig ones from the last model as @0
+
+  socadj3 with mood3;
+
+  [mood2-mood4@0];
+  [socadj2-socadj4@0];
+  !groups variables as outcomes in model
+  !@0 specification relates to intercepts of variables, fixed
+  !to zero by default
+
+  [I1 S1]
+  !intercept & slope for mood serve as a set of parameters in model
+  [I2 S2];
+  !ditto for intercept & slope for social adjustment
+
+  Output: stdyx;
+
+
+
+*** WARNING
+  Data set contains cases with missing on all variables.
+  These cases were not included in the analysis.
+  Number of cases with missing on all variables:  19
+   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+HK Cancer Study
+Latent Growth Curve Model 3;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         386
+
+Number of dependent variables                                    6
+Number of independent variables                                  0
+Number of continuous latent variables                            4
+
+Observed dependent variables
+
+  Continuous
+   MOOD2       MOOD3       MOOD4       SOCADJ2     SOCADJ3     SOCADJ4
+
+Continuous latent variables
+   I1          S1          I2          S2
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  hkcancer_red2.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            15
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              MOOD2         MOOD3         MOOD4         SOCADJ2       SOCADJ3
+              ________      ________      ________      ________      ________
+ MOOD2          0.959
+ MOOD3          0.834         0.860
+ MOOD4          0.855         0.813         0.883
+ SOCADJ2        0.959         0.837         0.858         0.964
+ SOCADJ3        0.842         0.858         0.821         0.845         0.870
+ SOCADJ4        0.865         0.819         0.883         0.868         0.829
+
+
+           Covariance Coverage
+              SOCADJ4
+              ________
+ SOCADJ4        0.894
+
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       17
+
+Loglikelihood
+
+          H0 Value                       -6853.727
+          H0 Scaling Correction Factor       1.711
+            for MLR
+          H1 Value                       -6845.291
+          H1 Scaling Correction Factor       1.539
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   13741.455
+          Bayesian (BIC)                 13808.704
+          Sample-Size Adjusted BIC       13754.765
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             13.530*
+          Degrees of Freedom                    10
+          P-Value                           0.1955
+          Scaling Correction Factor          1.247
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.030
+          90 Percent C.I.                    0.000  0.067
+          Probability RMSEA <= .05           0.778
+
+CFI/TLI
+
+          CFI                                0.993
+          TLI                                0.990
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                            529.596
+          Degrees of Freedom                    15
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.040
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ I1       BY
+    MOOD2              1.000      0.000    999.000    999.000
+    MOOD3              1.000      0.000    999.000    999.000
+    MOOD4              1.000      0.000    999.000    999.000
+
+ S1       BY
+    MOOD2              0.000      0.000    999.000    999.000
+    MOOD3              1.000      0.000    999.000    999.000
+    MOOD4              2.330      0.000    999.000    999.000
+
+ I2       BY
+    SOCADJ2            1.000      0.000    999.000    999.000
+    SOCADJ3            1.000      0.000    999.000    999.000
+    SOCADJ4            1.000      0.000    999.000    999.000
+
+ S2       BY
+    SOCADJ2            0.000      0.000    999.000    999.000
+    SOCADJ3            1.000      0.000    999.000    999.000
+    SOCADJ4            2.330      0.000    999.000    999.000
+
+ I1       WITH
+    S1                 0.000      0.000    999.000    999.000
+
+ I2       WITH
+    S2               -15.471      4.492     -3.444      0.001
+    S1                 0.000      0.000    999.000    999.000
+    I1               -19.870      2.866     -6.933      0.000
+
+ S2       WITH
+    I1                 0.000      0.000    999.000    999.000
+    S1                 0.000      0.000    999.000    999.000
+
+ SOCADJ3  WITH
+    MOOD3            -10.647      2.540     -4.192      0.000
+
+ Means
+    I1                21.397      0.313     68.313      0.000
+!this is the avg. self-reported mood at 1 month 
+!lower numbers = better mood
+    S1                -0.550      0.131     -4.188      0.000
+!indicates the mood score decreased by .55, on avg.
+!as time since surgery increased, gradually more positive
+!mood
+    I2               100.926      0.503    200.675      0.000
+!this is the avg. social adjustment at 1 month
+    S2                -0.268      0.207     -1.293      0.196
+!non-sig here means there was negligible change in social
+!adjustment over the 8-month time period
+
+ Intercepts
+    MOOD2              0.000      0.000    999.000    999.000
+    MOOD3              0.000      0.000    999.000    999.000
+    MOOD4              0.000      0.000    999.000    999.000
+    SOCADJ2            0.000      0.000    999.000    999.000
+    SOCADJ3            0.000      0.000    999.000    999.000
+    SOCADJ4            0.000      0.000    999.000    999.000
+
+ Variances
+    I1                21.962      2.722      8.068      0.000
+!sig. interindividual differences in initial status on mood
+    S1                 0.887      0.763      1.163      0.245
+!non-sig interindividual slope (change) in mood
+    I2                83.399     13.061      6.385      0.000
+!sig. interindividual differences in initial status on social
+!adjustment
+    S2                12.492      3.429      3.643      0.000
+!sig. interindividual differences in slope (change) in 
+!social adjustment
+
+!bc we have significant interindividual differences, we want
+!to try to explain those in subsequent analyses with predictors
+
+ Residual Variances
+    MOOD2             18.101      2.245      8.064      0.000
+    MOOD3             18.626      2.526      7.375      0.000
+    MOOD4              9.480      3.637      2.607      0.009
+    SOCADJ2           11.362      7.454      1.524      0.127
+    SOCADJ3           41.360      7.331      5.642      0.000
+    SOCADJ4            1.187     10.978      0.108      0.914
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ I1       BY
+    MOOD2              0.740      0.032     23.090      0.000
+    MOOD3              0.728      0.036     20.221      0.000
+    MOOD4              0.778      0.029     27.045      0.000
+
+ S1       BY
+    MOOD2              0.000      0.000    999.000    999.000
+    MOOD3              0.146      0.063      2.339      0.019
+    MOOD4              0.364      0.156      2.338      0.019
+
+ I2       BY
+    SOCADJ2            0.938      0.039     24.187      0.000
+    SOCADJ3            0.886      0.051     17.537      0.000
+    SOCADJ4            1.019      0.079     12.926      0.000
+
+ S2       BY
+    SOCADJ2            0.000      0.000    999.000    999.000
+    SOCADJ3            0.343      0.039      8.727      0.000
+    SOCADJ4            0.919      0.136      6.766      0.000
+
+ I1       WITH
+    S1                 0.000      0.000    999.000    999.000
+
+ I2       WITH
+    S2                -0.479      0.081     -5.940      0.000
+    S1                 0.000      0.000    999.000    999.000
+    I1                -0.464      0.064     -7.216      0.000
+
+ S2       WITH
+    I1                 0.000      0.000    999.000    999.000
+    S1                 0.000      0.000    999.000    999.000
+
+ SOCADJ3  WITH
+    MOOD3             -0.384      0.069     -5.598      0.000
+
+ Means
+    I1                 4.566      0.264     17.317      0.000
+    S1                -0.584      0.312     -1.873      0.061
+    I2                11.052      0.882     12.523      0.000
+    S2                -0.076      0.061     -1.242      0.214
+
+ Intercepts
+    MOOD2              0.000      0.000    999.000    999.000
+    MOOD3              0.000      0.000    999.000    999.000
+    MOOD4              0.000      0.000    999.000    999.000
+    SOCADJ2            0.000      0.000    999.000    999.000
+    SOCADJ3            0.000      0.000    999.000    999.000
+    SOCADJ4            0.000      0.000    999.000    999.000
+
+ Variances
+    I1                 1.000      0.000    999.000    999.000
+    S1                 1.000      0.000    999.000    999.000
+    I2                 1.000      0.000    999.000    999.000
+    S2                 1.000      0.000    999.000    999.000
+
+ Residual Variances
+    MOOD2              0.452      0.047      9.515      0.000
+    MOOD3              0.449      0.049      9.178      0.000
+    MOOD4              0.261      0.099      2.645      0.008
+    SOCADJ2            0.120      0.073      1.648      0.099
+    SOCADJ3            0.389      0.047      8.340      0.000
+    SOCADJ4            0.015      0.137      0.108      0.914
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    MOOD2              0.548      0.047     11.545      0.000
+    MOOD3              0.551      0.049     11.259      0.000
+    MOOD4              0.739      0.099      7.471      0.000
+    SOCADJ2            0.880      0.073     12.094      0.000
+    SOCADJ3            0.611      0.047     13.097      0.000
+    SOCADJ4            0.985      0.137      7.208      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.109E-05
+       (ratio of smallest to largest eigenvalue)
+
+
+     Beginning Time:  15:13:34
+        Ending Time:  15:13:35
+       Elapsed Time:  00:00:01
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2010 Muthen & Muthen

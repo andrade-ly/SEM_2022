@@ -1,0 +1,916 @@
+Mplus VERSION 8.2
+MUTHEN & MUTHEN
+02/13/2019  10:58 AM
+
+INPUT INSTRUCTIONS
+
+  Title: MTMM Test for Construct Validity;
+
+  Data: File is ind7mt.dat;
+
+  Variable:
+  NAMES ARE scself sctch scpar scpeer acself actch acpar acpeer
+    ecself ectch ecpar ecpeer mcself mctch mcpar mcpeer;
+  USEVARIABLES ARE scself-mcpeer;
+
+!note correlations among traits & methods not in syntax
+!this is bc they are left free to vary
+
+  Model:
+  F1 by scself* sctch scpar scpeer;
+  F2 by acself* actch acpar acpeer;
+  F3 by ecself* ectch ecpar ecpeer;
+  F4 by mcself* mctch mcpar mcpeer;
+  F5 by scself* acself ecself mcself;
+  F6 by sctch* actch ectch mctch;
+  F7 by scpar* acpar ecpar mcpar;
+  F8 by scpeer* acpeer ecpeer mcpeer;
+
+  F1-F8@1;
+
+  F1 with F5@0;
+  F1 with F6@0;
+  F1 with F7@0;
+  F1 with F8@0;
+  F2 with F5@0;
+  F2 with F6@0;
+  F2 with F7@0;
+  F2 with F8@0;
+  F3 with F5@0;
+  F3 with F6@0;
+  F3 with F7@0;
+  F3 with F8@0;
+  F4 with F5@0;
+  F4 with F6@0;
+  F4 with F7@0;
+  F4 with F8@0;
+
+!all correlations btwn traits & methods fixed to zero
+
+  Output: stdyx; tech1;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+MTMM Test for Construct Validity;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         193
+
+Number of dependent variables                                   16
+Number of independent variables                                  0
+Number of continuous latent variables                            8
+
+Observed dependent variables
+
+  Continuous
+   SCSELF      SCTCH       SCPAR       SCPEER      ACSELF      ACTCH
+   ACPAR       ACPEER      ECSELF      ECTCH       ECPAR       ECPEER
+   MCSELF      MCTCH       MCPAR       MCPEER
+
+Continuous latent variables
+   F1          F2          F3          F4          F5          F6
+   F7          F8
+
+
+Estimator                                                       ML
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+
+Input data file(s)
+  ind7mt.dat
+
+Input data format  FREE
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     SCSELF                3.032      -0.548       1.000    0.52%       2.300      3.000      3.200
+             193.000       0.499      -0.458       4.000   10.36%       3.300      3.700
+     SCTCH                 2.954      -0.296       1.000    1.55%       2.400      3.000      3.000
+             193.000       0.468      -0.161       4.000   16.06%       3.000      3.500
+     SCPAR                 3.301      -1.027       1.000    1.55%       2.500      3.000      3.500
+             193.000       0.651       0.153       4.000   44.04%       4.000      4.000
+     SCPEER               -0.126      -0.238      -5.500    1.04%      -0.880     -0.510     -0.330
+             193.000       1.240       5.337       3.310    0.52%      -0.050      0.510
+     ACSELF                3.005      -0.195       1.500    0.52%       2.500      2.800      3.000
+             193.000       0.329      -0.526       4.000    5.70%       3.200      3.500
+     ACTCH                 3.249      -0.836       1.000    1.04%       3.000      3.000      3.500
+             193.000       0.536       0.079       4.000   34.20%       3.500      4.000
+     ACPAR                 3.571      -1.384       1.500    1.04%       3.000      3.700      4.000
+             193.000       0.408       0.840       4.000   60.10%       4.000      4.000
+     ACPEER                0.081       1.846      -1.220    0.52%      -0.550     -0.400     -0.350
+             193.000       1.068       2.754       4.080    0.52%      -0.320      0.540
+     ECSELF                3.119      -0.489       1.500    1.04%       2.700      3.000      3.200
+             193.000       0.319      -0.442       4.000    4.15%       3.300      3.700
+     ECTCH                 3.148      -0.392       1.000    1.04%       2.500      3.000      3.000
+             193.000       0.602      -0.875       4.000   35.23%       3.500      4.000
+     ECPAR                 3.412      -0.915       1.500    2.59%       3.000      3.500      3.500
+             193.000       0.482      -0.155       4.000   48.70%       4.000      4.000
+     ECPEER                0.041       1.750      -1.000    3.11%      -0.700     -0.570     -0.370
+             193.000       1.097       3.025       4.730    0.52%       0.000      0.650
+     MCSELF                2.936      -0.414       1.000    2.07%       2.200      2.700      3.000
+             193.000       0.670      -0.707       4.000   15.54%       3.200      3.800
+     MCTCH                 3.077      -0.547       1.000    4.15%       2.400      3.000      3.000
+             193.000       0.729      -0.547       4.000   34.20%       3.500      4.000
+     MCPAR                 3.306      -1.225       1.000    4.66%       2.500      3.500      3.500
+             193.000       0.772       0.441       4.000   45.60%       4.000      4.000
+     MCPEER                0.051       1.862      -1.130    1.04%      -0.580     -0.450     -0.370
+             193.000       1.043       2.847       3.840    0.52%       0.000      0.190
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     WARNING:  THE RESIDUAL COVARIANCE MATRIX (THETA) IS NOT POSITIVE DEFINITE.
+     THIS COULD INDICATE A NEGATIVE VARIANCE/RESIDUAL VARIANCE FOR AN OBSERVED
+     VARIABLE, A CORRELATION GREATER OR EQUAL TO ONE BETWEEN TWO OBSERVED
+     VARIABLES, OR A LINEAR DEPENDENCY AMONG MORE THAN TWO OBSERVED VARIABLES.
+     CHECK THE RESULTS SECTION FOR MORE INFORMATION.
+     PROBLEM INVOLVING VARIABLE ACSELF.
+     !go back and add acself@0 to fix this error
+
+
+     WARNING:  THE LATENT VARIABLE COVARIANCE MATRIX (PSI) IS NOT POSITIVE
+     DEFINITE.  THIS COULD INDICATE A NEGATIVE VARIANCE/RESIDUAL VARIANCE FOR A
+     LATENT VARIABLE, A CORRELATION GREATER OR EQUAL TO ONE BETWEEN TWO LATENT
+     VARIABLES, OR A LINEAR DEPENDENCY AMONG MORE THAN TWO LATENT VARIABLES.
+     CHECK THE TECH4 OUTPUT FOR MORE INFORMATION.
+     PROBLEM INVOLVING VARIABLE F4.
+
+!these are common in MTMM models based on the general CFA model.
+!often occur due to overparameterization of the model
+!usually as a function of complexity of model specification.
+!offending parameter often represents a neg. variance assoc. w/
+!either a residual or a factor. can fix by (1) imposing equality
+!constraint or (2) fixing parameter to zero.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       76
+
+Loglikelihood
+
+          H0 Value                       -2948.286
+          H1 Value                       -2910.529
+
+Information Criteria
+
+          Akaike (AIC)                    6048.571
+          Bayesian (BIC)                  6296.536
+          Sample-Size Adjusted BIC        6055.787
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             75.514
+          Degrees of Freedom                    76
+          P-Value                           0.4942
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.000
+          90 Percent C.I.                    0.000  0.040
+          Probability RMSEA <= .05           0.991
+
+CFI/TLI
+
+          CFI                                1.000
+          TLI                                1.001
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           1504.105
+          Degrees of Freedom                   120
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.047
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ F1       BY
+    SCSELF             0.589      0.078      7.555      0.000
+    SCTCH              0.282      0.055      5.102      0.000
+    SCPAR              0.488      0.068      7.158      0.000
+    SCPEER             0.367      0.091      4.014      0.000
+
+ F2       BY
+    ACSELF             0.192      0.164      1.174      0.241
+    ACTCH              0.165      0.147      1.117      0.264
+    ACPAR              0.267      0.162      1.647      0.100
+    ACPEER             0.156      0.192      0.815      0.415
+
+ F3       BY
+    ECSELF             0.431      0.144      2.993      0.003
+    ECTCH              0.220      0.091      2.424      0.015
+    ECPAR              0.444      0.083      5.345      0.000
+    ECPEER             0.255      0.111      2.294      0.022
+
+ F4       BY
+    MCSELF             0.572      0.102      5.617      0.000
+    MCTCH              0.421      0.083      5.059      0.000
+    MCPAR              0.614      0.082      7.498      0.000
+    MCPEER             0.331      0.108      3.075      0.002
+
+ F5       BY
+    SCSELF             0.158      0.098      1.611      0.107
+    ACSELF             0.642      0.176      3.655      0.000
+    ECSELF             0.185      0.148      1.251      0.211
+    MCSELF             0.332      0.186      1.785      0.074
+
+ F6       BY
+    SCTCH              0.188      0.051      3.711      0.000
+    ACTCH              0.668      0.061     10.879      0.000
+    ECTCH              0.592      0.057     10.296      0.000
+    MCTCH              0.494      0.077      6.448      0.000
+
+ F7       BY
+    SCPAR              0.290      0.064      4.535      0.000
+    ACPAR              0.449      0.074      6.051      0.000
+    ECPAR              0.318      0.077      4.147      0.000
+    MCPAR              0.485      0.094      5.177      0.000
+
+ F8       BY
+    SCPEER             0.443      0.089      4.990      0.000
+    ACPEER             0.950      0.076     12.464      0.000
+    ECPEER             0.667      0.083      7.994      0.000
+    MCPEER             0.686      0.083      8.272      0.000
+
+ F1       WITH
+    F5                 0.000      0.000    999.000    999.000
+    F6                 0.000      0.000    999.000    999.000
+    F7                 0.000      0.000    999.000    999.000
+    F8                 0.000      0.000    999.000    999.000
+
+ F2       WITH
+    F5                 0.000      0.000    999.000    999.000
+    F6                 0.000      0.000    999.000    999.000
+    F7                 0.000      0.000    999.000    999.000
+    F8                 0.000      0.000    999.000    999.000
+    F1                 0.319      0.208      1.535      0.125
+
+ F3       WITH
+    F5                 0.000      0.000    999.000    999.000
+    F6                 0.000      0.000    999.000    999.000
+    F7                 0.000      0.000    999.000    999.000
+    F8                 0.000      0.000    999.000    999.000
+    F1                 0.147      0.172      0.853      0.394
+    F2                 0.893      0.198      4.504      0.000
+
+ F4       WITH
+    F5                 0.000      0.000    999.000    999.000
+    F6                 0.000      0.000    999.000    999.000
+    F7                 0.000      0.000    999.000    999.000
+    F8                 0.000      0.000    999.000    999.000
+    F1                 0.211      0.149      1.421      0.155
+    F2                 0.863      0.188      4.590      0.000
+    F3                 0.380      0.215      1.768      0.077
+
+ F6       WITH
+    F5                 0.334      0.195      1.718      0.086
+
+ F7       WITH
+    F5                 0.440      0.239      1.845      0.065
+    F6                 0.574      0.102      5.636      0.000
+
+ F8       WITH
+    F5                 0.309      0.190      1.631      0.103
+    F6                 0.417      0.091      4.575      0.000
+    F7                 0.235      0.172      1.366      0.172
+
+ Intercepts
+    SCSELF             3.032      0.052     58.853      0.000
+    SCTCH              2.954      0.049     60.054      0.000
+    SCPAR              3.301      0.059     56.319      0.000
+    SCPEER            -0.126      0.080     -1.568      0.117
+    ACSELF             3.005      0.041     73.162      0.000
+    ACTCH              3.249      0.052     62.024      0.000
+    ACPAR              3.571      0.046     77.226      0.000
+    ACPEER             0.081      0.073      1.112      0.266
+    ECSELF             3.119      0.041     76.742      0.000
+    ECTCH              3.148      0.056     56.634      0.000
+    ECPAR              3.412      0.050     67.926      0.000
+    ECPEER             0.041      0.074      0.551      0.581
+    MCSELF             2.936      0.058     50.251      0.000
+    MCTCH              3.077      0.061     50.290      0.000
+    MCPAR              3.306      0.063     52.146      0.000
+    MCPEER             0.051      0.073      0.704      0.482
+
+ Variances
+    F1                 1.000      0.000    999.000    999.000
+    F2                 1.000      0.000    999.000    999.000
+    F3                 1.000      0.000    999.000    999.000
+    F4                 1.000      0.000    999.000    999.000
+    F5                 1.000      0.000    999.000    999.000
+    F6                 1.000      0.000    999.000    999.000
+    F7                 1.000      0.000    999.000    999.000
+    F8                 1.000      0.000    999.000    999.000
+
+ Residual Variances
+    SCSELF             0.141      0.066      2.117      0.034
+    SCTCH              0.352      0.040      8.877      0.000
+    SCPAR              0.341      0.053      6.434      0.000
+    SCPEER             0.911      0.101      9.037      0.000
+    ACSELF            -0.124      0.259     -0.478      0.633
+!neg. residual variance causing error/warning (fix to zero)
+    ACTCH              0.056      0.031      1.814      0.070
+    ACPAR              0.140      0.030      4.666      0.000
+    ACPEER             0.103      0.059      1.747      0.081
+    ECSELF             0.099      0.075      1.320      0.187
+    ECTCH              0.198      0.034      5.867      0.000
+    ECPAR              0.189      0.058      3.227      0.001
+    ECPEER             0.542      0.067      8.125      0.000
+    MCSELF             0.222      0.052      4.225      0.000
+    MCTCH              0.301      0.038      7.948      0.000
+    MCPAR              0.164      0.043      3.820      0.000
+    MCPEER             0.436      0.055      7.885      0.000
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ F1       BY
+    SCSELF             0.822      0.095      8.629      0.000
+    SCTCH              0.412      0.074      5.577      0.000
+    SCPAR              0.599      0.070      8.499      0.000
+    SCPEER             0.329      0.078      4.207      0.000
+
+ F2       BY
+    ACSELF             0.337      0.285      1.183      0.237
+    ACTCH              0.226      0.202      1.120      0.263
+    ACPAR              0.416      0.245      1.699      0.089
+    ACPEER             0.154      0.191      0.807      0.420
+
+ F3       BY
+    ECSELF             0.763      0.248      3.076      0.002
+    ECTCH              0.285      0.116      2.457      0.014
+    ECPAR              0.636      0.115      5.547      0.000
+    ECPEER             0.249      0.109      2.287      0.022
+
+ F4       BY
+    MCSELF             0.705      0.114      6.208      0.000
+    MCTCH              0.496      0.094      5.299      0.000
+    MCPAR              0.697      0.078      8.884      0.000
+    MCPEER             0.328      0.107      3.081      0.002
+
+ F5       BY
+    SCSELF             0.221      0.137      1.619      0.105
+    ACSELF             1.125      0.305      3.692      0.000
+    ECSELF             0.327      0.262      1.250      0.211
+    MCSELF             0.408      0.230      1.778      0.075
+
+ F6       BY
+    SCTCH              0.276      0.071      3.876      0.000
+    ACTCH              0.918      0.069     13.379      0.000
+    ECTCH              0.766      0.054     14.085      0.000
+    MCTCH              0.581      0.080      7.266      0.000
+
+ F7       BY
+    SCPAR              0.356      0.075      4.780      0.000
+    ACPAR              0.698      0.116      6.016      0.000
+    ECPAR              0.456      0.107      4.250      0.000
+    MCPAR              0.550      0.105      5.251      0.000
+
+ F8       BY
+    SCPEER             0.398      0.073      5.469      0.000
+    ACPEER             0.936      0.045     20.940      0.000
+    ECPEER             0.650      0.065     10.026      0.000
+    MCPEER             0.680      0.065     10.446      0.000
+
+ F1       WITH
+    F5                 0.000      0.000    999.000    999.000
+    F6                 0.000      0.000    999.000    999.000
+    F7                 0.000      0.000    999.000    999.000
+    F8                 0.000      0.000    999.000    999.000
+
+ F2       WITH
+    F5                 0.000      0.000    999.000    999.000
+    F6                 0.000      0.000    999.000    999.000
+    F7                 0.000      0.000    999.000    999.000
+    F8                 0.000      0.000    999.000    999.000
+    F1                 0.319      0.208      1.535      0.125
+
+ F3       WITH
+    F5                 0.000      0.000    999.000    999.000
+    F6                 0.000      0.000    999.000    999.000
+    F7                 0.000      0.000    999.000    999.000
+    F8                 0.000      0.000    999.000    999.000
+    F1                 0.147      0.172      0.853      0.394
+    F2                 0.893      0.198      4.504      0.000
+
+ F4       WITH
+    F5                 0.000      0.000    999.000    999.000
+    F6                 0.000      0.000    999.000    999.000
+    F7                 0.000      0.000    999.000    999.000
+    F8                 0.000      0.000    999.000    999.000
+    F1                 0.211      0.149      1.421      0.155
+    F2                 0.863      0.188      4.590      0.000
+    F3                 0.380      0.215      1.768      0.077
+
+ F6       WITH
+    F5                 0.334      0.195      1.718      0.086
+
+ F7       WITH
+    F5                 0.440      0.239      1.845      0.065
+    F6                 0.574      0.102      5.636      0.000
+
+ F8       WITH
+    F5                 0.309      0.190      1.631      0.103
+    F6                 0.417      0.091      4.575      0.000
+    F7                 0.235      0.172      1.366      0.172
+
+ Intercepts
+    SCSELF             4.236      0.228     18.557      0.000
+    SCTCH              4.323      0.230     18.802      0.000
+    SCPAR              4.054      0.221     18.367      0.000
+    SCPEER            -0.113      0.072     -1.563      0.118
+    ACSELF             5.266      0.276     19.054      0.000
+    ACTCH              4.465      0.235     19.002      0.000
+    ACPAR              5.559      0.302     18.394      0.000
+    ACPEER             0.080      0.072      1.110      0.267
+    ECSELF             5.524      0.287     19.217      0.000
+    ECTCH              4.077      0.218     18.729      0.000
+    ECPAR              4.889      0.270     18.121      0.000
+    ECPEER             0.040      0.072      0.551      0.581
+    MCSELF             3.617      0.194     18.643      0.000
+    MCTCH              3.620      0.193     18.788      0.000
+    MCPAR              3.754      0.201     18.659      0.000
+    MCPEER             0.051      0.072      0.703      0.482
+
+ Variances
+    F1                 1.000      0.000    999.000    999.000
+    F2                 1.000      0.000    999.000    999.000
+    F3                 1.000      0.000    999.000    999.000
+    F4                 1.000      0.000    999.000    999.000
+    F5                 1.000      0.000    999.000    999.000
+    F6                 1.000      0.000    999.000    999.000
+    F7                 1.000      0.000    999.000    999.000
+    F8                 1.000      0.000    999.000    999.000
+
+ Residual Variances
+    SCSELF             0.275      0.131      2.093      0.036
+    SCTCH              0.754      0.064     11.750      0.000
+    SCPAR              0.514      0.080      6.430      0.000
+    SCPEER             0.733      0.063     11.616      0.000
+    ACSELF            -0.380    999.000    999.000    999.000
+    ACTCH              0.106      0.059      1.801      0.072
+    ACPAR              0.339      0.081      4.204      0.000
+    ACPEER             0.100      0.058      1.733      0.083
+    ECSELF             0.311      0.238      1.308      0.191
+    ECTCH              0.331      0.061      5.418      0.000
+    ECPAR              0.388      0.112      3.466      0.001
+    ECPEER             0.515      0.061      8.379      0.000
+    MCSELF             0.336      0.079      4.237      0.000
+    MCTCH              0.417      0.055      7.641      0.000
+    MCPAR              0.212      0.058      3.673      0.000
+    MCPEER             0.429      0.056      7.656      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    SCSELF             0.725      0.131      5.528      0.000
+    SCTCH              0.246      0.064      3.828      0.000
+    SCPAR              0.486      0.080      6.082      0.000
+    SCPEER             0.267      0.063      4.225      0.000
+    ACSELF          Undefined   0.13796E+01
+!due to the neg. residual variance identified above
+    ACTCH              0.894      0.059     15.157      0.000
+    ACPAR              0.661      0.081      8.193      0.000
+    ACPEER             0.900      0.058     15.652      0.000
+    ECSELF             0.689      0.238      2.899      0.004
+    ECTCH              0.669      0.061     10.926      0.000
+    ECPAR              0.612      0.112      5.477      0.000
+    ECPEER             0.485      0.061      7.882      0.000
+    MCSELF             0.664      0.079      8.355      0.000
+    MCTCH              0.583      0.055     10.694      0.000
+    MCPAR              0.788      0.058     13.681      0.000
+    MCPEER             0.571      0.056     10.181      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.985E-04
+       (ratio of smallest to largest eigenvalue)
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              SCSELF        SCTCH         SCPAR         SCPEER        ACSELF
+              ________      ________      ________      ________      ________
+                  1             2             3             4             5
+
+
+           NU
+              ACTCH         ACPAR         ACPEER        ECSELF        ECTCH
+              ________      ________      ________      ________      ________
+                  6             7             8             9            10
+
+
+           NU
+              ECPAR         ECPEER        MCSELF        MCTCH         MCPAR
+              ________      ________      ________      ________      ________
+                 11            12            13            14            15
+
+
+           NU
+              MCPEER
+              ________
+                 16
+
+
+           LAMBDA
+              F1            F2            F3            F4            F5
+              ________      ________      ________      ________      ________
+ SCSELF            17             0             0             0            18
+ SCTCH             19             0             0             0             0
+ SCPAR             21             0             0             0             0
+ SCPEER            23             0             0             0             0
+ ACSELF             0            25             0             0            26
+ ACTCH              0            27             0             0             0
+ ACPAR              0            29             0             0             0
+ ACPEER             0            31             0             0             0
+ ECSELF             0             0            33             0            34
+ ECTCH              0             0            35             0             0
+ ECPAR              0             0            37             0             0
+ ECPEER             0             0            39             0             0
+ MCSELF             0             0             0            41            42
+ MCTCH              0             0             0            43             0
+ MCPAR              0             0             0            45             0
+ MCPEER             0             0             0            47             0
+
+
+           LAMBDA
+              F6            F7            F8
+              ________      ________      ________
+ SCSELF             0             0             0
+ SCTCH             20             0             0
+ SCPAR              0            22             0
+ SCPEER             0             0            24
+ ACSELF             0             0             0
+ ACTCH             28             0             0
+ ACPAR              0            30             0
+ ACPEER             0             0            32
+ ECSELF             0             0             0
+ ECTCH             36             0             0
+ ECPAR              0            38             0
+ ECPEER             0             0            40
+ MCSELF             0             0             0
+ MCTCH             44             0             0
+ MCPAR              0            46             0
+ MCPEER             0             0            48
+
+
+           THETA
+              SCSELF        SCTCH         SCPAR         SCPEER        ACSELF
+              ________      ________      ________      ________      ________
+ SCSELF            49
+ SCTCH              0            50
+ SCPAR              0             0            51
+ SCPEER             0             0             0            52
+ ACSELF             0             0             0             0            53
+ ACTCH              0             0             0             0             0
+ ACPAR              0             0             0             0             0
+ ACPEER             0             0             0             0             0
+ ECSELF             0             0             0             0             0
+ ECTCH              0             0             0             0             0
+ ECPAR              0             0             0             0             0
+ ECPEER             0             0             0             0             0
+ MCSELF             0             0             0             0             0
+ MCTCH              0             0             0             0             0
+ MCPAR              0             0             0             0             0
+ MCPEER             0             0             0             0             0
+
+
+           THETA
+              ACTCH         ACPAR         ACPEER        ECSELF        ECTCH
+              ________      ________      ________      ________      ________
+ ACTCH             54
+ ACPAR              0            55
+ ACPEER             0             0            56
+ ECSELF             0             0             0            57
+ ECTCH              0             0             0             0            58
+ ECPAR              0             0             0             0             0
+ ECPEER             0             0             0             0             0
+ MCSELF             0             0             0             0             0
+ MCTCH              0             0             0             0             0
+ MCPAR              0             0             0             0             0
+ MCPEER             0             0             0             0             0
+
+
+           THETA
+              ECPAR         ECPEER        MCSELF        MCTCH         MCPAR
+              ________      ________      ________      ________      ________
+ ECPAR             59
+ ECPEER             0            60
+ MCSELF             0             0            61
+ MCTCH              0             0             0            62
+ MCPAR              0             0             0             0            63
+ MCPEER             0             0             0             0             0
+
+
+           THETA
+              MCPEER
+              ________
+ MCPEER            64
+
+
+           ALPHA
+              F1            F2            F3            F4            F5
+              ________      ________      ________      ________      ________
+                  0             0             0             0             0
+
+
+           ALPHA
+              F6            F7            F8
+              ________      ________      ________
+                  0             0             0
+
+
+           BETA
+              F1            F2            F3            F4            F5
+              ________      ________      ________      ________      ________
+ F1                 0             0             0             0             0
+ F2                 0             0             0             0             0
+ F3                 0             0             0             0             0
+ F4                 0             0             0             0             0
+ F5                 0             0             0             0             0
+ F6                 0             0             0             0             0
+ F7                 0             0             0             0             0
+ F8                 0             0             0             0             0
+
+
+           BETA
+              F6            F7            F8
+              ________      ________      ________
+ F1                 0             0             0
+ F2                 0             0             0
+ F3                 0             0             0
+ F4                 0             0             0
+ F5                 0             0             0
+ F6                 0             0             0
+ F7                 0             0             0
+ F8                 0             0             0
+
+
+           PSI
+              F1            F2            F3            F4            F5
+              ________      ________      ________      ________      ________
+ F1                 0
+ F2                65             0
+ F3                66            67             0
+ F4                68            69            70             0
+ F5                 0             0             0             0             0
+ F6                 0             0             0             0            71
+ F7                 0             0             0             0            72
+ F8                 0             0             0             0            74
+
+
+           PSI
+              F6            F7            F8
+              ________      ________      ________
+ F6                 0
+ F7                73             0
+ F8                75            76             0
+
+
+     STARTING VALUES
+
+
+           NU
+              SCSELF        SCTCH         SCPAR         SCPEER        ACSELF
+              ________      ________      ________      ________      ________
+                3.032         2.954         3.301        -0.126         3.005
+
+
+           NU
+              ACTCH         ACPAR         ACPEER        ECSELF        ECTCH
+              ________      ________      ________      ________      ________
+                3.249         3.571         0.081         3.119         3.148
+
+
+           NU
+              ECPAR         ECPEER        MCSELF        MCTCH         MCPAR
+              ________      ________      ________      ________      ________
+                3.412         0.041         2.936         3.077         3.306
+
+
+           NU
+              MCPEER
+              ________
+                0.051
+
+
+           LAMBDA
+              F1            F2            F3            F4            F5
+              ________      ________      ________      ________      ________
+ SCSELF         1.000         0.000         0.000         0.000         1.000
+ SCTCH          1.000         0.000         0.000         0.000         0.000
+ SCPAR          1.000         0.000         0.000         0.000         0.000
+ SCPEER         1.000         0.000         0.000         0.000         0.000
+ ACSELF         0.000         1.000         0.000         0.000         1.000
+ ACTCH          0.000         1.000         0.000         0.000         0.000
+ ACPAR          0.000         1.000         0.000         0.000         0.000
+ ACPEER         0.000         1.000         0.000         0.000         0.000
+ ECSELF         0.000         0.000         1.000         0.000         1.000
+ ECTCH          0.000         0.000         1.000         0.000         0.000
+ ECPAR          0.000         0.000         1.000         0.000         0.000
+ ECPEER         0.000         0.000         1.000         0.000         0.000
+ MCSELF         0.000         0.000         0.000         1.000         1.000
+ MCTCH          0.000         0.000         0.000         1.000         0.000
+ MCPAR          0.000         0.000         0.000         1.000         0.000
+ MCPEER         0.000         0.000         0.000         1.000         0.000
+
+
+           LAMBDA
+              F6            F7            F8
+              ________      ________      ________
+ SCSELF         0.000         0.000         0.000
+ SCTCH          1.000         0.000         0.000
+ SCPAR          0.000         1.000         0.000
+ SCPEER         0.000         0.000         1.000
+ ACSELF         0.000         0.000         0.000
+ ACTCH          1.000         0.000         0.000
+ ACPAR          0.000         1.000         0.000
+ ACPEER         0.000         0.000         1.000
+ ECSELF         0.000         0.000         0.000
+ ECTCH          1.000         0.000         0.000
+ ECPAR          0.000         1.000         0.000
+ ECPEER         0.000         0.000         1.000
+ MCSELF         0.000         0.000         0.000
+ MCTCH          1.000         0.000         0.000
+ MCPAR          0.000         1.000         0.000
+ MCPEER         0.000         0.000         1.000
+
+
+           THETA
+              SCSELF        SCTCH         SCPAR         SCPEER        ACSELF
+              ________      ________      ________      ________      ________
+ SCSELF         0.250
+ SCTCH          0.000         0.234
+ SCPAR          0.000         0.000         0.325
+ SCPEER         0.000         0.000         0.000         0.620
+ ACSELF         0.000         0.000         0.000         0.000         0.165
+ ACTCH          0.000         0.000         0.000         0.000         0.000
+ ACPAR          0.000         0.000         0.000         0.000         0.000
+ ACPEER         0.000         0.000         0.000         0.000         0.000
+ ECSELF         0.000         0.000         0.000         0.000         0.000
+ ECTCH          0.000         0.000         0.000         0.000         0.000
+ ECPAR          0.000         0.000         0.000         0.000         0.000
+ ECPEER         0.000         0.000         0.000         0.000         0.000
+ MCSELF         0.000         0.000         0.000         0.000         0.000
+ MCTCH          0.000         0.000         0.000         0.000         0.000
+ MCPAR          0.000         0.000         0.000         0.000         0.000
+ MCPEER         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              ACTCH         ACPAR         ACPEER        ECSELF        ECTCH
+              ________      ________      ________      ________      ________
+ ACTCH          0.268
+ ACPAR          0.000         0.204
+ ACPEER         0.000         0.000         0.534
+ ECSELF         0.000         0.000         0.000         0.160
+ ECTCH          0.000         0.000         0.000         0.000         0.301
+ ECPAR          0.000         0.000         0.000         0.000         0.000
+ ECPEER         0.000         0.000         0.000         0.000         0.000
+ MCSELF         0.000         0.000         0.000         0.000         0.000
+ MCTCH          0.000         0.000         0.000         0.000         0.000
+ MCPAR          0.000         0.000         0.000         0.000         0.000
+ MCPEER         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              ECPAR         ECPEER        MCSELF        MCTCH         MCPAR
+              ________      ________      ________      ________      ________
+ ECPAR          0.241
+ ECPEER         0.000         0.549
+ MCSELF         0.000         0.000         0.335
+ MCTCH          0.000         0.000         0.000         0.365
+ MCPAR          0.000         0.000         0.000         0.000         0.386
+ MCPEER         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              MCPEER
+              ________
+ MCPEER         0.522
+
+
+           ALPHA
+              F1            F2            F3            F4            F5
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              F6            F7            F8
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           BETA
+              F1            F2            F3            F4            F5
+              ________      ________      ________      ________      ________
+ F1             0.000         0.000         0.000         0.000         0.000
+ F2             0.000         0.000         0.000         0.000         0.000
+ F3             0.000         0.000         0.000         0.000         0.000
+ F4             0.000         0.000         0.000         0.000         0.000
+ F5             0.000         0.000         0.000         0.000         0.000
+ F6             0.000         0.000         0.000         0.000         0.000
+ F7             0.000         0.000         0.000         0.000         0.000
+ F8             0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              F6            F7            F8
+              ________      ________      ________
+ F1             0.000         0.000         0.000
+ F2             0.000         0.000         0.000
+ F3             0.000         0.000         0.000
+ F4             0.000         0.000         0.000
+ F5             0.000         0.000         0.000
+ F6             0.000         0.000         0.000
+ F7             0.000         0.000         0.000
+ F8             0.000         0.000         0.000
+
+
+           PSI
+              F1            F2            F3            F4            F5
+              ________      ________      ________      ________      ________
+ F1             1.000
+ F2             0.000         1.000
+ F3             0.000         0.000         1.000
+ F4             0.000         0.000         0.000         1.000
+ F5             0.000         0.000         0.000         0.000         1.000
+ F6             0.000         0.000         0.000         0.000         0.000
+ F7             0.000         0.000         0.000         0.000         0.000
+ F8             0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              F6            F7            F8
+              ________      ________      ________
+ F6             1.000
+ F7             0.000         1.000
+ F8             0.000         0.000         1.000
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    h:\sem ta lab & lecture 2019\2.12.19 complex measurement models\mtmm 35.dgm
+
+     Beginning Time:  10:58:50
+        Ending Time:  10:58:54
+       Elapsed Time:  00:00:04
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2018 Muthen & Muthen

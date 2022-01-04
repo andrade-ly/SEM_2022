@@ -1,0 +1,721 @@
+Mplus VERSION 6.1
+MUTHEN & MUTHEN
+03/24/2016  10:49 AM
+
+INPUT INSTRUCTIONS
+
+  Title: Validating Hypothesized Causal Structure for Calibration Group
+  Combining Factors 2 and 3 into one factor;
+  Adding F8 on F2;
+  Adding EE1 with EE2;
+
+  Data:
+  FILE IS elemind1.dat;
+  FORMAT IS (19F4.2/13F4.2);
+
+  Variable:
+  NAMES ARE rolea1 rolea2 rolec1 rolec2 work1 work2 cclim1 cclim2 cclim3
+  cclim4 dec1 dec2 ssup1 ssup2 psup1 psup2 self1 self2 self3 elc1
+  elc2 elc3 elc4 elc5 ee1 ee2 ee3 dp1 dp2 pa1 pa2 pa3;
+  USEVARIABLES ARE rolea1-pa3;
+
+  Analysis:
+  TYPE = GENERAL;
+  ESTIMATOR = MLM;
+
+  MODEL:
+  F1 by rolea1-rolea2;
+  F2 by rolec1-rolec2 work1-work2;
+  !based on previous model, we combined factor 2 & 3
+  !(and then renumbered other factors)
+  F3 by cclim1-cclim4;
+  F4 by dec1-dec2;
+  F5 by ssup1-ssup2;
+  F6 by psup1-psup2;
+  F7 by self1-self3;
+  F8 by elc1-elc5;
+  F9 by ee1-ee3;
+  F10 by dp1-dp2;
+  F11 by pa1-pa3;
+
+  F7 on F4 F5 F6;
+  F8 on F4 F2;
+  F9 on F2 F3;
+  F10 on F2 F9;
+  F11 on F1 F7 F8 F9 F10;
+
+
+  EE1 with EE2;
+
+  Output: MODINDICES STDYX;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Validating Hypothesized Causal Structure for Calibration Group
+Combining Factors 2 and 3 into one factor;
+Adding F8 on F2;
+Adding EE1 with EE2;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         602
+
+Number of dependent variables                                   32
+Number of independent variables                                  0
+Number of continuous latent variables                           11
+
+Observed dependent variables
+
+  Continuous
+   ROLEA1      ROLEA2      ROLEC1      ROLEC2      WORK1       WORK2
+   CCLIM1      CCLIM2      CCLIM3      CCLIM4      DEC1        DEC2
+   SSUP1       SSUP2       PSUP1       PSUP2       SELF1       SELF2
+   SELF3       ELC1        ELC2        ELC3        ELC4        ELC5
+   EE1         EE2         EE3         DP1         DP2         PA1
+   PA2         PA3
+
+Continuous latent variables
+   F1          F2          F3          F4          F5          F6
+   F7          F8          F9          F10         F11
+
+
+Estimator                                                      MLM
+Information matrix                                        EXPECTED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+
+Input data file(s)
+  elemind1.dat
+
+Input data format
+  (19F4.2,/,13F4.2)
+
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                      126
+
+Loglikelihood
+
+          H0 Value                      -19774.976
+          H1 Value                      -19303.125
+
+Information Criteria
+
+          Akaike (AIC)                   39801.952
+          Bayesian (BIC)                 40356.384
+          Sample-Size Adjusted BIC       39956.367
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                            866.557*
+          Degrees of Freedom                   434
+          P-Value                           0.0000
+          Scaling Correction Factor          1.089
+            for MLM
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.041
+          90 Percent C.I.                    0.037  0.045
+          Probability RMSEA <= .05           1.000
+
+CFI/TLI
+
+          CFI                                0.953
+          TLI                                0.946
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           9627.807
+          Degrees of Freedom                   496
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.048
+
+WRMR (Weighted Root Mean Square Residual)
+
+          Value                              1.549
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ F1       BY
+    ROLEA1             1.000      0.000    999.000    999.000
+    ROLEA2             1.184      0.076     15.521      0.000
+
+ F2       BY
+    ROLEC1             1.000      0.000    999.000    999.000
+    ROLEC2             1.334      0.076     17.539      0.000
+    WORK1              1.119      0.062     18.021      0.000
+    WORK2              1.014      0.080     12.620      0.000
+
+ F3       BY
+    CCLIM1             1.000      0.000    999.000    999.000
+    CCLIM2             1.342      0.097     13.791      0.000
+    CCLIM3             1.002      0.085     11.815      0.000
+    CCLIM4             1.424      0.097     14.729      0.000
+
+ F4       BY
+    DEC1               1.000      0.000    999.000    999.000
+    DEC2               1.300      0.068     19.147      0.000
+
+ F5       BY
+    SSUP1              1.000      0.000    999.000    999.000
+    SSUP2              1.064      0.029     36.940      0.000
+
+ F6       BY
+    PSUP1              1.000      0.000    999.000    999.000
+    PSUP2              1.039      0.059     17.718      0.000
+
+ F7       BY
+    SELF1              1.000      0.000    999.000    999.000
+    SELF2              1.223      0.066     18.496      0.000
+    SELF3              1.371      0.071     19.429      0.000
+
+ F8       BY
+    ELC1               1.000      0.000    999.000    999.000
+    ELC2               0.845      0.057     14.801      0.000
+    ELC3               1.029      0.065     15.818      0.000
+    ELC4               1.039      0.065     15.898      0.000
+    ELC5               1.288      0.078     16.481      0.000
+
+ F9       BY
+    EE1                1.000      0.000    999.000    999.000
+    EE2                1.033      0.027     37.982      0.000
+    EE3                1.142      0.049     23.493      0.000
+
+ F10      BY
+    DP1                1.000      0.000    999.000    999.000
+    DP2                0.898      0.064     14.047      0.000
+
+ F11      BY
+    PA1                1.000      0.000    999.000    999.000
+    PA2                0.879      0.059     14.940      0.000
+    PA3                0.848      0.071     11.884      0.000
+
+ F7       ON
+    F4                 1.072      0.337      3.181      0.001
+    F5                -0.588      0.203     -2.900      0.004
+    F6                -0.104      0.083     -1.258      0.208
+
+ F8       ON
+    F4                -0.047      0.032     -1.473      0.141
+    F2                 0.276      0.036      7.708      0.000
+
+ F9       ON
+    F2                 0.838      0.077     10.895      0.000
+    F3                -0.685      0.136     -5.034      0.000
+
+ F10      ON
+    F2                 0.081      0.080      1.012      0.311
+    F9                 0.525      0.052     10.046      0.000
+
+ F11      ON
+    F1                -0.107      0.070     -1.532      0.126
+    F7                 0.299      0.101      2.962      0.003
+    F8                -0.058      0.082     -0.703      0.482
+    F9                -0.115      0.043     -2.661      0.008
+    F10               -0.221      0.059     -3.773      0.000
+
+ F2       WITH
+    F1                 0.420      0.042     10.078      0.000
+
+ F3       WITH
+    F1                -0.088      0.015     -5.922      0.000
+    F2                -0.107      0.016     -6.612      0.000
+
+ F4       WITH
+    F1                -0.401      0.041     -9.872      0.000
+    F2                -0.398      0.042     -9.486      0.000
+    F3                 0.097      0.017      5.705      0.000
+
+ F5       WITH
+    F1                -0.503      0.053     -9.471      0.000
+    F2                -0.474      0.051     -9.296      0.000
+    F3                 0.108      0.022      4.883      0.000
+    F4                 0.806      0.061     13.252      0.000
+
+ F6       WITH
+    F1                -0.280      0.031     -9.059      0.000
+    F2                -0.262      0.032     -8.066      0.000
+    F3                 0.068      0.015      4.433      0.000
+    F4                 0.398      0.039     10.217      0.000
+    F5                 0.433      0.046      9.371      0.000
+
+ EE1      WITH
+    EE2                0.268      0.045      5.931      0.000
+
+ Intercepts
+    ROLEA1             2.343      0.039     60.308      0.000
+    ROLEA2             1.996      0.040     49.602      0.000
+    ROLEC1             2.871      0.045     63.115      0.000
+    ROLEC2             3.042      0.053     57.601      0.000
+    WORK1              3.124      0.047     66.925      0.000
+    WORK2              2.396      0.049     48.549      0.000
+    CCLIM1             3.040      0.023    134.534      0.000
+    CCLIM2             2.724      0.024    111.394      0.000
+    CCLIM3             3.062      0.021    142.958      0.000
+    CCLIM4             3.316      0.029    115.950      0.000
+    DEC1               3.999      0.044     91.133      0.000
+    DEC2               4.449      0.051     87.885      0.000
+    SSUP1              4.578      0.050     91.398      0.000
+    SSUP2              4.683      0.050     93.385      0.000
+    PSUP1              4.781      0.040    120.901      0.000
+    PSUP2              4.698      0.037    125.973      0.000
+    SELF1              3.590      0.019    188.146      0.000
+    SELF2              3.584      0.022    162.853      0.000
+    SELF3              3.504      0.023    153.382      0.000
+    ELC1               2.823      0.025    115.058      0.000
+    ELC2               3.011      0.025    121.200      0.000
+    ELC3               2.829      0.024    117.913      0.000
+    ELC4               2.270      0.027     85.196      0.000
+    ELC5               2.439      0.028     87.508      0.000
+    EE1                3.739      0.055     67.650      0.000
+    EE2                3.534      0.055     63.984      0.000
+    EE3                3.142      0.055     56.820      0.000
+    DP1                2.187      0.046     47.877      0.000
+    DP2                1.872      0.044     42.090      0.000
+    PA1                6.021      0.033    179.903      0.000
+    PA2                6.084      0.036    170.440      0.000
+    PA3                6.085      0.035    172.377      0.000
+
+ Variances
+    F1                 0.469      0.054      8.613      0.000
+    F2                 0.577      0.060      9.573      0.000
+    F3                 0.118      0.016      7.309      0.000
+    F4                 0.582      0.058      9.950      0.000
+    F5                 1.194      0.092     13.038      0.000
+    F6                 0.619      0.053     11.781      0.000
+
+ Residual Variances
+    ROLEA1             0.440      0.036     12.104      0.000
+    ROLEA2             0.318      0.042      7.626      0.000
+    ROLEC1             0.669      0.037     18.019      0.000
+    ROLEC2             0.651      0.052     12.557      0.000
+    WORK1              0.589      0.037     15.946      0.000
+    WORK2              0.873      0.064     13.652      0.000
+    CCLIM1             0.189      0.012     16.452      0.000
+    CCLIM2             0.147      0.013     11.434      0.000
+    CCLIM3             0.158      0.011     14.897      0.000
+    CCLIM4             0.253      0.020     12.444      0.000
+    DEC1               0.577      0.036     15.844      0.000
+    DEC2               0.559      0.043     13.116      0.000
+    SSUP1              0.316      0.036      8.867      0.000
+    SSUP2              0.161      0.028      5.816      0.000
+    PSUP1              0.322      0.041      7.894      0.000
+    PSUP2              0.168      0.035      4.800      0.000
+    SELF1              0.088      0.008     10.782      0.000
+    SELF2              0.095      0.012      7.664      0.000
+    SELF3              0.067      0.008      8.596      0.000
+    ELC1               0.185      0.013     14.483      0.000
+    ELC2               0.245      0.015     15.927      0.000
+    ELC3               0.159      0.011     14.282      0.000
+    ELC4               0.237      0.016     15.221      0.000
+    ELC5               0.174      0.015     11.572      0.000
+    EE1                0.621      0.049     12.654      0.000
+    EE2                0.538      0.054      9.943      0.000
+    EE3                0.253      0.042      6.091      0.000
+    DP1                0.385      0.054      7.107      0.000
+    DP2                0.489      0.063      7.715      0.000
+    PA1                0.166      0.025      6.586      0.000
+    PA2                0.374      0.036     10.344      0.000
+    PA3                0.385      0.039      9.934      0.000
+    F7                 0.095      0.013      7.325      0.000
+    F8                 0.121      0.013      9.124      0.000
+    F9                 0.633      0.053     11.910      0.000
+    F10                0.485      0.058      8.404      0.000
+    F11                0.331      0.036      9.172      0.000
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ F1       BY
+    ROLEA1             0.718      0.029     24.909      0.000
+    ROLEA2             0.821      0.025     32.211      0.000
+
+ F2       BY
+    ROLEC1             0.681      0.024     28.459      0.000
+    ROLEC2             0.782      0.020     39.032      0.000
+    WORK1              0.742      0.021     35.024      0.000
+    WORK2              0.636      0.029     21.572      0.000
+
+ F3       BY
+    CCLIM1             0.620      0.031     19.827      0.000
+    CCLIM2             0.769      0.025     31.295      0.000
+    CCLIM3             0.655      0.032     20.176      0.000
+    CCLIM4             0.697      0.029     23.753      0.000
+
+ F4       BY
+    DEC1               0.709      0.023     30.578      0.000
+    DEC2               0.799      0.018     43.984      0.000
+
+ F5       BY
+    SSUP1              0.889      0.014     62.329      0.000
+    SSUP2              0.945      0.010     93.451      0.000
+
+ F6       BY
+    PSUP1              0.811      0.025     32.285      0.000
+    PSUP2              0.894      0.024     37.546      0.000
+
+ F7       BY
+    SELF1              0.775      0.024     32.466      0.000
+    SELF2              0.822      0.025     32.910      0.000
+    SELF3              0.887      0.015     57.595      0.000
+
+ F8       BY
+    ELC1               0.699      0.025     27.985      0.000
+    ELC2               0.583      0.030     19.156      0.000
+    ELC3               0.736      0.022     33.130      0.000
+    ELC4               0.668      0.025     26.753      0.000
+    ELC5               0.793      0.021     38.343      0.000
+
+ F9       BY
+    EE1                0.814      0.018     45.253      0.000
+    EE2                0.841      0.018     47.071      0.000
+    EE3                0.929      0.013     74.135      0.000
+
+ F10      BY
+    DP1                0.833      0.027     31.003      0.000
+    DP2                0.768      0.033     23.430      0.000
+
+ F11      BY
+    PA1                0.866      0.023     37.167      0.000
+    PA2                0.712      0.033     21.913      0.000
+    PA3                0.694      0.035     19.624      0.000
+
+ F7       ON
+    F4                 2.256      0.673      3.352      0.001
+    F5                -1.772      0.596     -2.972      0.003
+    F6                -0.226      0.179     -1.261      0.207
+    !non-sig so delete in next
+
+ F8       ON
+    F4                -0.086      0.057     -1.493      0.135
+    !non-sig so delete in next
+    F2                 0.498      0.056      8.923      0.000
+
+ F9       ON
+    F2                 0.577      0.035     16.657      0.000
+    F3                -0.213      0.039     -5.434      0.000
+
+ F10      ON
+    F2                 0.066      0.065      1.013      0.311
+    !non-sig so delete in next
+    F9                 0.620      0.053     11.648      0.000
+
+ F11      ON
+    F1                -0.104      0.068     -1.532      0.125
+    !non-sig so delete in next
+    F7                 0.154      0.050      3.085      0.002
+    F8                -0.034      0.049     -0.704      0.481
+    !non-sig so delete in next
+    F9                -0.180      0.067     -2.692      0.007
+    F10               -0.293      0.072     -4.091      0.000
+
+ F2       WITH
+    F1                 0.808      0.027     29.779      0.000
+
+ F3       WITH
+    F1                -0.376      0.050     -7.481      0.000
+    F2                -0.412      0.046     -8.929      0.000
+
+ F4       WITH
+    F1                -0.768      0.032    -24.185      0.000
+    F2                -0.687      0.034    -20.301      0.000
+    F3                 0.369      0.047      7.923      0.000
+
+ F5       WITH
+    F1                -0.672      0.032    -21.121      0.000
+    F2                -0.571      0.032    -17.738      0.000
+    F3                 0.288      0.049      5.924      0.000
+    F4                 0.967      0.010     92.088      0.000
+
+ F6       WITH
+    F1                -0.520      0.043    -12.098      0.000
+    F2                -0.438      0.040    -10.899      0.000
+    F3                 0.253      0.050      5.048      0.000
+    F4                 0.662      0.040     16.468      0.000
+    F5                 0.503      0.041     12.225      0.000
+
+ EE1      WITH
+    EE2                0.464      0.046     10.079      0.000
+
+ Intercepts
+    ROLEA1             2.458      0.065     38.022      0.000
+    ROLEA2             2.022      0.054     37.194      0.000
+    ROLEC1             2.572      0.068     37.896      0.000
+    ROLEC2             2.348      0.061     38.579      0.000
+    WORK1              2.728      0.071     38.397      0.000
+    WORK2              1.979      0.047     42.502      0.000
+    CCLIM1             5.483      0.166     33.086      0.000
+    CCLIM2             4.540      0.134     33.937      0.000
+    CCLIM3             5.827      0.178     32.660      0.000
+    CCLIM4             4.726      0.173     27.316      0.000
+    DEC1               3.714      0.114     32.534      0.000
+    DEC2               3.582      0.124     28.866      0.000
+    SSUP1              3.725      0.137     27.282      0.000
+    SSUP2              3.806      0.143     26.596      0.000
+    PSUP1              4.928      0.155     31.805      0.000
+    PSUP2              5.134      0.159     32.388      0.000
+    SELF1              7.668      0.301     25.509      0.000
+    SELF2              6.637      0.262     25.344      0.000
+    SELF3              6.251      0.225     27.757      0.000
+    ELC1               4.689      0.129     36.273      0.000
+    ELC2               4.940      0.140     35.404      0.000
+    ELC3               4.806      0.127     37.801      0.000
+    ELC4               3.472      0.083     41.617      0.000
+    ELC5               3.567      0.094     37.803      0.000
+    EE1                2.757      0.071     38.600      0.000
+    EE2                2.608      0.063     41.226      0.000
+    EE3                2.316      0.053     43.435      0.000
+    DP1                1.951      0.051     38.246      0.000
+    DP2                1.715      0.049     35.031      0.000
+    PA1                7.392      0.287     25.741      0.000
+    PA2                6.985      0.273     25.579      0.000
+    PA3                7.062      0.236     29.909      0.000
+
+ Variances
+    F1                 1.000      0.000    999.000    999.000
+    F2                 1.000      0.000    999.000    999.000
+    F3                 1.000      0.000    999.000    999.000
+    F4                 1.000      0.000    999.000    999.000
+    F5                 1.000      0.000    999.000    999.000
+    F6                 1.000      0.000    999.000    999.000
+
+ Residual Variances
+    ROLEA1             0.484      0.041     11.688      0.000
+    ROLEA2             0.326      0.042      7.805      0.000
+    ROLEC1             0.537      0.033     16.481      0.000
+    ROLEC2             0.388      0.031     12.371      0.000
+    WORK1              0.449      0.031     14.279      0.000
+    WORK2              0.595      0.038     15.864      0.000
+    CCLIM1             0.616      0.039     15.880      0.000
+    CCLIM2             0.409      0.038     10.817      0.000
+    CCLIM3             0.570      0.043     13.397      0.000
+    CCLIM4             0.514      0.041     12.552      0.000
+    DEC1               0.498      0.033     15.162      0.000
+    DEC2               0.362      0.029     12.485      0.000
+    SSUP1              0.209      0.025      8.248      0.000
+    SSUP2              0.107      0.019      5.571      0.000
+    PSUP1              0.342      0.041      8.401      0.000
+    PSUP2              0.201      0.043      4.727      0.000
+    SELF1              0.400      0.037     10.824      0.000
+    SELF2              0.325      0.041      7.927      0.000
+    SELF3              0.213      0.027      7.792      0.000
+    ELC1               0.512      0.035     14.668      0.000
+    ELC2               0.660      0.035     18.597      0.000
+    ELC3               0.459      0.033     14.055      0.000
+    ELC4               0.554      0.033     16.586      0.000
+    ELC5               0.372      0.033     11.342      0.000
+    EE1                0.338      0.029     11.550      0.000
+    EE2                0.293      0.030      9.752      0.000
+    EE3                0.138      0.023      5.911      0.000
+    DP1                0.306      0.045      6.842      0.000
+    DP2                0.410      0.050      8.149      0.000
+    PA1                0.250      0.040      6.180      0.000
+    PA2                0.493      0.046     10.636      0.000
+    PA3                0.518      0.049     10.547      0.000
+    F7                 0.721      0.068     10.612      0.000
+    F8                 0.686      0.039     17.696      0.000
+    F9                 0.520      0.036     14.593      0.000
+    F10                0.557      0.040     14.054      0.000
+    F11                0.665      0.041     16.060      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    ROLEA1             0.516      0.041     12.455      0.000
+    ROLEA2             0.674      0.042     16.106      0.000
+    ROLEC1             0.463      0.033     14.230      0.000
+    ROLEC2             0.612      0.031     19.516      0.000
+    WORK1              0.551      0.031     17.512      0.000
+    WORK2              0.405      0.038     10.786      0.000
+    CCLIM1             0.384      0.039      9.914      0.000
+    CCLIM2             0.591      0.038     15.647      0.000
+    CCLIM3             0.430      0.043     10.088      0.000
+    CCLIM4             0.486      0.041     11.876      0.000
+    DEC1               0.502      0.033     15.289      0.000
+    DEC2               0.638      0.029     21.992      0.000
+    SSUP1              0.791      0.025     31.165      0.000
+    SSUP2              0.893      0.019     46.726      0.000
+    PSUP1              0.658      0.041     16.143      0.000
+    PSUP2              0.799      0.043     18.773      0.000
+    SELF1              0.600      0.037     16.233      0.000
+    SELF2              0.675      0.041     16.455      0.000
+    SELF3              0.787      0.027     28.797      0.000
+    ELC1               0.488      0.035     13.993      0.000
+    ELC2               0.340      0.035      9.578      0.000
+    ELC3               0.541      0.033     16.565      0.000
+    ELC4               0.446      0.033     13.376      0.000
+    ELC5               0.628      0.033     19.171      0.000
+    EE1                0.662      0.029     22.627      0.000
+    EE2                0.707      0.030     23.535      0.000
+    EE3                0.862      0.023     37.068      0.000
+    DP1                0.694      0.045     15.501      0.000
+    DP2                0.590      0.050     11.715      0.000
+    PA1                0.750      0.040     18.584      0.000
+    PA2                0.507      0.046     10.957      0.000
+    PA3                0.482      0.049      9.812      0.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    F7                 0.279      0.068      4.116      0.000
+    F8                 0.314      0.039      8.107      0.000
+    F9                 0.480      0.036     13.458      0.000
+    F10                0.443      0.040     11.179      0.000
+    F11                0.335      0.041      8.089      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.585E-04
+       (ratio of smallest to largest eigenvalue)
+
+
+MODEL MODIFICATION INDICES
+
+NOTE:  Modification indices for direct effects of observed dependent variables
+regressed on covariates may not be included.  To include these, request
+MODINDICES (ALL).
+
+Minimum M.I. value for printing the modification index    10.000
+
+                            M.I.     E.P.C.  Std E.P.C.  StdYX E.P.C.
+
+BY Statements
+
+F1       BY ROLEC1         12.254     0.506      0.346        0.310
+F1       BY WORK1          10.256    -0.465     -0.319       -0.278
+F1       BY DEC1           12.490    -0.396     -0.271       -0.252
+F2       BY DEC1           10.016    -0.264     -0.200       -0.186
+F2       BY DEC2           22.886     0.501      0.381        0.307
+F3       BY DP1            25.276    -0.658     -0.226       -0.202
+F4       BY ROLEC1         14.554    -0.298     -0.227       -0.204
+F4       BY ROLEC2         10.233     0.277      0.212        0.163
+F5       BY ROLEC1         17.365    -0.198     -0.217       -0.194
+F5       BY DEC1           16.800    -0.693     -0.758       -0.704
+F5       BY DEC2           18.457     0.944      1.031        0.830
+F7       BY ELC5           10.404    -0.207     -0.075       -0.110
+F8       BY PA3            10.179    -0.257     -0.108       -0.126
+F9       BY ROLEC1         24.036    -0.264     -0.291       -0.261
+F9       BY WORK1          21.766     0.248      0.274        0.239
+F9       BY CCLIM1         11.053    -0.076     -0.084       -0.151
+F10      BY SELF3          12.877    -0.067     -0.062       -0.111
+F11      BY EE1            11.716     0.199      0.140        0.103
+
+ON/BY Statements
+
+F2       ON F7       /
+F7       BY F2             11.607    -0.722     -0.344       -0.344
+F2       ON F10      /
+F10      BY F2             13.597    -0.171     -0.210       -0.210
+F2       ON F11      /
+F11      BY F2             11.803     0.193      0.179        0.179
+F3       ON F9       /
+F9       BY F3             25.071     0.765      2.457        2.457
+F3       ON F10      /
+F10      BY F3             17.733    -0.120     -0.325       -0.325
+F4       ON F9       /
+F9       BY F4             24.723    -0.086     -0.125       -0.125
+F5       ON F8       /
+F8       BY F5             11.774     0.237      0.091        0.091
+F5       ON F9       /
+F9       BY F5             19.701     0.125      0.126        0.126
+F6       ON F7       /
+F7       BY F6             13.813     4.343      2.002        2.002
+F7       ON F2       /
+F2       BY F7             12.019    -0.603     -1.263       -1.263
+F7       ON F8       /
+F8       BY F7             11.837    -0.169     -0.196       -0.196
+F7       ON F9       /
+F9       BY F7             22.021    -0.101     -0.306       -0.306
+F7       ON F10      /
+F10      BY F7             20.452    -0.097     -0.249       -0.249
+F7       ON F11      /
+F11      BY F7             16.003     0.247      0.481        0.481
+F8       ON F7       /
+F7       BY F8             12.060    -0.204     -0.176       -0.176
+F9       ON F7       /
+F7       BY F9             26.237    -0.687     -0.226       -0.226
+F9       ON F10      /
+F10      BY F9             25.225    -1.367     -1.157       -1.157
+F10      ON F3       /
+F3       BY F10            25.225    -0.718     -0.264       -0.264
+F10      ON F7       /
+F7       BY F10            10.648    -0.407     -0.158       -0.158
+F10      ON F11      /
+F11      BY F10            15.111    -1.447     -1.094       -1.094
+
+WITH Statements
+
+SSUP1    WITH DEC2         13.339    -0.101     -0.101       -0.239
+SSUP2    WITH DEC1         21.971    -0.111     -0.111       -0.363
+SSUP2    WITH DEC2         16.036     0.112      0.112        0.372
+PSUP2    WITH SSUP1        13.572    -0.061     -0.061       -0.266
+PSUP2    WITH SSUP2        11.104     0.053      0.053        0.321
+PSUP2    WITH PSUP1        13.816     4.108      4.108       17.636
+ELC2     WITH ELC1         18.850     0.047      0.047        0.222
+EE1      WITH WORK1        22.794     0.122      0.122        0.202
+EE1      WITH WORK2        15.274     0.117      0.117        0.159
+F7       WITH F2           11.607    -0.068     -0.292       -0.292
+F7       WITH F6           13.814     0.411      1.699        1.699
+F8       WITH F5           11.774     0.029      0.076        0.076
+F8       WITH F7           10.199    -0.019     -0.178       -0.178
+F9       WITH F3           25.071     0.485      1.772        1.772
+F9       WITH F4           24.723    -0.055     -0.090       -0.090
+F9       WITH F5           19.702     0.079      0.091        0.091
+F9       WITH F7           21.239    -0.063     -0.257       -0.257
+F10      WITH F3           22.337    -0.066     -0.274       -0.274
+F10      WITH F9           25.225    -0.664     -1.197       -1.197
+
+
+     Beginning Time:  10:49:07
+        Ending Time:  10:49:10
+       Elapsed Time:  00:00:03
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2010 Muthen & Muthen

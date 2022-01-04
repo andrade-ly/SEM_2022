@@ -1,0 +1,55 @@
+Title: MTMM Test for Construct Validity 
+       Perfectly Correlated Traits Freely Correlated Methods;
+
+Data: File is ind7mt.dat;
+
+Variable: 
+NAMES ARE scself sctch scpar scpeer acself actch acpar acpeer
+  ecself ectch ecpar ecpeer mcself mctch mcpar mcpeer;
+USEVARIABLES ARE scself-mcpeer;
+
+Model:
+F1 by scself* sctch scpar scpeer;
+F2 by acself* actch acpar acpeer;
+F3 by ecself* ectch ecpar ecpeer;
+F4 by mcself* mctch mcpar mcpeer;
+F5 by scself* acself ecself mcself;
+F6 by sctch* actch ectch mctch;
+F7 by scpar* acpar ecpar mcpar;
+F8 by scpeer* acpeer ecpeer mcpeer;
+
+F1-F8@1;
+
+F1 with F2@1;
+F1 with F3@1;
+F1 with F4@1;
+F2 with F3@1;
+F2 with F4@1;
+F3 with F4@1;
+!correlations among traits fixed to 1
+!(perfectly correlated)
+
+F1 with F5@0;
+F1 with F6@0;
+F1 with F7@0;
+F1 with F8@0;
+F2 with F5@0;
+F2 with F6@0;
+F2 with F7@0;
+F2 with F8@0;
+F3 with F5@0;
+F3 with F6@0;
+F3 with F7@0;
+F3 with F8@0;
+F4 with F5@0;
+F4 with F6@0;
+F4 with F7@0;
+F4 with F8@0;
+!correlations btwn traits & methods fixed to 0
+
+!correlations among methods left out of syntax
+!(left free to vary)
+
+ACSELF@0;
+
+Output: stdyx; tech1;

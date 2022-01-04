@@ -1,0 +1,21 @@
+Title: MTMM Test for Construct Validity 
+       No Traits Correlated Methods;
+
+Data: File is ind7mt.dat;
+
+Variable: 
+NAMES ARE scself sctch scpar scpeer acself actch acpar acpeer
+  ecself ectch ecpar ecpeer mcself mctch mcpar mcpeer;
+USEVARIABLES ARE scself-mcpeer;
+
+Model:
+F5 by scself* acself ecself mcself;
+F6 by sctch* actch ectch mctch;
+F7 by scpar* acpar ecpar mcpar;
+F8 by scpeer* acpeer ecpeer mcpeer;
+
+F5-F8@1;
+
+ACSELF@0;
+
+Output: stdyx; tech1;

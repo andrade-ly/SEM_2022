@@ -1,0 +1,67 @@
+TITLE: Mediation Model 2;
+
+DATA: file=thesis.dat;
+      format = 160F8;
+ 
+variable:
+NAMES = sex year race rstatus rlength rdist rcommit ls1-ls5
+rs1-rs3 tfs1-tfs10 ecr1-ecr36 blength bhurt bupset bsever brum
+temp1-temp7 semp1-semp8 rrq1-rrq12 fdegree trim1-trim18
+dep1-dep20 tfs1r tfs3r tfs6r tfs7r tfs8r temp2r temp4r temp6r 
+dep4r dep8r dep12r dep16r rrq4r rrq9r ecr4r ecr7r ecr15r ecr17r
+ecr18r ecr19r ecr21r ecr23r ecr24r ecr27r ecr30r ecr32r
+ecr34r ecr35r;
+
+USEVARIABLES = rrq2 rrq4r rrq5 rrq6 rrq1 rrq3 
+tfs10 tfs2 tfs9 tfs1r tfs5 
+ecr24r ecr34r ecr5 ecr2 ecr30r ecr3 ecr36 ecr6 ecr1 ecr11;
+
+MISSING IS .;
+
+Analysis:
+estimator = ML;
+bootstrap = 1000;
+!bootstrap recommended 
+
+Model:
+!specifying our model
+
+!measurement model
+rum by rrq5 rrq6 rrq1 rrq3 rrq2 rrq4r;
+
+for by tfs10 tfs2 tfs9 tfs1r tfs5;
+att_avo by ecr24r ecr34r ecr5 ecr2 ecr30r;
+att_anx by ecr3 ecr36 ecr6 ecr1 ecr11;
+att_anx with att_avo;
+
+!IGNORE NEXT THREE LINES:
+!emp by temp4r temp1 temp2r temp7;
+!dep by dep6 dep3 dep14 dep18 dep1 dep19;
+!emp with att_anx@0;
+
+!structural model
+!regress mediator on IV
+rum on att_anx;
+!regress outcome on mediator & IV
+for on rum att_anx;
+!specifying no relationship btwn
+!rumination & attach. avoid.
+rum on att_avo@0;
+
+!IGNORE THESE NEXT TWO LINES:
+!emp on att_avo;
+!for on emp att_avo;
+
+
+Model indirect: 
+!requesting significance test for indirect effect of 
+!x on y via m
+for ind rum att_anx; 
+!indirect effect of interest ending in y, starting with x
+
+!IGNORE THESE NEXT TWO LINES:
+!for ind emp att_avo;
+!indirect effect of interest ending in y, starting with x
+
+Output: stdyx; cinterval(bcbootstrap);
+!requesting bias-corrected bootstrap confidence intervals

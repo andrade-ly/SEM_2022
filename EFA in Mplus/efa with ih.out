@@ -1,0 +1,227 @@
+Mplus VERSION 6.1
+MUTHEN & MUTHEN
+01/20/2016   3:11 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:  EFA with Intellectual Humility Validation Data
+
+  DATA:
+    FILE = IH validation 1-21.dat;
+      format = 6F8;
+
+  VARIABLE:
+    NAMES = IH1 IH2 IH3 IH4 IH5 IH6;
+
+    USEVAR = IH1 IH2 IH3 IH4 IH5 IH6;
+
+  ANALYSIS: TYPE = EFA 1 2;
+            ROTATION = OBLIMIN;
+            ESTIMATOR = ULS;
+
+  OUTPUT:  SAMPSTAT;
+
+  PLOT: TYPE = PLOT2;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+EFA with Intellectual Humility Validation Data
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         200
+
+Number of dependent variables                                    6
+Number of independent variables                                  0
+Number of continuous latent variables                            0
+
+Observed dependent variables
+
+  Continuous
+   IH1         IH2         IH3         IH4         IH5         IH6
+
+
+Estimator                                                      ULS
+Rotation                                                   OBLIMIN
+Row standardization                                    CORRELATION
+Type of rotation                                           OBLIQUE
+Gamma value                                              0.000D+00
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Optimization Specifications for the Exploratory Factor Analysis
+Rotation Algorithm
+  Number of random starts                                        0
+  Maximum number of iterations                               10000
+  Derivative convergence criterion                       0.100D-04
+
+Input data file(s)
+  IH validation 1-21.dat
+
+Input data format
+  (6F8)
+
+
+SAMPLE STATISTICS
+
+
+     SAMPLE STATISTICS
+
+
+           Means
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1         3.325         4.070         4.005         3.825         4.070
+
+
+           Means
+              IH6
+              ________
+      1         3.795
+
+
+           Correlations
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+ IH1            1.000
+ IH2            0.366         1.000
+ IH3            0.052         0.266         1.000
+ IH4            0.420         0.361         0.284         1.000
+ IH5            0.187         0.578         0.360         0.341         1.000
+ IH6            0.247         0.341         0.298         0.385         0.347
+
+
+           Correlations
+              IH6
+              ________
+ IH6            1.000
+
+
+RESULTS FOR EXPLORATORY FACTOR ANALYSIS
+
+
+           EIGENVALUES FOR SAMPLE CORRELATION MATRIX
+                  1             2             3             4             5
+              ________      ________      ________      ________      ________
+      1         2.645         1.019         0.790         0.648         0.520
+
+
+           EIGENVALUES FOR SAMPLE CORRELATION MATRIX
+                  6
+              ________
+      1         0.379
+
+
+EXPLORATORY FACTOR ANALYSIS WITH 1 FACTOR(S):
+
+
+
+MINIMUM ROTATION FUNCTION VALUE       0.00000
+
+
+
+           OBLIMIN ROTATED LOADINGS
+                  1
+              ________
+ IH1            0.440
+ IH2            0.710
+ IH3            0.433
+ IH4            0.613
+ IH5            0.670
+ IH6            0.555
+
+
+           OBLIMIN FACTOR CORRELATIONS
+                  1
+              ________
+      1         1.000
+
+
+           ESTIMATED RESIDUAL VARIANCES
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1         0.806         0.496         0.813         0.624         0.552
+
+
+           ESTIMATED RESIDUAL VARIANCES
+              IH6
+              ________
+      1         0.692
+
+
+EXPLORATORY FACTOR ANALYSIS WITH 2 FACTOR(S):
+
+
+
+MINIMUM ROTATION FUNCTION VALUE       0.01577
+
+
+
+           OBLIMIN ROTATED LOADINGS
+                  1             2
+              ________      ________
+ IH1            1.000         0.003
+ IH2            0.131         0.635
+ IH3           -0.123         0.531
+ IH4            0.261         0.456
+ IH5           -0.086         0.775
+ IH6            0.083         0.508
+
+
+           OBLIMIN FACTOR CORRELATIONS
+                  1             2
+              ________      ________
+      1         1.000
+      2         0.345         1.000
+
+
+           ESTIMATED RESIDUAL VARIANCES
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1        -0.002         0.522         0.748         0.642         0.438
+
+
+           ESTIMATED RESIDUAL VARIANCES
+              IH6
+              ________
+      1         0.706
+
+
+           FACTOR STRUCTURE
+                  1             2
+              ________      ________
+ IH1            1.001         0.348
+ IH2            0.351         0.680
+ IH3            0.061         0.489
+ IH4            0.418         0.546
+ IH5            0.182         0.745
+ IH6            0.259         0.537
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Eigenvalues for exploratory factor analysis
+
+     Beginning Time:  15:11:45
+        Ending Time:  15:11:45
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2010 Muthen & Muthen

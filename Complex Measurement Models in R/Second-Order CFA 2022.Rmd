@@ -1,0 +1,128 @@
+---
+title: "Complex Measurement Models - Second-Order CFA"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(lavaan)
+```
+
+```{r}
+cont85 <- read.table("continuation85.dat")
+```
+
+```{r}
+colnames(cont85) <- c(
+  'id',
+  'tfscs1',
+  'tfscs2',
+  'tfscs3',
+  'tfscs4',
+  'tfscs5',
+  'tfscs6',
+  'tfscs7',
+  'tfscs8',
+  'tfscs9',
+  'tfscs10',
+  'tfscs11',
+  'tfscs12',
+  'tfscs13',
+  'tfscs14',
+  'tfscs15',
+  'tfscs16',
+  'tfscs17',
+  'tfscs18',
+  'tfscs19',
+  'tfscs20',
+  'tfscs21',
+  'tfscs22',
+  'tfscs23',
+  'tfscs24',
+  'tfscs25',
+  'tfscs26',
+  'tfscs27',
+  'tfscs28',
+  'tfscs29',
+  'tfscs30',
+  'tfscs31',
+  'tfscs32',
+  'tfscs33',
+  'tfscs34'
+)
+```
+
+# Part 1: Higher-order CFAs
+
+## Model Specification
+
+```{r}
+cfa_model <-
+  '
+  # inhibition factor
+  inhib =~ 1*tfscs1 + tfscs10 + tfscs15 + 
+            tfscs17 + tfscs22 + tfscs23 + tfscs33
+  # initiation factor
+  init =~ 1*tfscs6 + tfscs11 + tfscs12 + 
+            tfscs18 + tfscs21 + tfscs24 + tfscs27
+  # continuation factor 
+  cont =~ 1*tfscs3 + tfscs4 + tfscs9 + tfscs14 + 
+            tfscs16 + tfscs28 + tfscs31
+  # second order factor
+  selfcont =~ inhib + init + cont # New second order factor
+'
+```
+
+## Fitting the model
+
+```{r}
+
+sec_order <- cfa(model = cfa_model,
+               data = cont85,
+               missing = "ml",
+               estimator = "ml",
+               control = list(iter.max = 1000)
+               )
+
+```
+
+## Model Output 
+
+### Model summary
+
+```{r}
+summary(sec_order, 
+        standardized = TRUE, 
+        rsquare = TRUE,
+        fit.measures = TRUE,
+        modindices = TRUE)
+```
+
+### Residual covariances and variances
+
+```{r}
+lavResiduals(cfa_fit)
+```
+
+### Additional Information
+
+lavInspect() is equivalent to TECH1 in Mplus 
+
+```{r}
+lavInspect(cfa_fit)
+```
+
+# Part 2: MTMM(Multitrait-multimethod models) Models
+
+## Correlated Traits and Correlated Methods (CTCM)
+
+## No Traits/Correlated Methods (NTCM)
+
+## Perfectly Correlated Traits/Freely Correlated Methods (PCTCM)
+
+## Freely Correlated Traits/Uncorrelated Methods (CTUM)
+
+## Correlated Uniquenesses (CU)

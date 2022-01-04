@@ -1,0 +1,56 @@
+TITLE: HK Cancer Study
+    Latent Growth Curve Model 2;
+
+DATA: file=hkcancer_red2.dat;
+ 
+variable:
+NAMES = AGE_GP SURG_TX mood2 mood3 mood4
+socadj2 socadj3 socadj4 age age2 surg_tx2;
+
+USEVARIABLES = mood2 mood3 mood4 socadj2
+socadj3 socadj4;
+
+MISSING IS *;
+!telling Mplus how our missing data is identified;
+
+Analysis:
+estimator IS MLR;
+!using MLR estimator - std. errors are robust - 
+!bc of missing data;
+
+Model:
+
+I1 by mood2@1 mood3@1 mood4@1;
+!intercept for mood (I1) is measured by mood2 mood3 mood4;
+S1 by mood2@0 mood3@1 mood4@2.33;
+!slope for mood (I1) is measured by mood2 mood3 mood4;
+I2 by socadj2@1 socadj3@1 socadj4@1;
+!intercept for social adjustment (I2) is measured by
+!socadj2 socadj3 socadj4
+S2 by socadj2@0 socadj3@1 socadj4@2.33;
+!slope for social adjustment (I2) is measured by
+!socadj2 socadj3 socadj4
+
+I1 with S1;
+I2 with S2;
+!intercept and slope factors covary
+!this is a default in mplus (don't actually need to specify)
+
+socadj3 with mood3;
+!added this bc of large MI in first model
+
+[mood2-mood4@0];
+[socadj2-socadj4@0];
+!groups variables as outcomes in model
+!@0 specification relates to intercepts of variables, fixed
+!to zero by default
+
+[I1 S1]
+!intercept & slope for mood serve as a set of parameters in model
+[I2 S2];
+!ditto for intercept & slope for social adjustment
+
+Output: patterns sampstat modindices;
+
+plot: type = plot1;
+series is mood2-mood4 (S1) | socadj2-socadj4 (S2);

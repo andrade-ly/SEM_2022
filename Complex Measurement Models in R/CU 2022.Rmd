@@ -1,0 +1,121 @@
+---
+title: "Complex Measurement Models - MTMM Test for Construct Validity - CU"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Part 2: MTMM(Multitrait-multimethod models) Models
+
+## Correlated Uniquenesses (CU)
+
+```{r}
+mtmm_data <- read.table("ind7mt.dat")
+```
+
+```{r}
+colnames(mtmm_data) <- c(
+  'scself',
+  'sctch',
+  'scpar',
+  'scpeer',
+  'acself',
+  'actch',
+  'acpar',
+  'acpeer',
+  'ecself',
+  'ectch',
+  'ecpar',
+  'ecpeer',
+  'mcself',
+  'mctch',
+  'mcpar',
+  'mcpeer'
+)
+```
+
+## Model Specification
+
+This model only embodies the 4 correlated traits. We do not specify method effects per se. That is, the CU does not assume that method effects associated with a certain method can be explained by a single latent method factor. 
+
+However, their effects are implied by specifying correlated uniquenesses (residuals) associated with each set of observed variables with same method.
+
+```{r}
+mtmm_cu <- '
+# Latent factors
+# F1-F4 are latent methods (parent, teacher, self, peer report)
+F1 =~ NA*scself + sctch + scpar + scpeer
+F2 =~ NA*acself + actch + acpar + acpeer
+F3 =~ NA*ecself + ectch + ecpar + ecpeer
+F4 =~ NA*mcself + mctch + mcpar + mcpeer
+
+# F5-F8 are latent traits (social, academic, english, math competence)
+# Note that we are removing these from the model and specifying
+# the correlated uniquenesses instead
+# F5 =~ NA*scself + acself + ecself + mcself
+# F6 =~ NA*sctch + actch + ectch + mctch 
+# F7 =~ NA*scpar + acpar + ecpar + mcpar
+# F8 =~ NA*scpeer + acpeer + ecpeer + mcpeer
+
+# Latent variable variances fixed to 1
+F1 ~~ 1*F1
+F2 ~~ 1*F2
+F3 ~~ 1*F3
+F4 ~~ 1*F4
+
+# Covariances among the residuals of the methods
+scself ~~ acself
+scself ~~ ecself 
+scself ~~ mcself
+acself ~~ ecself
+acself ~~ mcself
+ecself ~~ mcself
+sctch ~~ actch 
+sctch ~~ ectch 
+sctch ~~ mctch
+actch ~~ ectch
+actch ~~ mctch
+ectch ~~ mctch
+scpar ~~ acpar 
+scpar ~~ ecpar 
+scpar ~~ mcpar
+acpar ~~ ecpar 
+acpar ~~ mcpar
+ecpar ~~ mcpar
+scpeer ~~ acpeer 
+scpeer ~~ ecpeer 
+scpeer ~~ mcpeer
+acpeer ~~ ecpeer 
+acpeer ~~ mcpeer
+ecpeer ~~ mcpeer
+'
+```
+
+## Fitting the model
+
+```{r}
+
+mtmm_cu_fit <- cfa(model = mtmm_cu,
+               data = mtmm_data,
+               missing = "ml",
+               estimator = "mlr",
+               control = list(iter.max = 1000)
+               )
+
+```
+
+Note that fit is very good and we didn't need to fix the variance of SCSELF to 0. 
+
+## Model Output 
+
+### Model summary
+
+```{r}
+summary(mtmm_cu_fit, 
+        standardized = TRUE, 
+        rsquare = TRUE,
+        fit.measures = TRUE)
+```
+

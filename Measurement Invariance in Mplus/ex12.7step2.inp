@@ -1,0 +1,22 @@
+TITLE:	this is an example of a Monte Carlo
+	simulation study where parameter estimates
+	saved from a real data analysis are used
+	for true population parameter values for
+	data generation and coverage
+MONTECARLO:
+	NAMES ARE y1-y10 x1 x2;
+	NOBSERVATIONS = 500;
+	NREPS = 500;
+	SEED = 45335;
+	POPULATION = ex12.7estimates.dat;
+	COVERAGE = ex12.7estimates.dat;
+MODEL POPULATION:
+	f1 BY y1-y5;
+	f2 BY y6-y10;
+	f1 ON x1 x2;
+	f2 ON x1 x2;
+MODEL:	f1 BY y1-y5;
+	f2 BY y6-y10;
+	f1 ON x1 x2;
+	f2 ON x1 x2;
+OUTPUT:	TECH9;

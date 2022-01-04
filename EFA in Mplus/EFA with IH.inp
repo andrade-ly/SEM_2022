@@ -1,0 +1,18 @@
+TITLE:  EFA with Intellectual Humility Validation Data
+
+DATA:
+  FILE = IH validation 1-21.dat;
+    format = 6F8;
+
+VARIABLE:
+  NAMES = IH1 IH2 IH3 IH4 IH5 IH6;
+
+  USEVAR = IH1 IH2 IH3 IH4 IH5 IH6;
+
+ANALYSIS: TYPE = EFA 1 2;
+          ROTATION = OBLIMIN;
+          ESTIMATOR = ULS;
+           
+OUTPUT:  SAMPSTAT;
+
+PLOT: TYPE = PLOT2; 

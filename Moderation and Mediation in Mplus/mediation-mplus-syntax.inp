@@ -1,0 +1,56 @@
+TITLE:    Ch. 9 Within-subject mediation(person deviated variables only);
+DATA:     FILE IS mediationdata.txt;
+VARIABLE: NAMES ARE id time timec freldis fwkdis fwkstr 
+                      fwkstrc fwkdisc freldisc   
+                      fwkstrcb fwkdiscb freldiscb 
+                      fwkstrcw fwkdiscw freldiscw x m y; 
+                      !renaming variables to x m y for mediation demo; 
+                      !all person-deviated variables
+          USEVAR = id timec x m y;
+          WITHIN = timec x m y;
+          !specifying variables with only within-person variance
+          !variables not specified as WITHIN = or BETWEEN = can have
+          !both within and between variance
+          CLUSTER = id;
+          !grouping identifier
+ANALYSIS: TYPE = TWOLEVEL RANDOM; ESTIMATOR=ml;
+MODEL:    %WITHIN% !model for within effects
+            cp | y ON x;  
+            !regressing y on x & labeling it c-prime
+            a | m ON x;   
+            !regressing of m on x & labeling it a
+            b | y ON m;   
+            !regressing of y on m & labeling it b
+            y m on timec; 
+            !controlling for effect of time (fixed-effects)
+            [m@0 y@0]; 
+            !fixing the intercept for m and y at zero
+            !b/c we have person-deviated x, m, & y, 
+            !taking out the mean for each person. 
+            !(i.e., these are gropu-mean centered variables)
+            !when we do that, there isn't an intercept
+            !for m & y b/c we take them out via taking out the means. 
+            !brackets differentiate m representing an intercept, 
+            !vs. the residual above
+            
+          %BETWEEN%
+            cp WITH a b; 
+            !fixed effects & random effects at between-level; 
+            !off-diagonals of tau matrix
+            [a] (ma); a (vara); [b] (mb); b (varb); 
+            !labeling the fixed & random effects
+            !so we can use them below to get indirect effects
+            !and test them. fixed effect of a = ma, mean a; 
+            !var of a path, vara; & so on
+            [cp] (mcp); !same as above
+            a WITH b (covab); !covariance of ab
+MODEL CONSTRAINT:  
+            !section for computing indirect effects
+            NEW MED TE PME CORR; 
+            MED=ma*mb+covab; !MED - mediated effect (aka the indirect effect)
+            TE=MED+mcp; !TE - total effect 
+            PME=MED/TE; 
+            !PME - percent mediated effect (effect size) of total effect;
+            !what percentage is due to mediated effect
+            CORR=covab/sqrt(vara*varb); !CORR 
+OUTPUT:     tech1 tech8 sampstat cinterval;

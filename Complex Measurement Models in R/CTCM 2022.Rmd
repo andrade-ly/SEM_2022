@@ -1,0 +1,122 @@
+---
+title: "Complex Measurement Models - MTMM Test for Construct Validity - CTCM"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(lavaan)
+```
+
+# Part 2: MTMM(Multitrait-multimethod models) Models
+
+## Correlated Traits and Correlated Methods (CTCM)
+
+```{r}
+mtmm_data <- read.table("ind7mt.dat")
+```
+
+```{r}
+colnames(mtmm_data) <- c(
+  'scself',
+  'sctch',
+  'scpar',
+  'scpeer',
+  'acself',
+  'actch',
+  'acpar',
+  'acpeer',
+  'ecself',
+  'ectch',
+  'ecpar',
+  'ecpeer',
+  'mcself',
+  'mctch',
+  'mcpar',
+  'mcpeer'
+)
+```
+
+## Model Specification
+
+Exogenous variables are allowed to correlate by default and do not need to be specified. However, if set to 0, as is the case of the correlations between traits and methods, then they need to be specified. 
+
+Alternatively, you can set all latent variables to be uncorrelated (i.e., orthogonal) and specify the covariances you're interested in. To specify all uncorrelated latent variables, add 'r cfa(..., orthogonal = TRUE).
+
+Note that we are fixing the variances of the latent factors to 1, which allows us to set the latent factor scale without fixing one of the factor loadings (i.e., they are all freely estimated). To override lavaan's default and freely estimate the loading, we add NA* before the variable name.
+
+```{r}
+mtmm_ctcm <- '
+# Latent factors
+# F1-F4 are latent methods (parent, teacher, self, peer report)
+F1 =~ NA*scself + sctch + scpar + scpeer
+F2 =~ NA*acself + actch + acpar + acpeer
+F3 =~ NA*ecself + ectch + ecpar + ecpeer
+F4 =~ NA*mcself + mctch + mcpar + mcpeer
+
+# F5-F8 are latent traits (social, academic, english, math competence)
+F5 =~ NA*scself + acself + ecself + mcself
+F6 =~ NA*sctch + actch + ectch + mctch 
+F7 =~ NA*scpar + acpar + ecpar + mcpar
+F8 =~ NA*scpeer + acpeer + ecpeer + mcpeer
+
+# Latent variable variances fixed to 1
+F1 ~~ 1*F1
+F2 ~~ 1*F2
+F3 ~~ 1*F3
+F4 ~~ 1*F4
+F5 ~~ 1*F5
+F6 ~~ 1*F6
+F7 ~~ 1*F7
+F8 ~~ 1*F8
+
+# Covariances between latent methods and latent traits fixed to 0
+F1 ~~ 0*F5
+F1 ~~ 0*F6
+F1 ~~ 0*F7
+F1 ~~ 0*F8
+F2 ~~ 0*F5
+F2 ~~ 0*F6
+F2 ~~ 0*F7
+F2 ~~ 0*F8
+F3 ~~ 0*F5
+F3 ~~ 0*F6
+F3 ~~ 0*F7
+F3 ~~ 0*F8
+F4 ~~ 0*F5
+F4 ~~ 0*F6
+F4 ~~ 0*F7
+F4 ~~ 0*F8
+'
+```
+
+## Fitting the model
+
+```{r}
+
+mtmm_ctcm_fit <- cfa(model = mtmm_ctcm,
+               data = mtmm_data,
+               missing = "ml",
+               estimator = "mlr",
+               control = list(iter.max = 1000)
+               )
+
+```
+
+Note that the lavaan output indicates that there is a negative variance in the model (specifically in an observed variable (ov)). This is similar to the Mplus output, which accuses errors in the Theta (measurement error) and Psi (endogenous disturbances) matrices, potentially due to a negative variance/residual variance (among other possibilities that need to be considered).
+
+## Model Output 
+
+### Model summary
+
+```{r}
+summary(mtmm_ctcm_fit, 
+        standardized = TRUE, 
+        rsquare = TRUE,
+        fit.measures = TRUE)
+```
+
+From the output, we can see that the residual variance of ACSELF is negative, which is causing errors in the model.

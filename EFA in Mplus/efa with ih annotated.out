@@ -1,0 +1,457 @@
+Mplus VERSION 6.1
+MUTHEN & MUTHEN
+01/22/2019  10:57 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE:  EFA with Intellectual Humility Validation Data
+
+  DATA:
+    FILE = IH validation 1-21.dat;
+      format = 6F8;
+
+  VARIABLE:
+    NAMES = IH1 IH2 IH3 IH4 IH5 IH6;
+
+    USEVAR = IH1 IH2 IH3 IH4 IH5 IH6;
+
+  ANALYSIS: TYPE = EFA 1 2;
+            ROTATION = OBLIMIN;
+
+!uses default estimator (ML)
+
+  OUTPUT:  SAMPSTAT;
+
+  PLOT: TYPE = PLOT2;
+!requests scree plot 
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+EFA with Intellectual Humility Validation Data
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         200
+
+Number of dependent variables                                    6
+!number of factor indicators
+Number of independent variables                                  0
+Number of continuous latent variables                            0
+
+Observed dependent variables
+!variables that are included in analysis
+
+  Continuous
+   IH1         IH2         IH3         IH4         IH5         IH6
+
+
+Estimator                                                       ML
+Rotation                                                   OBLIMIN
+Row standardization                                    CORRELATION
+Type of rotation                                           OBLIQUE
+Gamma value                                              0.000D+00
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Optimization Specifications for the Exploratory Factor Analysis
+Rotation Algorithm
+  Number of random starts                                        0
+  Maximum number of iterations                               10000
+  Derivative convergence criterion                       0.100D-04
+
+Input data file(s)
+  IH validation 1-21.dat
+
+Input data format
+  (6F8)
+
+
+SAMPLE STATISTICS
+
+
+           Means
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1         3.325         4.070         4.005         3.825         4.070
+
+
+           Means
+              IH6
+              ________
+      1         3.795
+
+
+           Covariances
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+ IH1            1.069
+ IH2            0.292         0.595
+ IH3            0.043         0.165         0.645
+ IH4            0.402         0.257         0.211         0.854
+ IH5            0.167         0.385         0.250         0.272         0.745
+ IH6            0.247         0.254         0.231         0.344         0.289
+
+
+           Covariances
+              IH6
+              ________
+ IH6            0.933
+
+
+           Correlations
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+ IH1            1.000
+ IH2            0.366         1.000
+ IH3            0.052         0.266         1.000
+ IH4            0.420         0.361         0.284         1.000
+ IH5            0.187         0.578         0.360         0.341         1.000
+ IH6            0.247         0.341         0.298         0.385         0.347
+
+
+           Correlations
+              IH6
+              ________
+ IH6            1.000
+
+
+RESULTS FOR EXPLORATORY FACTOR ANALYSIS
+
+
+           EIGENVALUES FOR SAMPLE CORRELATION MATRIX
+                  1             2             3             4             5
+              ________      ________      ________      ________      ________
+      1         2.645         1.019         0.790         0.648         0.520
+
+
+           EIGENVALUES FOR SAMPLE CORRELATION MATRIX
+                  6
+              ________
+      1         0.379
+
+
+EXPLORATORY FACTOR ANALYSIS WITH 1 FACTOR(S):
+!fit indices
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       18
+
+Loglikelihood
+
+          H0 Value                       -1452.072
+          H1 Value                       -1431.147
+
+Information Criteria
+
+          Akaike (AIC)                    2940.145
+          Bayesian (BIC)                  2999.514
+          Sample-Size Adjusted BIC        2942.489
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             41.850
+          Degrees of Freedom                     9
+          P-Value                           0.0000
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.135
+          90 Percent C.I.                    0.095  0.178
+          Probability RMSEA <= .05           0.000
+
+CFI/TLI
+
+          CFI                                0.866
+          TLI                                0.777
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                            260.859
+          Degrees of Freedom                    15
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.060
+
+
+
+MINIMUM ROTATION FUNCTION VALUE       0.00000
+
+
+
+           OBLIMIN ROTATED LOADINGS
+!linear combo of variables that make up the factor
+                  1
+              ________
+ IH1            0.434
+ IH2            0.734
+ IH3            0.434
+ IH4            0.570
+ IH5            0.701
+ IH6            0.532
+
+
+           OBLIMIN FACTOR CORRELATIONS
+                  1
+              ________
+      1         1.000
+
+
+           ESTIMATED RESIDUAL VARIANCES
+!variances of observed values after account for all the variance in EFA model
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1         0.812         0.461         0.811         0.675         0.508
+
+
+           ESTIMATED RESIDUAL VARIANCES
+              IH6
+              ________
+      1         0.717
+
+
+           S.E. OBLIMIN ROTATED LOADINGS
+                  1
+              ________
+ IH1            0.070
+ IH2            0.051
+ IH3            0.069
+ IH4            0.063
+ IH5            0.052
+ IH6            0.064
+
+
+           S.E. OBLIMIN FACTOR CORRELATIONS
+                  1
+              ________
+      1         0.000
+
+
+           S.E. ESTIMATED RESIDUAL VARIANCES
+
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1         0.061         0.074         0.060         0.072         0.073
+
+
+           S.E. ESTIMATED RESIDUAL VARIANCES
+              IH6
+              ________
+      1         0.068
+
+
+           Est./S.E. OBLIMIN ROTATED LOADINGS
+           !z-statistics - can be used to perform hypothesis tests
+                  1
+              ________
+ IH1            6.179
+ IH2           14.496
+ IH3            6.307
+ IH4            9.071
+ IH5           13.391
+ IH6            8.360
+
+
+           Est./S.E. OBLIMIN FACTOR CORRELATIONS
+                  1
+              ________
+      1         0.000
+
+
+           Est./S.E. ESTIMATED RESIDUAL VARIANCES
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1        13.310         6.210        13.568         9.406         6.927
+
+
+           Est./S.E. ESTIMATED RESIDUAL VARIANCES
+              IH6
+              ________
+      1        10.592
+
+
+EXPLORATORY FACTOR ANALYSIS WITH 2 FACTOR(S):
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       23
+
+Loglikelihood
+
+          H0 Value                       -1437.700
+          H1 Value                       -1431.147
+
+Information Criteria
+
+          Akaike (AIC)                    2921.400
+          Bayesian (BIC)                  2997.261
+          Sample-Size Adjusted BIC        2924.395
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             13.105
+          Degrees of Freedom                     4
+          P-Value                           0.0108
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.107
+          90 Percent C.I.                    0.046  0.173
+          Probability RMSEA <= .05           0.060
+
+CFI/TLI
+
+          CFI                                0.963
+          TLI                                0.861
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                            260.859
+          Degrees of Freedom                    15
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.034
+
+
+
+MINIMUM ROTATION FUNCTION VALUE       0.00827
+
+
+
+           OBLIMIN ROTATED LOADINGS
+                  1             2
+              ________      ________
+ IH1            1.356         0.001
+ IH2            0.084         0.693
+ IH3           -0.099         0.491
+ IH4            0.181         0.470
+ IH5           -0.073         0.781
+ IH6            0.034         0.503
+
+
+           OBLIMIN FACTOR CORRELATIONS
+                  1             2
+              ________      ________
+      1         1.000
+      2         0.273         1.000
+
+
+           ESTIMATED RESIDUAL VARIANCES
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1        -0.838         0.481         0.776         0.700         0.415
+
+
+           ESTIMATED RESIDUAL VARIANCES
+              IH6
+              ________
+      1         0.737
+
+
+           S.E. OBLIMIN ROTATED LOADINGS
+                  1             2
+              ________      ________
+ IH1            1.183         0.003
+ IH2            0.126         0.075
+ IH3            0.088         0.082
+ IH4            0.218         0.125
+ IH5            0.052         0.070
+ IH6            0.098         0.082
+
+
+           S.E. OBLIMIN FACTOR CORRELATIONS
+                  1             2
+              ________      ________
+      1         0.000
+      2         0.195         0.000
+
+
+           S.E. ESTIMATED RESIDUAL VARIANCES
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1         3.206         0.070         0.066         0.084         0.088
+
+
+           S.E. ESTIMATED RESIDUAL VARIANCES
+              IH6
+              ________
+      1         0.067
+
+
+           Est./S.E. OBLIMIN ROTATED LOADINGS
+                  1             2
+              ________      ________
+ IH1            1.146         0.245
+ IH2            0.666         9.180
+ IH3           -1.126         6.013
+ IH4            0.832         3.767
+ IH5           -1.412        11.169
+ IH6            0.345         6.150
+
+
+           Est./S.E. OBLIMIN FACTOR CORRELATIONS
+                  1             2
+              ________      ________
+      1         0.000
+      2         1.403         0.000
+
+
+           Est./S.E. ESTIMATED RESIDUAL VARIANCES
+              IH1           IH2           IH3           IH4           IH5
+              ________      ________      ________      ________      ________
+      1        -0.262         6.826        11.799         8.347         4.742
+
+
+           Est./S.E. ESTIMATED RESIDUAL VARIANCES
+              IH6
+              ________
+      1        10.979
+
+
+           FACTOR STRUCTURE
+!correlations between variables and each of the factors
+                  1             2
+              ________      ________
+ IH1            1.356         0.371
+ IH2            0.273         0.716
+ IH3            0.034         0.464
+ IH4            0.310         0.519
+ IH5            0.141         0.762
+ IH6            0.171         0.512
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Eigenvalues for exploratory factor analysis
+
+     Beginning Time:  10:57:00
+        Ending Time:  10:57:00
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2010 Muthen & Muthen

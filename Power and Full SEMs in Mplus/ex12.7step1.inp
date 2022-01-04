@@ -1,0 +1,23 @@
+TITLE:	this is an example of a real data analysis
+	of a CFA with covariates (MIMIC) for
+	continuous factor indicators where the
+	parameter estimates are saved for use in a
+	Monte Carlo simulation study	
+DATA:	FILE = ex12.7real.dat;
+VARIABLE:	NAMES = y1-y10 x1 x2;
+MODEL:	f1 BY y1@1 y2-y5*1;
+	f2 BY y6@1 y7-y10*1;
+	f1-f2*.5;
+	f1 WITH f2*.25;
+	y1-y5*.5;
+	[y1-y5*1];
+	y6-y10*.75;
+	[y6-y10*2];
+	f1 ON x1*.3 x2*.5;
+	f2 ON x1*.5 x2*.3;
+OUTPUT:	TECH1;
+SAVEDATA:	ESTIMATES = ex12.7estimates.dat;
+!parameter estiamtes from a real data analysis
+!of a CFA with covariates for continuous factor
+!indicators are saved for use in data generation
+!in a subsequent Monte Carlo simulation study

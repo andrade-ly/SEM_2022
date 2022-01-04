@@ -1,0 +1,33 @@
+Title: MTMM Test for Construct Validity 
+       Correlated Uniquenesses Model;
+
+Data: File is ind7mt.dat;
+
+Variable: 
+NAMES ARE scself sctch scpar scpeer acself actch acpar acpeer
+  ecself ectch ecpar ecpeer mcself mctch mcpar mcpeer;
+USEVARIABLES ARE scself-mcpeer;
+
+Model:
+F1 by scself* sctch scpar scpeer;
+F2 by acself* actch acpar acpeer;
+F3 by ecself* ectch ecpar ecpeer;
+F4 by mcself* mctch mcpar mcpeer;
+
+
+F1-F4@1;
+
+scself with acself ecself mcself;
+acself with ecself mcself;
+ecself with mcself;
+sctch with actch ectch mctch;
+actch with ectch mctch;
+ectch with mctch;
+scpar with acpar ecpar mcpar;
+acpar with ecpar mcpar;
+ecpar with mcpar;
+scpeer with acpeer ecpeer mcpeer;
+acpeer with ecpeer mcpeer;
+ecpeer with mcpeer;
+
+Output: stdyx; tech1;

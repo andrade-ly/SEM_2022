@@ -1,0 +1,45 @@
+Title: Testing for Measurement Invariance,
+Partial Factor Loading Invariance
+Residual Covariances Invariant;
+
+Data:
+!group-specific data files
+FILE (Elem) IS mbielm1.dat;
+FILE (Sec) IS mbisec1.dat;
+
+
+Variable: 
+NAMES ARE item1-item22; 
+USEVARIABLES ARE item1-item22;
+
+Analysis:
+ESTIMATOR = MLM;
+
+MODEL: 
+F1 by item1-item3 item6 item8 item13 item14 item16 item20;
+F1 by item12;
+F2 by item5 item10 item11 item15 item22;
+F3 by item4 item7 item9 item12 item17-item19 item21;
+
+!residual covariances constrained equal
+item6 with item16(1);
+item1 with item2(2);
+item10 with item11(3);
+
+[F1@0 F2@0 F3@0]; !factor means constrained to zero
+
+MODEL Elem:
+!group-specific model parameters
+item7 with item4;
+
+MODEL Sec:
+!group-specific model parameters
+F1 by item11;
+item9 with item19;
+
+!intercepts not constrained equal
+[item1 - item22];
+F2 by item11 item15;
+
+Output: MODINDICES (3.84);
+

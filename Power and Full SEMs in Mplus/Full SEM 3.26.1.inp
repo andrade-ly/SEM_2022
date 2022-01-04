@@ -1,0 +1,40 @@
+TITLE: Full SEM Model 1 of Burnout for Secondary Teachers;
+
+DATA: file=allsecondary.dat;
+      format = free;
+ 
+variable:
+names = rolea1 rolea2 rolec1 rolec2 work1 work2 cclim1 cclim2 cclim3
+cclim4 dec1 dec2 ssup1 ssup2 psup1 psup2 self1 self2 self3 elc1
+elc2 elc3 elc4 elc5 ee1 ee2 ee3 dp1 dp2 pa1 pa2 pa3;
+usevariables = rolea1-pa3;
+
+Analysis:
+estimator = MLM; !due to non-normality
+
+Model:
+
+!measurement model
+!added cross-loading indicators
+!dec2 cross-loaded significantly on F1 and F6
+F1 by rolea1-rolea2 dec2;
+F2 by rolec1-rolec2;
+F3 by work1-work2;
+F4 by cclim1-cclim4;
+F5 by dec1-dec2;
+F6 by ssup1-ssup2 dec2;
+F7 by psup1-psup2;
+F8 by self1-self3;
+F9 by elc1-elc5;
+F10 by ee1-ee3;
+F11 by dp1-dp2;
+F12 by pa1-pa3;
+
+!structural model
+F8 on F5 F6 F7;
+F9 on F5;
+F10 on F2 F3 F4;
+F11 on F2 F10;
+F12 on F1 F8 F9 F10 F11;
+
+Output: modindices; tech1;

@@ -1,0 +1,43 @@
+Title: Validating Hypothesized Causal Structure for Calibration Group
+Combining Factors 2 and 3 into one factor
+Added: F8 on F2
+Added: EE1 with EE2
+Deleted nonsignificant parameters (F7 on F6) (F8 on F4)
+(F10 on F2) (F11 on F1) (F11 on F8)
+!would add all of these separately
+Revised Baseline Model;
+
+Data: 
+FILE IS elemind1.dat;
+FORMAT IS (19F4.2/13F4.2);
+
+Variable:
+NAMES ARE rolea1 rolea2 rolec1 rolec2 work1 work2 cclim1 cclim2 cclim3
+cclim4 dec1 dec2 ssup1 ssup2 psup1 psup2 self1 self2 self3 elc1
+elc2 elc3 elc4 elc5 ee1 ee2 ee3 dp1 dp2 pa1 pa2 pa3;
+USEVARIABLES ARE rolec1-ssup2 self1-pa3; !deleted variables
+
+Analysis:
+TYPE = GENERAL;
+ESTIMATOR = MLM;
+
+MODEL:
+F1 by rolec1-rolec2 work1-work2;
+F2 by cclim1-cclim4;
+F3 by dec1-dec2;
+F4 by ssup1-ssup2;
+F5 by self1-self3;
+F6 by elc1-elc5;
+F7 by ee1-ee3;
+F8 by dp1-dp2;
+F9 by pa1-pa3;
+
+F5 on F3 F4;
+F6 on F1;
+F7 on F1 F2;
+F8 on F7 F2;
+F9 on F5 F7 F8;
+ 
+EE1 with EE2;
+
+Output: STDYX;
