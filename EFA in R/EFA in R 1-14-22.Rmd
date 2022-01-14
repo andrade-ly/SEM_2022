@@ -40,7 +40,7 @@ As in Mplus, this varies by the model being estimated, we'll go over these as ne
 
 ## Fixing covariances in lavaan
 
-Building on the above, you can specifyu an orthogonal (zero) covariance between two latent or observed variables:
+Building on the above, you can specify an orthogonal (zero) covariance between two latent or observed variables:
 f1 ~~ 0*f2 
 
 ## If you have categorical indicators
@@ -56,6 +56,9 @@ http://www.statmodel.com/discussion/messages/8/8.html
 
 ```{r}
 library(lavaan)# for the loadings
+library(psych)
+
+#psych::alpha()
 ```
 
 # Load file
@@ -64,14 +67,22 @@ library(lavaan)# for the loadings
 efa_data <- read.table("IH validation 1-21.dat")
 ```
 
+
+```{r}
+scree(efa_data, 
+      factors = TRUE
+      ) # get scree plot
+
+```
+
 # Specify the model
 
 ```{r}
 # these are exploratory blocks (you can give them any name), you'll need to specify them
-efa_model <- '
-  efa("block1")*F1 =~ V1 + V2 + V3 + V4 + V5 + V6 
-  efa("block1")*F2 =~ V1 + V2 + V3 + V4 + V5 + V6
-'
+efa_model <- '  
+              efa("block1")*F1 =~ V1 + V2 + V3 + V4 + V5 + V6 
+              efa("block1")*F2 =~ V1 + V2 + V3 + V4 + V5 + V6
+              '
 ```
 
 # Estimate the Model
@@ -93,3 +104,89 @@ summary(efa_f2,
         standardized = TRUE
         )
 ```
+
+```{r}
+
+# lavInspect() is a helpful function to get additional informaiton on the model
+
+# Here, you can see the parameter numbers (as in Mplus' TECH1)
+lavInspect(efa_f2)
+
+# By asking for "sampstat" you can see the observed var/covar matrix (as in Mplus)
+lavInspect(efa_f2,"sampstat")
+
+# There are MANY other options. To see residual var/covar matrix:
+lavInspect(efa_f2,"resid")
+
+# To see R2 values (note there's an NA for V1 because it's fixed to 1 by default)
+lavInspect(efa_f2,"rsquare")
+
+#... And lots more
+
+```
+
+## You can also run an EFA using the cfa() function of lavaan, by specifying auto.efa = TRUE
+
+```{r}
+efa_f2 <- 
+  cfa(model = efa_model,
+      data = efa_data,
+      rotation = "oblimin",
+      estimator = "MLR",
+      auto.efa = TRUE
+      )
+```
+
+```{r}
+summary(efa_f2, 
+        fit.measures = TRUE, 
+        standardized = TRUE
+        )
+```
+
+## Finally, (among other options) you can use the "psych" package to do your EFA
+
+```{r}
+library(psych) # for EFA
+```
+
+```{r Model specification}
+
+efa_model <-
+  fa(
+    efa_data, # raw data, corr or cov matrix
+    nfactors = 2, # default is 1
+    rotate = "oblimin", # default is "oblimin"
+    fm = 'uls'
+  )
+
+summary(efa_model)
+efa_model$loadings
+efa_model$value # eigen values
+efa_model$communality # communalities for items
+```
+
+```{r PCA in psych package}
+# needs to be a matrix for this one so we'll practice making a 
+# matrix in which we use FIML to account for missing data
+
+efa_matrix <- corFiml(efa_data, covar = FALSE, show = FALSE)
+
+# show = F means that you will do FIML, show = true means only showing missingess patterns (also useful) but not doing FIML. covar = FALSE means we're getting a correlation (and not a covariance) matrix
+
+# You can specify with columns to use without creating a new dataframe (e.g., corFiml(psychTools::efa_data[1:3],show = FALSE)). 
+
+pca_model <-
+  principal(
+    r = efa_matrix,
+    nfactors = 2,
+    rotate = "oblimin"
+  )
+
+pca_model$values # Eigen values as we saw in Mplus
+pca_model$communality
+```
+
+
+```
+
