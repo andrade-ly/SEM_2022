@@ -1,0 +1,2001 @@
+Mplus VERSION 8.7
+MUTHEN & MUTHEN
+01/19/2022   2:40 PM
+
+INPUT INSTRUCTIONS
+
+  DATA: FILE IS "C:\Users\Fe\Box\Hoyle Lab\
+  Habits and Adjustment to Covid Outbreak\Analysis Scripts\
+  Time 1 Analysis\sem_categorical.dat";
+  type is individual;
+
+  VARIABLE:
+
+  NAMES ARE age sex white child init inhib cont bfi psyeffect sched insec prehabit
+  sl exer dt screen sm subs fri work hobby fam;
+
+  USEVARIABLES ARE age sex white child init inhib cont bfi psyeffect
+  sched insec prehabit sl exer dt subs;
+
+  CATEGORICAL ARE sl exer dt subs;
+
+  Missing are .;
+
+  ANALYSIS:
+  ESTIMATOR IS MLR;
+  INTEGRATION IS MONTECARLO;
+
+  MODEL:
+  !latent variables
+  disrupt by psyeffect* sched insec;
+  sreg by cont* init inhib bfi;
+
+  !paths
+  sl exer dt subs on age sex white child prehabit sreg disrupt;
+
+  [age sex white child prehabit]; !variances for FIML
+
+  !variances
+  sreg@1;
+  disrupt@1;
+
+  !covariances
+  sreg WITH disrupt;
+
+  OUTPUT: SAMPSTAT TECH1 TECH4 residual standardized (all);
+
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         432
+
+Number of dependent variables                                   11
+Number of independent variables                                  5
+Number of continuous latent variables                            2
+
+Observed dependent variables
+
+  Continuous
+   INIT        INHIB       CONT        BFI         PSYEFFECT   SCHED
+   INSEC
+
+  Binary and ordered categorical (ordinal)
+   SL          EXER        DT          SUBS
+
+Observed independent variables
+   AGE         SEX         WHITE       CHILD       PREHABIT
+
+Continuous latent variables
+   DISRUPT     SREG
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Optimization Specifications for the Quasi-Newton Algorithm for
+Continuous Outcomes
+  Maximum number of iterations                                 100
+  Convergence criterion                                  0.100D-05
+Optimization Specifications for the EM Algorithm
+  Maximum number of iterations                                 500
+  Convergence criteria
+    Loglikelihood change                                 0.100D-02
+    Relative loglikelihood change                        0.100D-05
+    Derivative                                           0.100D-02
+Optimization Specifications for the M step of the EM Algorithm for
+Categorical Latent variables
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+Optimization Specifications for the M step of the EM Algorithm for
+Censored, Binary or Ordered Categorical (Ordinal), Unordered
+Categorical (Nominal) and Count Outcomes
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+  Maximum value for logit thresholds                            15
+  Minimum value for logit thresholds                           -15
+  Minimum expected cell size for chi-square              0.100D-01
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+Optimization algorithm                                         EMA
+Integration Specifications
+  Type                                                  MONTECARLO
+  Number of integration points                                3250
+  Dimensions of numerical integration                            7
+  Adaptive quadrature                                           ON
+  Monte Carlo integration seed                                   0
+Link                                                         LOGIT
+Cholesky                                                       OFF
+
+Input data file(s)
+  C:\Users\Fe\Box\Hoyle Lab\Habits and Adjustment to Covid Outbreak\Analysis Scr
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns             8
+     Number of y missing data patterns           8
+     Number of u missing data patterns           1
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT FOR Y
+
+
+           Covariance Coverage
+              INIT          INHIB         CONT          BFI           PSYEFFEC
+              ________      ________      ________      ________      ________
+ INIT           1.000
+ INHIB          1.000         1.000
+ CONT           1.000         1.000         1.000
+ BFI            1.000         1.000         1.000         1.000
+ PSYEFFEC       1.000         1.000         1.000         1.000         1.000
+ SCHED          1.000         1.000         1.000         1.000         1.000
+ INSEC          0.998         0.998         0.998         0.998         0.998
+ AGE            0.979         0.979         0.979         0.979         0.979
+ SEX            0.998         0.998         0.998         0.998         0.998
+ WHITE          0.988         0.988         0.988         0.988         0.988
+ CHILD          0.998         0.998         0.998         0.998         0.998
+ PREHABIT       0.998         0.998         0.998         0.998         0.998
+
+
+           Covariance Coverage
+              SCHED         INSEC         AGE           SEX           WHITE
+              ________      ________      ________      ________      ________
+ SCHED          1.000
+ INSEC          0.998         0.998
+ AGE            0.979         0.977         0.979
+ SEX            0.998         0.995         0.977         0.998
+ WHITE          0.988         0.986         0.970         0.986         0.988
+ CHILD          0.998         0.995         0.979         0.995         0.986
+ PREHABIT       0.998         0.995         0.977         0.995         0.986
+
+
+           Covariance Coverage
+              CHILD         PREHABIT
+              ________      ________
+ CHILD          0.998
+ PREHABIT       0.995         0.998
+
+
+UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
+
+    SL
+      Category 1    0.361          156.000
+      Category 2    0.350          151.000
+      Category 3    0.289          125.000
+    EXER
+      Category 1    0.431          186.000
+      Category 2    0.255          110.000
+      Category 3    0.315          136.000
+    DT
+      Category 1    0.215           93.000
+      Category 2    0.620          268.000
+      Category 3    0.164           71.000
+    SUBS
+      Category 1    0.194           84.000
+      Category 2    0.331          143.000
+      Category 3    0.475          205.000
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              INIT          INHIB         CONT          BFI           PSYEFFEC
+              ________      ________      ________      ________      ________
+                3.270         3.826         3.448         3.861         3.251
+
+
+           Means
+              SCHED         INSEC         AGE           SEX           WHITE
+              ________      ________      ________      ________      ________
+                3.641         2.662        34.635         0.406         0.669
+
+
+           Means
+              CHILD         PREHABIT
+              ________      ________
+                0.406         4.056
+
+
+           Covariances
+              INIT          INHIB         CONT          BFI           PSYEFFEC
+              ________      ________      ________      ________      ________
+ INIT           0.939
+ INHIB          0.255         0.485
+ CONT           0.374         0.211         0.556
+ BFI            0.496         0.197         0.300         0.496
+ PSYEFFEC      -0.096        -0.046        -0.085        -0.057         0.882
+ SCHED         -0.028        -0.038        -0.023        -0.007         0.476
+ INSEC         -0.187        -0.052        -0.128        -0.153         0.492
+ AGE            2.380         1.219         1.665         0.795        -0.537
+ SEX           -0.042        -0.025        -0.004        -0.044        -0.052
+ WHITE          0.017         0.008         0.018         0.021        -0.001
+ CHILD          0.069         0.016         0.049         0.037         0.016
+ PREHABIT       0.089         0.075         0.046         0.110         0.100
+
+
+           Covariances
+              SCHED         INSEC         AGE           SEX           WHITE
+              ________      ________      ________      ________      ________
+ SCHED          0.944
+ INSEC          0.541         1.670
+ AGE           -0.961        -0.431       131.722
+ SEX           -0.007         0.019        -0.350         0.241
+ WHITE         -0.043        -0.064         0.741        -0.018         0.221
+ CHILD          0.127        -0.016         1.060         0.000        -0.010
+ PREHABIT       0.077         0.008         0.988        -0.024        -0.020
+
+
+           Covariances
+              CHILD         PREHABIT
+              ________      ________
+ CHILD          0.241
+ PREHABIT       0.025         0.452
+
+
+           Correlations
+              INIT          INHIB         CONT          BFI           PSYEFFEC
+              ________      ________      ________      ________      ________
+ INIT           1.000
+ INHIB          0.379         1.000
+ CONT           0.517         0.406         1.000
+ BFI            0.727         0.403         0.572         1.000
+ PSYEFFEC      -0.106        -0.071        -0.122        -0.087         1.000
+ SCHED         -0.029        -0.056        -0.032        -0.010         0.522
+ INSEC         -0.150        -0.058        -0.133        -0.168         0.405
+ AGE            0.214         0.153         0.194         0.098        -0.050
+ SEX           -0.088        -0.073        -0.012        -0.128        -0.112
+ WHITE          0.038         0.025         0.051         0.064        -0.003
+ CHILD          0.145         0.048         0.133         0.106         0.034
+ PREHABIT       0.137         0.160         0.092         0.233         0.159
+
+
+           Correlations
+              SCHED         INSEC         AGE           SEX           WHITE
+              ________      ________      ________      ________      ________
+ SCHED          1.000
+ INSEC          0.430         1.000
+ AGE           -0.086        -0.029         1.000
+ SEX           -0.015         0.030        -0.062         1.000
+ WHITE         -0.094        -0.106         0.137        -0.079         1.000
+ CHILD          0.266        -0.025         0.188        -0.002        -0.045
+ PREHABIT       0.118         0.009         0.128        -0.073        -0.064
+
+
+           Correlations
+              CHILD         PREHABIT
+              ________      ________
+ CHILD          1.000
+ PREHABIT       0.075         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -6330.426
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     INIT                  3.270      -0.129       1.000    1.85%       2.333      3.000      3.333
+             432.000       0.939      -0.674       5.000    5.09%       3.667      4.333
+     INHIB                 3.826      -0.211       2.000    0.93%       3.333      3.667      4.000
+             432.000       0.485      -0.433       5.000    9.26%       4.000      4.333
+     CONT                  3.448      -0.071       1.000    0.23%       2.667      3.333      3.333
+             432.000       0.556      -0.319       5.000    2.55%       3.667      4.000
+     BFI                   3.861      -0.254       1.417    0.23%       3.167      3.667      3.917
+             432.000       0.496      -0.523       5.000    5.32%       4.083      4.583
+     PSYEFFECT             3.251      -0.186       1.000    0.23%       2.375      3.000      3.250
+             432.000       0.882      -0.630       5.000    3.24%       3.500      4.125
+     SCHED                 3.641      -0.640       1.000    1.16%       3.000      3.500      3.800
+             432.000       0.944      -0.080       5.000   11.11%       4.000      4.500
+     INSEC                 2.659       0.287       1.000   17.63%       1.250      2.000      2.500
+             431.000       1.668      -1.147       5.000    7.19%       3.000      4.000
+     AGE                  34.624       1.054      18.000    1.42%      26.000     30.000     31.000
+             423.000     131.677       0.728      74.000    0.24%      34.000     44.000
+     SEX                   0.406       0.383       0.000   59.40%       0.000      0.000      0.000
+             431.000       0.241      -1.854       1.000   40.60%       1.000      1.000
+     WHITE                 0.670      -0.722       0.000   33.02%       0.000      1.000      1.000
+             427.000       0.221      -1.479       1.000   66.98%       1.000      1.000
+     CHILD                 0.406       0.383       0.000   59.40%       0.000      0.000      0.000
+             431.000       0.241      -1.854       1.000   40.60%       1.000      1.000
+     PREHABIT              4.055      -0.790       1.889    0.23%       3.500      3.900      4.125
+             431.000       0.452       0.203       5.000    6.03%       4.375      4.667
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       88
+
+Loglikelihood
+
+          H0 Value                       -8135.979
+          H0 Scaling Correction Factor      1.0104
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   16447.958
+          Bayesian (BIC)                 16805.980
+          Sample-Size Adjusted BIC       16526.718
+            (n* = (n + 2) / 24)
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ DISRUPT  BY
+    PSYEFFECT          0.682      0.063     10.830      0.000
+    SCHED              0.725      0.067     10.767      0.000
+    INSEC              0.694      0.073      9.470      0.000
+
+ SREG     BY
+    CONT               0.489      0.036     13.387      0.000
+    INIT               0.793      0.036     21.781      0.000
+    INHIB              0.337      0.035      9.613      0.000
+    BFI                0.620      0.027     22.592      0.000
+
+ SL         ON
+    SREG              -0.058      0.121     -0.478      0.632
+    DISRUPT           -0.552      0.132     -4.196      0.000
+
+ EXER       ON
+    SREG               0.069      0.113      0.612      0.541
+    DISRUPT           -0.491      0.136     -3.595      0.000
+
+ DT         ON
+    SREG              -0.083      0.123     -0.675      0.500
+    DISRUPT           -0.225      0.147     -1.535      0.125
+
+ SUBS       ON
+    SREG               0.045      0.123      0.366      0.714
+    DISRUPT           -0.529      0.138     -3.823      0.000
+
+ SL         ON
+    AGE               -0.003      0.009     -0.330      0.742
+    SEX               -0.034      0.195     -0.173      0.863
+    WHITE             -0.173      0.200     -0.861      0.389
+    CHILD              0.341      0.206      1.656      0.098
+    PREHABIT          -0.054      0.153     -0.357      0.721
+
+ EXER       ON
+    AGE               -0.002      0.009     -0.203      0.839
+    SEX               -0.006      0.189     -0.030      0.976
+    WHITE             -0.285      0.201     -1.415      0.157
+    CHILD              0.190      0.204      0.929      0.353
+    PREHABIT           0.088      0.143      0.612      0.541
+
+ DT         ON
+    AGE                0.011      0.011      0.988      0.323
+    SEX               -0.079      0.200     -0.393      0.695
+    WHITE             -0.036      0.212     -0.172      0.863
+    CHILD              0.320      0.222      1.445      0.148
+    PREHABIT           0.092      0.158      0.581      0.562
+
+ SUBS       ON
+    AGE                0.010      0.009      1.027      0.304
+    SEX               -0.053      0.199     -0.267      0.790
+    WHITE              0.367      0.204      1.802      0.072
+    CHILD              0.062      0.218      0.286      0.775
+    PREHABIT           0.193      0.173      1.117      0.264
+
+ SREG     WITH
+    DISRUPT           -0.136      0.066     -2.043      0.041
+
+ AGE      WITH
+    DISRUPT           -1.013      0.684     -1.482      0.138
+    SREG               2.185      0.603      3.625      0.000
+
+ SEX      WITH
+    DISRUPT           -0.031      0.030     -1.011      0.312
+    SREG              -0.059      0.026     -2.297      0.022
+
+ WHITE    WITH
+    DISRUPT           -0.041      0.029     -1.440      0.150
+    SREG               0.030      0.024      1.242      0.214
+
+ CHILD    WITH
+    DISRUPT            0.085      0.038      2.247      0.025
+    SREG               0.072      0.025      2.912      0.004
+
+ PREHABIT WITH
+    DISRUPT            0.109      0.038      2.892      0.004
+    SREG               0.150      0.036      4.112      0.000
+
+ SEX      WITH
+    AGE               -0.340      0.266     -1.279      0.201
+
+ WHITE    WITH
+    AGE                0.746      0.244      3.053      0.002
+    SEX               -0.018      0.011     -1.625      0.104
+
+ CHILD    WITH
+    AGE                1.071      0.260      4.115      0.000
+    SEX                0.000      0.012     -0.035      0.972
+    WHITE             -0.011      0.011     -0.940      0.347
+
+ PREHABIT WITH
+    AGE                1.002      0.371      2.701      0.007
+    SEX               -0.024      0.016     -1.504      0.133
+    WHITE             -0.020      0.015     -1.340      0.180
+    CHILD              0.025      0.016      1.574      0.116
+
+ Means
+    AGE               34.648      0.557     62.231      0.000
+    SEX                0.406      0.024     17.168      0.000
+    WHITE              0.669      0.023     29.395      0.000
+    CHILD              0.406      0.024     17.172      0.000
+    PREHABIT           4.056      0.032    125.403      0.000
+
+ Intercepts
+    INIT               3.270      0.047     70.198      0.000
+    INHIB              3.826      0.033    114.270      0.000
+    CONT               3.448      0.036     96.091      0.000
+    BFI                3.861      0.034    114.005      0.000
+    PSYEFFECT          3.251      0.045     72.046      0.000
+    SCHED              3.641      0.047     78.082      0.000
+    INSEC              2.661      0.062     42.740      0.000
+
+ Thresholds
+    SL$1              -0.944      0.675     -1.400      0.162
+    SL$2               0.622      0.679      0.916      0.359
+    EXER$1            -0.127      0.638     -0.199      0.842
+    EXER$2             0.992      0.635      1.562      0.118
+    DT$1              -0.503      0.794     -0.634      0.526
+    DT$2               2.467      0.818      3.018      0.003
+    SUBS$1            -0.169      0.794     -0.213      0.832
+    SUBS$2             1.463      0.795      1.841      0.066
+
+ Variances
+    AGE              131.798     10.573     12.466      0.000
+    SEX                0.241      0.004     54.247      0.000
+    WHITE              0.221      0.008     28.634      0.000
+    CHILD              0.241      0.004     54.256      0.000
+    PREHABIT           0.452      0.032     13.993      0.000
+    DISRUPT            1.000      0.000    999.000    999.000
+    SREG               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    INIT               0.311      0.034      9.054      0.000
+    INHIB              0.371      0.025     14.934      0.000
+    CONT               0.318      0.029     11.127      0.000
+    BFI                0.113      0.020      5.689      0.000
+    PSYEFFECT          0.417      0.073      5.748      0.000
+    SCHED              0.419      0.087      4.828      0.000
+    INSEC              1.188      0.096     12.402      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.947E-09
+       (ratio of smallest to largest eigenvalue)
+
+
+LOGISTIC REGRESSION ODDS RATIO RESULTS
+
+                                                95% C.I.
+                    Estimate       S.E.  Lower 2.5% Upper 2.5%
+
+ SL         ON
+    SREG               0.944      0.114      0.745      1.196
+    DISRUPT            0.576      0.076      0.445      0.745
+
+ EXER       ON
+    SREG               1.071      0.121      0.859      1.336
+    DISRUPT            0.612      0.084      0.469      0.800
+
+ DT         ON
+    SREG               0.921      0.113      0.724      1.171
+    DISRUPT            0.798      0.117      0.599      1.064
+
+ SUBS       ON
+    SREG               1.046      0.128      0.822      1.330
+    DISRUPT            0.589      0.081      0.450      0.773
+
+ SL         ON
+    AGE                0.997      0.009      0.979      1.015
+    SEX                0.967      0.188      0.660      1.416
+    WHITE              0.842      0.169      0.568      1.247
+    CHILD              1.406      0.290      0.939      2.106
+    PREHABIT           0.947      0.145      0.702      1.278
+
+ EXER       ON
+    AGE                0.998      0.009      0.981      1.016
+    SEX                0.994      0.188      0.686      1.440
+    WHITE              0.752      0.151      0.507      1.116
+    CHILD              1.209      0.247      0.810      1.804
+    PREHABIT           1.091      0.156      0.825      1.445
+
+ DT         ON
+    AGE                1.011      0.011      0.990      1.032
+    SEX                0.924      0.185      0.625      1.368
+    WHITE              0.964      0.204      0.636      1.461
+    CHILD              1.378      0.306      0.892      2.128
+    PREHABIT           1.096      0.174      0.804      1.496
+
+ SUBS       ON
+    AGE                1.010      0.010      0.991      1.029
+    SEX                0.948      0.189      0.642      1.401
+    WHITE              1.443      0.294      0.968      2.151
+    CHILD              1.064      0.232      0.694      1.632
+    PREHABIT           1.213      0.210      0.864      1.704
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ DISRUPT  BY
+    PSYEFFECT          0.726      0.059     12.375      0.000
+    SCHED              0.746      0.061     12.175      0.000
+    INSEC              0.537      0.053     10.221      0.000
+
+ SREG     BY
+    CONT               0.655      0.038     17.070      0.000
+    INIT               0.818      0.023     34.988      0.000
+    INHIB              0.484      0.044     11.090      0.000
+    BFI                0.879      0.023     37.560      0.000
+
+ SL         ON
+    SREG              -0.030      0.064     -0.479      0.632
+    DISRUPT           -0.291      0.064     -4.540      0.000
+
+ EXER       ON
+    SREG               0.037      0.060      0.612      0.541
+    DISRUPT           -0.261      0.068     -3.826      0.000
+
+ DT         ON
+    SREG              -0.045      0.067     -0.676      0.499
+    DISRUPT           -0.123      0.079     -1.556      0.120
+
+ SUBS       ON
+    SREG               0.024      0.064      0.366      0.715
+    DISRUPT           -0.277      0.068     -4.085      0.000
+
+ SL         ON
+    AGE               -0.018      0.056     -0.330      0.741
+    SEX               -0.009      0.050     -0.173      0.863
+    WHITE             -0.043      0.050     -0.863      0.388
+    CHILD              0.088      0.053      1.668      0.095
+    PREHABIT          -0.019      0.054     -0.356      0.722
+
+ EXER       ON
+    AGE               -0.011      0.055     -0.203      0.839
+    SEX               -0.001      0.049     -0.030      0.976
+    WHITE             -0.071      0.050     -1.420      0.155
+    CHILD              0.050      0.053      0.930      0.352
+    PREHABIT           0.031      0.051      0.614      0.539
+
+ DT         ON
+    AGE                0.067      0.067      0.996      0.319
+    SEX               -0.021      0.053     -0.393      0.694
+    WHITE             -0.009      0.054     -0.172      0.863
+    CHILD              0.086      0.059      1.453      0.146
+    PREHABIT           0.034      0.058      0.582      0.561
+
+ SUBS       ON
+    AGE                0.058      0.056      1.030      0.303
+    SEX               -0.014      0.051     -0.267      0.790
+    WHITE              0.090      0.050      1.807      0.071
+    CHILD              0.016      0.056      0.287      0.774
+    PREHABIT           0.068      0.060      1.128      0.259
+
+ SREG     WITH
+    DISRUPT           -0.136      0.066     -2.043      0.041
+
+ AGE      WITH
+    DISRUPT           -0.088      0.058     -1.512      0.131
+    SREG               0.190      0.051      3.708      0.000
+
+ SEX      WITH
+    DISRUPT           -0.062      0.062     -1.011      0.312
+    SREG              -0.120      0.052     -2.299      0.022
+
+ WHITE    WITH
+    DISRUPT           -0.088      0.061     -1.441      0.149
+    SREG               0.064      0.052      1.243      0.214
+
+ CHILD    WITH
+    DISRUPT            0.173      0.077      2.247      0.025
+    SREG               0.147      0.050      2.915      0.004
+
+ PREHABIT WITH
+    DISRUPT            0.162      0.056      2.888      0.004
+    SREG               0.223      0.053      4.171      0.000
+
+ SEX      WITH
+    AGE               -0.060      0.047     -1.287      0.198
+
+ WHITE    WITH
+    AGE                0.138      0.044      3.150      0.002
+    SEX               -0.079      0.049     -1.628      0.104
+
+ CHILD    WITH
+    AGE                0.190      0.048      3.936      0.000
+    SEX               -0.002      0.048     -0.035      0.972
+    WHITE             -0.046      0.049     -0.941      0.347
+
+ PREHABIT WITH
+    AGE                0.130      0.047      2.782      0.005
+    SEX               -0.072      0.048     -1.508      0.132
+    WHITE             -0.064      0.048     -1.343      0.179
+    CHILD              0.075      0.048      1.576      0.115
+
+ Means
+    AGE                3.018      0.097     30.958      0.000
+    SEX                0.827      0.041     20.395      0.000
+    WHITE              1.423      0.073     19.426      0.000
+    CHILD              0.826      0.041     20.400      0.000
+    PREHABIT           6.035      0.245     24.664      0.000
+
+ Intercepts
+    INIT               3.373      0.110     30.757      0.000
+    INHIB              5.495      0.180     30.530      0.000
+    CONT               4.621      0.154     29.950      0.000
+    BFI                5.480      0.176     31.071      0.000
+    PSYEFFECT          3.460      0.115     30.141      0.000
+    SCHED              3.745      0.152     24.573      0.000
+    INSEC              2.059      0.055     37.355      0.000
+
+ Thresholds
+    SL$1              -0.499      0.356     -1.399      0.162
+    SL$2               0.329      0.358      0.917      0.359
+    EXER$1            -0.067      0.339     -0.199      0.842
+    EXER$2             0.527      0.337      1.564      0.118
+    DT$1              -0.274      0.434     -0.632      0.528
+    DT$2               1.343      0.438      3.066      0.002
+    SUBS$1            -0.088      0.416     -0.212      0.832
+    SUBS$2             0.766      0.410      1.867      0.062
+
+ Variances
+    AGE                1.000      0.000    999.000    999.000
+    SEX                1.000      0.000    999.000    999.000
+    WHITE              1.000      0.000    999.000    999.000
+    CHILD              1.000      0.000    999.000    999.000
+    PREHABIT           1.000      0.000    999.000    999.000
+    DISRUPT            1.000      0.000    999.000    999.000
+    SREG               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    INIT               0.330      0.038      8.634      0.000
+    INHIB              0.766      0.042     18.154      0.000
+    CONT               0.571      0.050     11.378      0.000
+    BFI                0.227      0.041      5.510      0.000
+    PSYEFFECT          0.473      0.085      5.545      0.000
+    SCHED              0.444      0.091      4.857      0.000
+    INSEC              0.712      0.056     12.618      0.000
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ DISRUPT  BY
+    PSYEFFECT          0.726      0.059     12.375      0.000
+    SCHED              0.746      0.061     12.175      0.000
+    INSEC              0.537      0.053     10.221      0.000
+
+ SREG     BY
+    CONT               0.655      0.038     17.070      0.000
+    INIT               0.818      0.023     34.988      0.000
+    INHIB              0.484      0.044     11.090      0.000
+    BFI                0.879      0.023     37.560      0.000
+
+ SL         ON
+    SREG              -0.030      0.064     -0.479      0.632
+    DISRUPT           -0.291      0.064     -4.540      0.000
+
+ EXER       ON
+    SREG               0.037      0.060      0.612      0.541
+    DISRUPT           -0.261      0.068     -3.826      0.000
+
+ DT         ON
+    SREG              -0.045      0.067     -0.676      0.499
+    DISRUPT           -0.123      0.079     -1.556      0.120
+
+ SUBS       ON
+    SREG               0.024      0.064      0.366      0.715
+    DISRUPT           -0.277      0.068     -4.085      0.000
+
+ SL         ON
+    AGE               -0.018      0.056     -0.330      0.741
+    SEX               -0.009      0.050     -0.173      0.863
+    WHITE             -0.043      0.050     -0.863      0.388
+    CHILD              0.088      0.053      1.668      0.095
+    PREHABIT          -0.019      0.054     -0.356      0.722
+
+ EXER       ON
+    AGE               -0.011      0.055     -0.203      0.839
+    SEX               -0.001      0.049     -0.030      0.976
+    WHITE             -0.071      0.050     -1.420      0.155
+    CHILD              0.050      0.053      0.930      0.352
+    PREHABIT           0.031      0.051      0.614      0.539
+
+ DT         ON
+    AGE                0.067      0.067      0.996      0.319
+    SEX               -0.021      0.053     -0.393      0.694
+    WHITE             -0.009      0.054     -0.172      0.863
+    CHILD              0.086      0.059      1.453      0.146
+    PREHABIT           0.034      0.058      0.582      0.561
+
+ SUBS       ON
+    AGE                0.058      0.056      1.030      0.303
+    SEX               -0.014      0.051     -0.267      0.790
+    WHITE              0.090      0.050      1.807      0.071
+    CHILD              0.016      0.056      0.287      0.774
+    PREHABIT           0.068      0.060      1.128      0.259
+
+ SREG     WITH
+    DISRUPT           -0.136      0.066     -2.043      0.041
+
+ AGE      WITH
+    DISRUPT           -0.088      0.058     -1.512      0.131
+    SREG               0.190      0.051      3.708      0.000
+
+ SEX      WITH
+    DISRUPT           -0.062      0.062     -1.011      0.312
+    SREG              -0.120      0.052     -2.299      0.022
+
+ WHITE    WITH
+    DISRUPT           -0.088      0.061     -1.441      0.149
+    SREG               0.064      0.052      1.243      0.214
+
+ CHILD    WITH
+    DISRUPT            0.173      0.077      2.247      0.025
+    SREG               0.147      0.050      2.915      0.004
+
+ PREHABIT WITH
+    DISRUPT            0.162      0.056      2.888      0.004
+    SREG               0.223      0.053      4.171      0.000
+
+ SEX      WITH
+    AGE               -0.060      0.047     -1.287      0.198
+
+ WHITE    WITH
+    AGE                0.138      0.044      3.150      0.002
+    SEX               -0.079      0.049     -1.628      0.104
+
+ CHILD    WITH
+    AGE                0.190      0.048      3.936      0.000
+    SEX               -0.002      0.048     -0.035      0.972
+    WHITE             -0.046      0.049     -0.941      0.347
+
+ PREHABIT WITH
+    AGE                0.130      0.047      2.782      0.005
+    SEX               -0.072      0.048     -1.508      0.132
+    WHITE             -0.064      0.048     -1.343      0.179
+    CHILD              0.075      0.048      1.576      0.115
+
+ Means
+    AGE                3.018      0.097     30.958      0.000
+    SEX                0.827      0.041     20.395      0.000
+    WHITE              1.423      0.073     19.426      0.000
+    CHILD              0.826      0.041     20.400      0.000
+    PREHABIT           6.035      0.245     24.664      0.000
+
+ Intercepts
+    INIT               3.373      0.110     30.757      0.000
+    INHIB              5.495      0.180     30.530      0.000
+    CONT               4.621      0.154     29.950      0.000
+    BFI                5.480      0.176     31.071      0.000
+    PSYEFFECT          3.460      0.115     30.141      0.000
+    SCHED              3.745      0.152     24.573      0.000
+    INSEC              2.059      0.055     37.355      0.000
+
+ Thresholds
+    SL$1              -0.499      0.356     -1.399      0.162
+    SL$2               0.329      0.358      0.917      0.359
+    EXER$1            -0.067      0.339     -0.199      0.842
+    EXER$2             0.527      0.337      1.564      0.118
+    DT$1              -0.274      0.434     -0.632      0.528
+    DT$2               1.343      0.438      3.066      0.002
+    SUBS$1            -0.088      0.416     -0.212      0.832
+    SUBS$2             0.766      0.410      1.867      0.062
+
+ Variances
+    AGE                1.000      0.000    999.000    999.000
+    SEX                1.000      0.000    999.000    999.000
+    WHITE              1.000      0.000    999.000    999.000
+    CHILD              1.000      0.000    999.000    999.000
+    PREHABIT           1.000      0.000    999.000    999.000
+    DISRUPT            1.000      0.000    999.000    999.000
+    SREG               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    INIT               0.330      0.038      8.634      0.000
+    INHIB              0.766      0.042     18.154      0.000
+    CONT               0.571      0.050     11.378      0.000
+    BFI                0.227      0.041      5.510      0.000
+    PSYEFFECT          0.473      0.085      5.545      0.000
+    SCHED              0.444      0.091      4.857      0.000
+    INSEC              0.712      0.056     12.618      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ DISRUPT  BY
+    PSYEFFECT          0.682      0.063     10.830      0.000
+    SCHED              0.725      0.067     10.767      0.000
+    INSEC              0.694      0.073      9.470      0.000
+
+ SREG     BY
+    CONT               0.489      0.036     13.387      0.000
+    INIT               0.793      0.036     21.781      0.000
+    INHIB              0.337      0.035      9.613      0.000
+    BFI                0.620      0.027     22.592      0.000
+
+ SL         ON
+    SREG              -0.058      0.121     -0.478      0.632
+    DISRUPT           -0.552      0.132     -4.196      0.000
+
+ EXER       ON
+    SREG               0.069      0.113      0.612      0.541
+    DISRUPT           -0.491      0.136     -3.595      0.000
+
+ DT         ON
+    SREG              -0.083      0.123     -0.675      0.500
+    DISRUPT           -0.225      0.147     -1.535      0.125
+
+ SUBS       ON
+    SREG               0.045      0.123      0.366      0.714
+    DISRUPT           -0.529      0.138     -3.823      0.000
+
+ SL         ON
+    AGE               -0.003      0.009     -0.330      0.742
+    SEX               -0.034      0.195     -0.173      0.863
+    WHITE             -0.173      0.200     -0.861      0.389
+    CHILD              0.341      0.206      1.656      0.098
+    PREHABIT          -0.054      0.153     -0.357      0.721
+
+ EXER       ON
+    AGE               -0.002      0.009     -0.203      0.839
+    SEX               -0.006      0.189     -0.030      0.976
+    WHITE             -0.285      0.201     -1.415      0.157
+    CHILD              0.190      0.204      0.929      0.353
+    PREHABIT           0.088      0.143      0.612      0.541
+
+ DT         ON
+    AGE                0.011      0.011      0.988      0.323
+    SEX               -0.079      0.200     -0.393      0.695
+    WHITE             -0.036      0.212     -0.172      0.863
+    CHILD              0.320      0.222      1.445      0.148
+    PREHABIT           0.092      0.158      0.581      0.562
+
+ SUBS       ON
+    AGE                0.010      0.009      1.027      0.304
+    SEX               -0.053      0.199     -0.267      0.790
+    WHITE              0.367      0.204      1.802      0.072
+    CHILD              0.062      0.218      0.286      0.775
+    PREHABIT           0.193      0.173      1.117      0.264
+
+ SREG     WITH
+    DISRUPT           -0.136      0.066     -2.043      0.041
+
+ AGE      WITH
+    DISRUPT           -1.013      0.684     -1.482      0.138
+    SREG               2.185      0.603      3.625      0.000
+
+ SEX      WITH
+    DISRUPT           -0.031      0.030     -1.011      0.312
+    SREG              -0.059      0.026     -2.297      0.022
+
+ WHITE    WITH
+    DISRUPT           -0.041      0.029     -1.440      0.150
+    SREG               0.030      0.024      1.242      0.214
+
+ CHILD    WITH
+    DISRUPT            0.085      0.038      2.247      0.025
+    SREG               0.072      0.025      2.912      0.004
+
+ PREHABIT WITH
+    DISRUPT            0.109      0.038      2.892      0.004
+    SREG               0.150      0.036      4.112      0.000
+
+ SEX      WITH
+    AGE               -0.340      0.266     -1.279      0.201
+
+ WHITE    WITH
+    AGE                0.746      0.244      3.053      0.002
+    SEX               -0.018      0.011     -1.625      0.104
+
+ CHILD    WITH
+    AGE                1.071      0.260      4.115      0.000
+    SEX                0.000      0.012     -0.035      0.972
+    WHITE             -0.011      0.011     -0.940      0.347
+
+ PREHABIT WITH
+    AGE                1.002      0.371      2.701      0.007
+    SEX               -0.024      0.016     -1.504      0.133
+    WHITE             -0.020      0.015     -1.340      0.180
+    CHILD              0.025      0.016      1.574      0.116
+
+ Means
+    AGE               34.648      0.557     62.231      0.000
+    SEX                0.406      0.024     17.168      0.000
+    WHITE              0.669      0.023     29.395      0.000
+    CHILD              0.406      0.024     17.172      0.000
+    PREHABIT           4.056      0.032    125.403      0.000
+
+ Intercepts
+    INIT               3.270      0.047     70.198      0.000
+    INHIB              3.826      0.033    114.270      0.000
+    CONT               3.448      0.036     96.091      0.000
+    BFI                3.861      0.034    114.005      0.000
+    PSYEFFECT          3.251      0.045     72.046      0.000
+    SCHED              3.641      0.047     78.082      0.000
+    INSEC              2.661      0.062     42.740      0.000
+
+ Thresholds
+    SL$1              -0.944      0.675     -1.400      0.162
+    SL$2               0.622      0.679      0.916      0.359
+    EXER$1            -0.127      0.638     -0.199      0.842
+    EXER$2             0.992      0.635      1.562      0.118
+    DT$1              -0.503      0.794     -0.634      0.526
+    DT$2               2.467      0.818      3.018      0.003
+    SUBS$1            -0.169      0.794     -0.213      0.832
+    SUBS$2             1.463      0.795      1.841      0.066
+
+ Variances
+    AGE              131.798     10.573     12.466      0.000
+    SEX                0.241      0.004     54.247      0.000
+    WHITE              0.221      0.008     28.634      0.000
+    CHILD              0.241      0.004     54.256      0.000
+    PREHABIT           0.452      0.032     13.993      0.000
+    DISRUPT            1.000      0.000    999.000    999.000
+    SREG               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    INIT               0.311      0.034      9.054      0.000
+    INHIB              0.371      0.025     14.934      0.000
+    CONT               0.318      0.029     11.127      0.000
+    BFI                0.113      0.020      5.689      0.000
+    PSYEFFECT          0.417      0.073      5.748      0.000
+    SCHED              0.419      0.087      4.828      0.000
+    INSEC              1.188      0.096     12.402      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    SL                 0.083      0.034      2.418      0.016
+    EXER               0.071      0.033      2.148      0.032
+    DT                 0.025      0.021      1.197      0.231
+    SUBS               0.099      0.035      2.793      0.005
+    INIT               0.670      0.038     17.494      0.000
+    INHIB              0.234      0.042      5.545      0.000
+    CONT               0.429      0.050      8.535      0.000
+    BFI                0.773      0.041     18.780      0.000
+    PSYEFFEC           0.527      0.085      6.188      0.000
+    SCHED              0.556      0.091      6.087      0.000
+    INSEC              0.288      0.056      5.111      0.000
+
+
+RESIDUAL OUTPUT
+
+
+     ESTIMATED MODEL AND RESIDUALS (OBSERVED - ESTIMATED)
+
+
+           Model Estimated Means
+              INIT          INHIB         CONT          BFI           PSYEFFEC
+              ________      ________      ________      ________      ________
+                3.270         3.826         3.448         3.861         3.251
+
+
+           Model Estimated Means
+              SCHED         INSEC         AGE           SEX           WHITE
+              ________      ________      ________      ________      ________
+                3.641         2.661        34.648         0.406         0.669
+
+
+           Model Estimated Means
+              CHILD         PREHABIT
+              ________      ________
+                0.406         4.056
+
+
+           Residuals for Means
+              INIT          INHIB         CONT          BFI           PSYEFFEC
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           Residuals for Means
+              SCHED         INSEC         AGE           SEX           WHITE
+              ________      ________      ________      ________      ________
+                0.000        -0.002        -0.024         0.000         0.001
+
+
+           Residuals for Means
+              CHILD         PREHABIT
+              ________      ________
+                0.000        -0.001
+
+
+           Model Estimated Covariances
+              INIT          INHIB         CONT          BFI           PSYEFFEC
+              ________      ________      ________      ________      ________
+ INIT           0.940
+ INHIB          0.267         0.485
+ CONT           0.388         0.165         0.557
+ BFI            0.491         0.209         0.303         0.496
+ PSYEFFEC      -0.073        -0.031        -0.045        -0.057         0.883
+ SCHED         -0.078        -0.033        -0.048        -0.061         0.495
+ INSEC         -0.075        -0.032        -0.046        -0.058         0.473
+ AGE            1.733         0.736         1.067         1.353        -0.692
+ SEX           -0.047        -0.020        -0.029        -0.036        -0.021
+ WHITE          0.024         0.010         0.015         0.019        -0.028
+ CHILD          0.057         0.024         0.035         0.045         0.058
+ PREHABIT       0.119         0.050         0.073         0.093         0.074
+
+
+           Model Estimated Covariances
+              SCHED         INSEC         AGE           SEX           WHITE
+              ________      ________      ________      ________      ________
+ SCHED          0.945
+ INSEC          0.503         1.669
+ AGE           -0.735        -0.703       131.798
+ SEX           -0.022        -0.021        -0.340         0.241
+ WHITE         -0.030        -0.029         0.746        -0.018         0.221
+ CHILD          0.062         0.059         1.071         0.000        -0.011
+ PREHABIT       0.079         0.076         1.002        -0.024        -0.020
+
+
+           Model Estimated Covariances
+              CHILD         PREHABIT
+              ________      ________
+ CHILD          0.241
+ PREHABIT       0.025         0.452
+
+
+           Residuals for Covariances
+              INIT          INHIB         CONT          BFI           PSYEFFEC
+              ________      ________      ________      ________      ________
+ INIT          -0.001
+ INHIB         -0.012         0.000
+ CONT          -0.014         0.046         0.000
+ BFI            0.005        -0.011        -0.002        -0.001
+ PSYEFFEC      -0.023        -0.015        -0.040         0.000        -0.001
+ SCHED          0.050        -0.005         0.025         0.054        -0.018
+ INSEC         -0.114        -0.031        -0.090        -0.101         0.015
+ AGE            0.550         0.480         0.745        -0.653         0.454
+ SEX            0.004        -0.005         0.025        -0.008        -0.029
+ WHITE         -0.002        -0.002         0.005         0.004         0.029
+ CHILD          0.012        -0.008         0.014        -0.007        -0.042
+ PREHABIT      -0.041         0.026        -0.023         0.006         0.008
+
+
+           Residuals for Covariances
+              SCHED         INSEC         AGE           SEX           WHITE
+              ________      ________      ________      ________      ________
+ SCHED         -0.001
+ INSEC          0.027        -0.001
+ AGE           -0.285        -0.464        -0.121
+ SEX            0.016         0.045        -0.103         0.000
+ WHITE         -0.016        -0.036        -0.139         0.000         0.000
+ CHILD          0.066        -0.072        -0.077         0.001        -0.001
+ PREHABIT      -0.015        -0.077         0.142         0.004        -0.005
+
+
+           Residuals for Covariances
+              CHILD         PREHABIT
+              ________      ________
+ CHILD          0.000
+ PREHABIT       0.005         0.000
+
+
+     RESIDUALS ARE NOT AVAILABLE FOR THE CATEGORICAL VARIABLES.
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           TAU
+              SL$1          SL$2          EXER$1        EXER$2        DT$1
+              ________      ________      ________      ________      ________
+                   81            82            83            84            85
+
+
+           TAU
+              DT$2          SUBS$1        SUBS$2
+              ________      ________      ________
+                   86            87            88
+
+
+           NU
+              SL            EXER          DT            SUBS          INIT
+              ________      ________      ________      ________      ________
+                    0             0             0             0             1
+
+
+           NU
+              INHIB         CONT          BFI           PSYEFFEC      SCHED
+              ________      ________      ________      ________      ________
+                    2             3             4             5             6
+
+
+           NU
+              INSEC         AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+                    7             0             0             0             0
+
+
+           NU
+              PREHABIT
+              ________
+                    0
+
+
+           LAMBDA
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ SL                 0             0             0             0             0
+ EXER               0             0             0             0             0
+ DT                 0             0             0             0             0
+ SUBS               0             0             0             0             0
+ INIT               0             8             0             0             0
+ INHIB              0             9             0             0             0
+ CONT               0            10             0             0             0
+ BFI                0            11             0             0             0
+ PSYEFFEC          12             0             0             0             0
+ SCHED             13             0             0             0             0
+ INSEC             14             0             0             0             0
+ AGE                0             0             0             0             0
+ SEX                0             0             0             0             0
+ WHITE              0             0             0             0             0
+ CHILD              0             0             0             0             0
+ PREHABIT           0             0             0             0             0
+
+
+           LAMBDA
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SL                 0             0             0             0             0
+ EXER               0             0             0             0             0
+ DT                 0             0             0             0             0
+ SUBS               0             0             0             0             0
+ INIT               0             0             0             0             0
+ INHIB              0             0             0             0             0
+ CONT               0             0             0             0             0
+ BFI                0             0             0             0             0
+ PSYEFFEC           0             0             0             0             0
+ SCHED              0             0             0             0             0
+ INSEC              0             0             0             0             0
+ AGE                0             0             0             0             0
+ SEX                0             0             0             0             0
+ WHITE              0             0             0             0             0
+ CHILD              0             0             0             0             0
+ PREHABIT           0             0             0             0             0
+
+
+           LAMBDA
+              PREHABIT
+              ________
+ SL                 0
+ EXER               0
+ DT                 0
+ SUBS               0
+ INIT               0
+ INHIB              0
+ CONT               0
+ BFI                0
+ PSYEFFEC           0
+ SCHED              0
+ INSEC              0
+ AGE                0
+ SEX                0
+ WHITE              0
+ CHILD              0
+ PREHABIT           0
+
+
+           THETA
+              SL            EXER          DT            SUBS          INIT
+              ________      ________      ________      ________      ________
+ SL                 0
+ EXER               0             0
+ DT                 0             0             0
+ SUBS               0             0             0             0
+ INIT               0             0             0             0            15
+ INHIB              0             0             0             0             0
+ CONT               0             0             0             0             0
+ BFI                0             0             0             0             0
+ PSYEFFEC           0             0             0             0             0
+ SCHED              0             0             0             0             0
+ INSEC              0             0             0             0             0
+ AGE                0             0             0             0             0
+ SEX                0             0             0             0             0
+ WHITE              0             0             0             0             0
+ CHILD              0             0             0             0             0
+ PREHABIT           0             0             0             0             0
+
+
+           THETA
+              INHIB         CONT          BFI           PSYEFFEC      SCHED
+              ________      ________      ________      ________      ________
+ INHIB             16
+ CONT               0            17
+ BFI                0             0            18
+ PSYEFFEC           0             0             0            19
+ SCHED              0             0             0             0            20
+ INSEC              0             0             0             0             0
+ AGE                0             0             0             0             0
+ SEX                0             0             0             0             0
+ WHITE              0             0             0             0             0
+ CHILD              0             0             0             0             0
+ PREHABIT           0             0             0             0             0
+
+
+           THETA
+              INSEC         AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ INSEC             21
+ AGE                0             0
+ SEX                0             0             0
+ WHITE              0             0             0             0
+ CHILD              0             0             0             0             0
+ PREHABIT           0             0             0             0             0
+
+
+           THETA
+              PREHABIT
+              ________
+ PREHABIT           0
+
+
+           ALPHA
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+                    0            22            23            24            25
+
+
+           ALPHA
+              PREHABIT
+              ________
+                   26
+
+
+           BETA
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT            0             0             0             0             0
+ SREG               0             0             0             0             0
+ SL                27            28             0             0             0
+ EXER              34            35             0             0             0
+ DT                41            42             0             0             0
+ SUBS              48            49             0             0             0
+ AGE                0             0             0             0             0
+ SEX                0             0             0             0             0
+ WHITE              0             0             0             0             0
+ CHILD              0             0             0             0             0
+ PREHABIT           0             0             0             0             0
+
+
+           BETA
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ DISRUPT            0             0             0             0             0
+ SREG               0             0             0             0             0
+ SL                 0            29            30            31            32
+ EXER               0            36            37            38            39
+ DT                 0            43            44            45            46
+ SUBS               0            50            51            52            53
+ AGE                0             0             0             0             0
+ SEX                0             0             0             0             0
+ WHITE              0             0             0             0             0
+ CHILD              0             0             0             0             0
+ PREHABIT           0             0             0             0             0
+
+
+           BETA
+              PREHABIT
+              ________
+ DISRUPT            0
+ SREG               0
+ SL                33
+ EXER              40
+ DT                47
+ SUBS              54
+ AGE                0
+ SEX                0
+ WHITE              0
+ CHILD              0
+ PREHABIT           0
+
+
+           PSI
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT            0
+ SREG              55             0
+ SL                 0             0             0
+ EXER               0             0             0             0
+ DT                 0             0             0             0             0
+ SUBS               0             0             0             0             0
+ AGE               56            57             0             0             0
+ SEX               59            60             0             0             0
+ WHITE             63            64             0             0             0
+ CHILD             68            69             0             0             0
+ PREHABIT          74            75             0             0             0
+
+
+           PSI
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS               0
+ AGE                0            58
+ SEX                0            61            62
+ WHITE              0            65            66            67
+ CHILD              0            70            71            72            73
+ PREHABIT           0            76            77            78            79
+
+
+           PSI
+              PREHABIT
+              ________
+ PREHABIT          80
+
+
+     STARTING VALUES
+
+
+           TAU
+              SL$1          SL$2          EXER$1        EXER$2        DT$1
+              ________      ________      ________      ________      ________
+               -0.571         0.899        -0.280         0.778        -1.293
+
+
+           TAU
+              DT$2          SUBS$1        SUBS$2
+              ________      ________      ________
+                1.626        -1.421         0.102
+
+
+           NU
+              SL            EXER          DT            SUBS          INIT
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         3.270
+
+
+           NU
+              INHIB         CONT          BFI           PSYEFFEC      SCHED
+              ________      ________      ________      ________      ________
+                3.826         3.448         3.861         3.251         3.641
+
+
+           NU
+              INSEC         AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+                2.659         0.000         0.000         0.000         0.000
+
+
+           NU
+              PREHABIT
+              ________
+                0.000
+
+
+           LAMBDA
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ SL             0.000         0.000         1.000         0.000         0.000
+ EXER           0.000         0.000         0.000         1.000         0.000
+ DT             0.000         0.000         0.000         0.000         1.000
+ SUBS           0.000         0.000         0.000         0.000         0.000
+ INIT           0.000         1.000         0.000         0.000         0.000
+ INHIB          0.000         1.000         0.000         0.000         0.000
+ CONT           0.000         1.000         0.000         0.000         0.000
+ BFI            0.000         1.000         0.000         0.000         0.000
+ PSYEFFEC       1.000         0.000         0.000         0.000         0.000
+ SCHED          1.000         0.000         0.000         0.000         0.000
+ INSEC          1.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ SEX            0.000         0.000         0.000         0.000         0.000
+ WHITE          0.000         0.000         0.000         0.000         0.000
+ CHILD          0.000         0.000         0.000         0.000         0.000
+ PREHABIT       0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SL             0.000         0.000         0.000         0.000         0.000
+ EXER           0.000         0.000         0.000         0.000         0.000
+ DT             0.000         0.000         0.000         0.000         0.000
+ SUBS           1.000         0.000         0.000         0.000         0.000
+ INIT           0.000         0.000         0.000         0.000         0.000
+ INHIB          0.000         0.000         0.000         0.000         0.000
+ CONT           0.000         0.000         0.000         0.000         0.000
+ BFI            0.000         0.000         0.000         0.000         0.000
+ PSYEFFEC       0.000         0.000         0.000         0.000         0.000
+ SCHED          0.000         0.000         0.000         0.000         0.000
+ INSEC          0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         1.000         0.000         0.000         0.000
+ SEX            0.000         0.000         1.000         0.000         0.000
+ WHITE          0.000         0.000         0.000         1.000         0.000
+ CHILD          0.000         0.000         0.000         0.000         1.000
+ PREHABIT       0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              PREHABIT
+              ________
+ SL             0.000
+ EXER           0.000
+ DT             0.000
+ SUBS           0.000
+ INIT           0.000
+ INHIB          0.000
+ CONT           0.000
+ BFI            0.000
+ PSYEFFEC       0.000
+ SCHED          0.000
+ INSEC          0.000
+ AGE            0.000
+ SEX            0.000
+ WHITE          0.000
+ CHILD          0.000
+ PREHABIT       1.000
+
+
+           THETA
+              SL            EXER          DT            SUBS          INIT
+              ________      ________      ________      ________      ________
+ SL             0.000
+ EXER           0.000         0.000
+ DT             0.000         0.000         0.000
+ SUBS           0.000         0.000         0.000         0.000
+ INIT           0.000         0.000         0.000         0.000         0.469
+ INHIB          0.000         0.000         0.000         0.000         0.000
+ CONT           0.000         0.000         0.000         0.000         0.000
+ BFI            0.000         0.000         0.000         0.000         0.000
+ PSYEFFEC       0.000         0.000         0.000         0.000         0.000
+ SCHED          0.000         0.000         0.000         0.000         0.000
+ INSEC          0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ SEX            0.000         0.000         0.000         0.000         0.000
+ WHITE          0.000         0.000         0.000         0.000         0.000
+ CHILD          0.000         0.000         0.000         0.000         0.000
+ PREHABIT       0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              INHIB         CONT          BFI           PSYEFFEC      SCHED
+              ________      ________      ________      ________      ________
+ INHIB          0.242
+ CONT           0.000         0.278
+ BFI            0.000         0.000         0.248
+ PSYEFFEC       0.000         0.000         0.000         0.441
+ SCHED          0.000         0.000         0.000         0.000         0.472
+ INSEC          0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ SEX            0.000         0.000         0.000         0.000         0.000
+ WHITE          0.000         0.000         0.000         0.000         0.000
+ CHILD          0.000         0.000         0.000         0.000         0.000
+ PREHABIT       0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              INSEC         AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ INSEC          0.834
+ AGE            0.000         0.000
+ SEX            0.000         0.000         0.000
+ WHITE          0.000         0.000         0.000         0.000
+ CHILD          0.000         0.000         0.000         0.000         0.000
+ PREHABIT       0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              PREHABIT
+              ________
+ PREHABIT       0.000
+
+
+           ALPHA
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+                0.000        34.624         0.406         0.670         0.406
+
+
+           ALPHA
+              PREHABIT
+              ________
+                4.055
+
+
+           BETA
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT        0.000         0.000         0.000         0.000         0.000
+ SREG           0.000         0.000         0.000         0.000         0.000
+ SL             0.000         0.000         0.000         0.000         0.000
+ EXER           0.000         0.000         0.000         0.000         0.000
+ DT             0.000         0.000         0.000         0.000         0.000
+ SUBS           0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ SEX            0.000         0.000         0.000         0.000         0.000
+ WHITE          0.000         0.000         0.000         0.000         0.000
+ CHILD          0.000         0.000         0.000         0.000         0.000
+ PREHABIT       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ DISRUPT        0.000         0.000         0.000         0.000         0.000
+ SREG           0.000         0.000         0.000         0.000         0.000
+ SL             0.000         0.000         0.000         0.000         0.000
+ EXER           0.000         0.000         0.000         0.000         0.000
+ DT             0.000         0.000         0.000         0.000         0.000
+ SUBS           0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ SEX            0.000         0.000         0.000         0.000         0.000
+ WHITE          0.000         0.000         0.000         0.000         0.000
+ CHILD          0.000         0.000         0.000         0.000         0.000
+ PREHABIT       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              PREHABIT
+              ________
+ DISRUPT        0.000
+ SREG           0.000
+ SL             0.000
+ EXER           0.000
+ DT             0.000
+ SUBS           0.000
+ AGE            0.000
+ SEX            0.000
+ WHITE          0.000
+ CHILD          0.000
+ PREHABIT       0.000
+
+
+           PSI
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT        1.000
+ SREG           0.000         1.000
+ SL             0.000         0.000         1.000
+ EXER           0.000         0.000         0.000         1.000
+ DT             0.000         0.000         0.000         0.000         1.000
+ SUBS           0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ SEX            0.000         0.000         0.000         0.000         0.000
+ WHITE          0.000         0.000         0.000         0.000         0.000
+ CHILD          0.000         0.000         0.000         0.000         0.000
+ PREHABIT       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS           1.000
+ AGE            0.000        65.838
+ SEX            0.000         0.000         0.121
+ WHITE          0.000         0.000         0.000         0.111
+ CHILD          0.000         0.000         0.000         0.000         0.121
+ PREHABIT       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              PREHABIT
+              ________
+ PREHABIT       0.226
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+                0.000         0.000        -0.317         0.176         0.817
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+                1.369        34.648         0.406         0.669         0.406
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+                4.056
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.671         0.637         0.789
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+                0.777         0.557         0.024         0.023         0.024
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+                0.032
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+                0.000         0.000        -0.473         0.277         1.036
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+                1.762        62.231        17.168        29.395        17.172
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+              125.403
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+                1.000         1.000         0.636         0.782         0.300
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+                0.078         0.000         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+                0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT        1.000
+ SREG          -0.136         1.000
+ SL            -0.510         0.024         3.587
+ EXER          -0.461         0.150         0.255         3.541
+ DT            -0.184         0.012         0.116         0.102         3.375
+ SUBS          -0.532         0.185         0.250         0.239         0.127
+ AGE           -1.013         2.185         0.226         0.489         1.891
+ SEX           -0.031        -0.059         0.018         0.013        -0.012
+ WHITE         -0.041         0.030        -0.021        -0.046         0.003
+ CHILD          0.085         0.072         0.028         0.012         0.066
+ PREHABIT       0.109         0.150        -0.084         0.005         0.026
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS           3.650
+ AGE            2.460       131.798
+ SEX           -0.014        -0.340         0.241
+ WHITE          0.108         0.746        -0.018         0.221
+ CHILD         -0.015         1.071         0.000        -0.011         0.241
+ PREHABIT       0.042         1.002        -0.024        -0.020         0.025
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+ PREHABIT       0.452
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT        0.000
+ SREG           0.066         0.000
+ SL             0.123         0.110         0.134
+ EXER           0.132         0.105         0.099         0.126
+ DT             0.131         0.109         0.078         0.075         0.073
+ SUBS           0.123         0.112         0.107         0.100         0.084
+ AGE            0.684         0.603         1.123         1.088         1.355
+ SEX            0.030         0.026         0.047         0.046         0.048
+ WHITE          0.029         0.024         0.044         0.045         0.046
+ CHILD          0.038         0.025         0.046         0.046         0.047
+ PREHABIT       0.038         0.036         0.067         0.061         0.064
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS           0.143
+ AGE            1.280        10.573
+ SEX            0.047         0.266         0.004
+ WHITE          0.046         0.244         0.011         0.008
+ CHILD          0.047         0.260         0.012         0.011         0.004
+ PREHABIT       0.074         0.371         0.016         0.015         0.016
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+ PREHABIT       0.032
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT  ***********
+ SREG          -2.043   ***********
+ SL            -4.131         0.216        26.813
+ EXER          -3.482         1.425         2.579        28.136
+ DT            -1.404         0.105         1.493         1.361        46.255
+ SUBS          -4.305         1.648         2.326         2.387         1.505
+ AGE           -1.482         3.625         0.201         0.449         1.395
+ SEX           -1.011        -2.297         0.369         0.291        -0.258
+ WHITE         -1.440         1.242        -0.483        -1.013         0.064
+ CHILD          2.247         2.912         0.618         0.265         1.421
+ PREHABIT       2.892         4.112        -1.258         0.085         0.404
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS          25.476
+ AGE            1.922        12.466
+ SEX           -0.294        -1.279        54.247
+ WHITE          2.366         3.053        -1.625        28.634
+ CHILD         -0.327         4.115        -0.035        -0.940        54.256
+ PREHABIT       0.562         2.701        -1.504        -1.340         1.574
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+ PREHABIT      13.993
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT        0.000
+ SREG           0.041         0.000
+ SL             0.000         0.829         0.000
+ EXER           0.000         0.154         0.010         0.000
+ DT             0.160         0.916         0.135         0.174         0.000
+ SUBS           0.000         0.099         0.020         0.017         0.132
+ AGE            0.138         0.000         0.841         0.653         0.163
+ SEX            0.312         0.022         0.712         0.771         0.797
+ WHITE          0.150         0.214         0.629         0.311         0.949
+ CHILD          0.025         0.004         0.537         0.791         0.155
+ PREHABIT       0.004         0.000         0.208         0.932         0.686
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS           0.000
+ AGE            0.055         0.000
+ SEX            0.769         0.201         0.000
+ WHITE          0.018         0.002         0.104         0.000
+ CHILD          0.744         0.000         0.972         0.347         0.000
+ PREHABIT       0.574         0.007         0.133         0.180         0.116
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+ PREHABIT       0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT        1.000
+ SREG          -0.136         1.000
+ SL            -0.269         0.013         1.000
+ EXER          -0.245         0.080         0.072         1.000
+ DT            -0.100         0.006         0.033         0.029         1.000
+ SUBS          -0.278         0.097         0.069         0.067         0.036
+ AGE           -0.088         0.190         0.010         0.023         0.090
+ SEX           -0.062        -0.120         0.019         0.014        -0.014
+ WHITE         -0.088         0.064        -0.024        -0.051         0.003
+ CHILD          0.173         0.147         0.031         0.013         0.073
+ PREHABIT       0.162         0.223        -0.066         0.004         0.021
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS           1.000
+ AGE            0.112         1.000
+ SEX           -0.015        -0.060         1.000
+ WHITE          0.120         0.138        -0.079         1.000
+ CHILD         -0.016         0.190        -0.002        -0.046         1.000
+ PREHABIT       0.032         0.130        -0.072        -0.064         0.075
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+ PREHABIT       1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT        0.000
+ SREG           0.066         0.000
+ SL             0.060         0.058         0.000
+ EXER           0.066         0.056         0.026         0.000
+ DT             0.070         0.060         0.022         0.021         0.000
+ SUBS           0.060         0.058         0.028         0.026         0.023
+ AGE            0.058         0.051         0.052         0.050         0.064
+ SEX            0.062         0.052         0.051         0.049         0.054
+ WHITE          0.061         0.052         0.049         0.051         0.053
+ CHILD          0.077         0.050         0.049         0.050         0.051
+ PREHABIT       0.056         0.053         0.052         0.049         0.052
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS           0.000
+ AGE            0.057         0.000
+ SEX            0.050         0.047         0.000
+ WHITE          0.050         0.044         0.049         0.000
+ CHILD          0.050         0.048         0.048         0.049         0.000
+ PREHABIT       0.058         0.047         0.048         0.048         0.048
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+ PREHABIT       0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT      999.000
+ SREG          -2.043       999.000
+ SL            -4.460         0.216       999.000
+ EXER          -3.700         1.434         2.766       999.000
+ DT            -1.421         0.105         1.525         1.388       999.000
+ SUBS          -4.663         1.659         2.477         2.528         1.541
+ AGE           -1.512         3.708         0.201         0.449         1.402
+ SEX           -1.011        -2.299         0.370         0.291        -0.258
+ WHITE         -1.441         1.243        -0.484        -1.016         0.064
+ CHILD          2.247         2.915         0.618         0.265         1.427
+ PREHABIT       2.888         4.171        -1.267         0.085         0.404
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS         999.000
+ AGE            1.984       999.000
+ SEX           -0.294        -1.287       999.000
+ WHITE          2.396         3.150        -1.628       999.000
+ CHILD         -0.327         3.936        -0.035        -0.941       999.000
+ PREHABIT       0.562         2.782        -1.508        -1.343         1.576
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+ PREHABIT     999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              DISRUPT       SREG          SL            EXER          DT
+              ________      ________      ________      ________      ________
+ DISRUPT        0.000
+ SREG           0.041         0.000
+ SL             0.000         0.829         0.000
+ EXER           0.000         0.152         0.006         0.000
+ DT             0.155         0.916         0.127         0.165         0.000
+ SUBS           0.000         0.097         0.013         0.011         0.123
+ AGE            0.131         0.000         0.840         0.653         0.161
+ SEX            0.312         0.022         0.712         0.771         0.797
+ WHITE          0.149         0.214         0.629         0.310         0.949
+ CHILD          0.025         0.004         0.536         0.791         0.154
+ PREHABIT       0.004         0.000         0.205         0.932         0.686
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SUBS          AGE           SEX           WHITE         CHILD
+              ________      ________      ________      ________      ________
+ SUBS           0.000
+ AGE            0.047         0.000
+ SEX            0.769         0.198         0.000
+ WHITE          0.017         0.002         0.104         0.000
+ CHILD          0.744         0.000         0.972         0.347         0.000
+ PREHABIT       0.574         0.005         0.132         0.179         0.115
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              PREHABIT
+              ________
+ PREHABIT       0.000
+
+
+     Beginning Time:  14:40:45
+        Ending Time:  14:41:44
+       Elapsed Time:  00:00:59
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2021 Muthen & Muthen

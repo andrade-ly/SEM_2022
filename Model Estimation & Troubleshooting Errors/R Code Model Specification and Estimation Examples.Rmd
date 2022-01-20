@@ -1,0 +1,163 @@
+---
+title: "Estimation & Troubleshooting Errors"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60), tidy=TRUE)
+options(scipen=999)
+
+```
+
+```{r}
+library(lavaan)
+library(dplyr)
+```
+
+```{r}
+habit <- read.table("sem_categorical.dat", header = FALSE)
+```
+This is a longer dataset, so we'll add column names to the variables. Because we're using the same dataset as the one for Mplus, missing values are still "." At last line of code in this chunk tells R to turn all variables into numeric, which means that the "." (which are character) will be turned into NAs - and that's what we want.
+
+```{r}
+
+colnames(habit) <- c(
+  'age',
+  'sex',
+  'white',
+  'child',
+  'init',
+  'inhib',
+  'cont', 
+  'bfi', 
+  'psyeffect',
+  'sched',
+  'insec',
+  'prehabit',
+  'sl',
+  'exer',
+  'dt', 
+  'screen', 
+  'sm',
+  'subs',
+  'fri',
+  'work', 
+  'hobby', 
+  'fam'
+)
+
+habit <- data.frame(lapply(habit, function(x) as.numeric(as.character(x))))
+```
+
+We'll first specify the model with categorical variables as continuous.
+
+```{r}
+
+habit.sem <- 'disrupt =~ psyeffect + sched + insec
+          sreg =~ init + inhib + cont + bfi
+          
+          sl + exer + dt + subs ~ disrupt + sreg + prehabit + age + sex + white + child
+          
+          sreg ~~ disrupt + prehabit + age + sex + white + child
+          disrupt ~~ prehabit + age + sex + white + child
+          prehabit ~~ age + sex + white + child
+          age ~~ sex + white + child
+          sex ~~ white + child
+          white ~~ child
+          '
+```
+
+Then we estimate the model as we did before
+
+```{r}
+
+cont.fit <- sem(
+  model = habit.sem,
+  data = habit,
+  missing = "ml",
+  estimator = "mlr"
+)
+
+summary(cont.fit, fit.measures = TRUE, standardized = TRUE)
+```
+
+Note that we're not getting any estimation errors here, as we did in Mplus. If you check the output, you'll see that the variance and SE of age are really high in comparison to the other variables in the model. This will yield the error that we saw earlier in Mplus. One way to fix this is to bring age to a smaller range of scores.
+
+To estimate the model with categorical endogenous variables, we only need to make changes to the estimation part by adding "ordered" to the sem() command. But note that lavaan isn't set up to estimate models with observed categorical outcomes. 
+Errors you'll get: 
+1. If you try to use MLR as the estimator, lavaan will tell you that you need WLSMV
+2. If you try to use FIML in missing, lavaan will tell you it's not supported in categorical models
+3. If you try to use WLSMV, lavaan will tell you there's an error and the model isn't identified
+
+```{r}
+
+cont.fit <- sem(
+  model = habit.sem,
+  data = habit,
+  estimator = "WLSMV",
+  ordered = c("sl", "dt", "exer", "subs")
+)
+
+summary(cont.fit, fit.measures = TRUE, standardized = TRUE)
+```
+
+An alternative is to make behavior into a latent variable. 
+
+```{r}
+
+habit.sem.lv <- 'disrupt =~ psyeffect + sched + insec
+          sreg =~ init + inhib + cont + bfi
+          beh =~ sl + exer + dt + subs
+          
+          beh ~ disrupt + sreg + prehabit + age + sex + white + child
+          
+          sreg ~~ disrupt + prehabit + age + sex + white + child
+          disrupt ~~ prehabit + age + sex + white + child
+          prehabit ~~ age + sex + white + child
+          age ~~ sex + white + child
+          sex ~~ white + child
+          white ~~ child
+          '
+```
+
+To use categorical, you can either specify in R that these are categorical variables.
+
+```{r}
+is.factor(habit$dt)
+is.factor(habit$sl)
+is.factor(habit$exer)
+is.factor(habit$subs)
+```
+You can see from these lines that the outcome variables are not being read as categorical. 
+
+```{r}
+habit[, c("sl", "dt", "exer", "subs")] <-
+  lapply(habit[, c("sl", "dt", "exer", "subs")], ordered)
+```
+
+Try again to see if it worked... And it did.
+
+```{r}
+is.factor(habit$dt)
+is.factor(habit$sl)
+is.factor(habit$exer)
+is.factor(habit$subs)
+```
+
+Like before, you can also tell lavaan that these variables are ordered with the line 'ordered = c("sl", "dt", "exer", "subs")'.
+There are still several limitations to using lavaan for categorical variables, including the fact that you can't use FIML or unordered (nominal) categorical variables. 
+
+```{r}
+
+cont.fit.lv <- sem(
+  model = habit.sem.lv,
+  data = habit,
+  estimator = "WLSMV",
+  ordered = c("sl", "dt", "exer", "subs")
+)
+
+summary(cont.fit.lv, fit.measures = TRUE, standardized = TRUE)
+```
+
+There are lots of errors in this output and you'll notice that the number of estimated parameters is not the same as in Mplus. That's because lavaan isn't computing the loadings for each of the level-combinations of the categorical variable (so the behavior latent variable as only 4 loadings instead of 8). 

@@ -1,0 +1,36 @@
+DATA: FILE IS "C:\Users\Fe\Box\Hoyle Lab\
+Habits and Adjustment to Covid Outbreak\Analysis Scripts\
+Time 1 Analysis\sem_categorical.dat";
+type is individual;
+
+VARIABLE:
+
+NAMES ARE age sex white child init inhib cont bfi psyeffect sched insec prehabit
+sl exer dt screen sm subs fri work hobby fam;
+
+USEVARIABLES ARE age sex white child init inhib cont bfi psyeffect 
+sched insec prehabit sl exer dt subs;
+
+NOMINAL ARE sl exer dt subs;
+
+Missing are .;
+
+ANALYSIS:
+ESTIMATOR IS MLR;
+INTEGRATION = MONTECARLO;
+
+MODEL:
+!latent variables
+disrupt by psyeffect* sched insec;
+sreg by cont* init inhib bfi;
+
+!paths
+sl exer dt subs on age sex white child prehabit sreg disrupt;
+[age sex white child prehabit]; !variances for FIML
+
+!variances
+sreg@1;
+disrupt@1;
+
+OUTPUT: SAMPSTAT TECH1 TECH4 residual standardized (all);
+

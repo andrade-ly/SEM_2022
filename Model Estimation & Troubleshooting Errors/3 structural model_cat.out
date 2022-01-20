@@ -1,0 +1,58 @@
+Mplus VERSION 8.7
+MUTHEN & MUTHEN
+01/20/2022   9:32 AM
+
+INPUT INSTRUCTIONS
+
+  DATA: FILE IS "C:\Users\Fe\Box\Hoyle Lab\
+  Habits and Adjustment to Covid Outbreak\Analysis Scripts\
+  Time 1 Analysis\sem_categorical.dat";
+  type is individual;
+
+  VARIABLE:
+
+  NAMES ARE age sex white child init inhib cont bfi psyeffect sched insec prehabit
+  sl exer dt screen sm subs fri work hobby fam;
+
+  USEVARIABLES ARE age sex white child init inhib cont bfi psyeffect
+  sched insec prehabit sl exer dt subs;
+
+  CATEGORICAL ARE sl exer dt subs;
+
+  Missing are .;
+
+  ANALYSIS:
+  ESTIMATOR IS MLR;
+
+  MODEL:
+  !latent variables
+  disrupt by psyeffect* sched insec;
+  sreg by cont* init inhib bfi;
+
+  !paths
+  sl exer dt subs on age sex white child prehabit sreg disrupt;
+
+  [age sex white child prehabit]; !variances for FIML
+
+  !variances
+  sreg@1;
+  disrupt@1;
+
+  !covariances
+  sreg WITH disrupt;
+
+  OUTPUT: SAMPSTAT TECH1 TECH4 residual standardized (all);
+
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+
+*** FATAL ERROR
+     THIS MODEL CAN BE DONE ONLY WITH MONTECARLO INTEGRATION.
