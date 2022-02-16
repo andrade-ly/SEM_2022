@@ -1,0 +1,25 @@
+TITLE: this is an example of multiple imputation for a set of
+variables with missing values
+DATA: FILE = ex11.5.dat;
+VARIABLE: ! the following are all the variables in the data
+! set:
+NAMES = x1 x2 y1-y4 v1-v50 z1-z5;
+! the following variables will be used to create the
+! imputed data sets:
+USEVARIABLES = x1 x2 y1-y4 z1-z5;
+! the following variables are saved with the imputed
+! data sets, but not used to create the imputed data
+! sets:
+AUXILIARY = v1- v10;
+MISSING = ALL (999);
+
+DATA IMPUTATION:
+! the following are the variables for which missing
+! data will be imputed:
+IMPUTE = y1-y4 x1 (c) x2;
+NDATASETS = 10;
+! the following data sets will contain data for the
+! variables x1 x2 y1-y4 z1-z5 v1-v10:
+SAVE = missimp*.dat;
+ANALYSIS: TYPE = BASIC;
+OUTPUT: TECH8;

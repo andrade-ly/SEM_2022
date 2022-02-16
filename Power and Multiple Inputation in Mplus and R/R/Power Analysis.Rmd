@@ -1,0 +1,171 @@
+---
+title: "Power with RMSEA and Monte Carlo Simulation"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Compute Power for RMSEA 
+
+Using http://www.quantpsy.org/rmsea/rmsea.htm
+
+From McCallum et al., 1996:
+All power estimates are based on alpha = .05. For the test of close fit. e0 = 0.05 and ea = 0.08, where e0 is the null value of the root-mean-square error of approximation (RMSEA) and ea is the alternative value of RMSEA. For the test of not-close fit, e0 = 0.05 and ea = 0.01. For the test of exact fit, e0= 0.00 and ea = 0.05.(http://dx.doi.org.proxy.lib.duke.edu/10.1037/1082-989X.1.2.130)
+
+
+```{r}
+
+#Power analysis for CSM
+
+alpha <- 0.05 #alpha level
+d <- 187 #degrees of freedom
+n <- 200 #sample size
+rmsea0 <- 0.05 #null hypothesized RMSEA
+rmseaa <- 0.08 #alternative hypothesized RMSEA
+
+#Code below this point need not be changed by user
+ncp0 <- (n-1)*d*rmsea0^2
+ncpa <- (n-1)*d*rmseaa^2
+
+#Compute power
+if(rmsea0<rmseaa) {
+    cval <- qchisq(alpha,d,ncp=ncp0,lower.tail=F)
+    pow <- pchisq(cval,d,ncp=ncpa,lower.tail=F)
+}
+if(rmsea0>rmseaa) {
+    cval <- qchisq(1-alpha,d,ncp=ncp0,lower.tail=F)
+    pow <- 1-pchisq(cval,d,ncp=ncpa,lower.tail=F)
+}
+print(pow)
+
+
+```
+
+# Compute power with Monte Carlo simulation
+
+We'll be using the package called simsem. If it's not already installed in your computer, you'll need to install it with the code below.
+You'll need to load the library for a package every time you open a new R session. Once the session is open and you've loaded them once, you don't need to load them again (unless you close the app)
+
+```{r}
+install.packages("simsem")
+library(simsem)
+library(lavaan)
+```
+
+Steps: 
+
+1. Read the dataset
+
+```{r}
+data <- read.table('ex12.7real.dat')
+data <- read.csv('ex12.7real.csv') # if reading the csv version
+
+```
+
+2. Let's give our variables names
+
+```{r}
+colnames(data) <- c('y1',
+                    'y2',
+                    'y3',
+                    'y4',
+                    'y5',
+                    'y6',
+                    'y7',
+                    'y8',
+                    'y9',
+                    'y10',
+                    'x1',
+                    'x2')
+```
+
+3. Specify the population model with starting values
+
+```{r}
+popmodel <- 'f1 =~ start(1)*y1 + start(1)*y2 + start(1)*y3 + start(1)*y4 + start(1)*y5 # Latent varible f1 #factor f1 is composed of y1-y5 indicators
+          f2 =~ start(1)*y6 + start(1)*y7 + start(1)*y8 + start(1)*y9 + start(1)*y10 # Latent variable f2 #factor f2 is composed of y6-y10 indicators
+          
+          f1~~start(0.5)*f1 # Variance f1
+          f2~~start(0.5)*f2 # Variance f2
+          
+          f1~~start(0.25)*f2 # Covariance between f1 and f2
+          
+          y1~~start(0.5)*y1 # Residual variance y1
+          y2~~start(0.5)*y2 # Residual variance y2 (and so on)
+          y3~~start(0.5)*y3
+          y4~~start(0.5)*y4
+          y5~~start(0.5)*y5
+          
+          y1 ~ start(1)*1 # Intercept (mean) y1 - we indicate this with ~ 1
+          y2 ~ start(1)*1 # Intercept (mean) y2 (and so on)
+          y3 ~ start(1)*1
+          y4 ~ start(1)*1
+          y5 ~ start(1)*1
+          
+          y6~~start(0.75)*y6 # Residual variance y6
+          y7~~start(0.75)*y7 # Residual variance y7 (and so on)
+          y8~~start(0.75)*y8
+          y9~~start(0.75)*y9
+          y10~~start(0.75)*y10
+          
+          y6 ~ start(2)*1 # Intercept (mean) y6 - we indicate this with ~ 1
+          y7 ~ start(2)*1 # Intercept (mean) y7 (and so on)
+          y8 ~ start(2)*1 
+          y9 ~ start(2)*1 
+          y10 ~ start(2)*1 
+          
+          f1 ~  start(0.3)*x1 + start(0.5)*x2 # Regressing f1 on x1 and x2
+          f2 ~  start(0.5)*x1 + start(0.3)*x2 # Regressing f2 on x1 and x2
+          '
+```
+
+4. Fit the population model
+
+```{r}
+
+popfit <- sem(popmodel, # Name of our model
+              data = data) # Name of our dataframe
+
+fitest <- parameterEstimates(popfit) # Ask for output with estimates of fit and create dataframe with values
+fitest # view dataframe of population values (note that these match Mplus's)
+
+```
+
+5. We now specify the analysis model 
+
+```{r}
+
+analysismod <- 'f1 =~  y1 + y2 + y3 + y4 + y5 
+                f2 =~  y6 + y7 + y8 + y9 + y10
+          
+                f1 ~  x1 + x2
+                f2 ~  x1 + x2
+
+                y1 ~ 1
+                y2 ~ 1
+                y3 ~ 1
+                y4 ~ 1
+                y5 ~ 1
+                y6 ~ 1
+                y7 ~ 1
+                y8 ~ 1                
+                y9 ~ 1
+                y10 ~ 1'
+
+```
+
+6. And we fit it to the simulation using the sim() function
+
+```{r}
+
+sim <- sim(nRep = 500, # number of random samples
+           model = analysismod, # sample model that we're trying to fit
+           generate = popfit, # fitted population estimates
+           n = 500, # sample size
+           lavaanfun = "sem", # lavaan function we're using
+           seed = 45335) # set the seed (very useful for replication)
+```
+

@@ -1,0 +1,190 @@
+---
+title: "MI in R"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60), tidy=TRUE)
+options(scipen=999)
+
+```
+
+```{r}
+library(lavaan)
+library(dplyr)
+```
+
+
+```{r}
+habit <- read.table("sem_categorical.dat", header = FALSE)
+```
+
+This is a longer dataset, so we'll add column names to the variables. Because we're using the same dataset as the one for Mplus, missing values are still "." At last line of code in this chunk tells R to turn all variables into numeric, which means that the "." (which are character) will be turned into NAs - and that's what we want.
+
+```{r}
+
+colnames(habit) <- c(
+  'age',
+  'sex',
+  'white',
+  'child',
+  'init',
+  'inhib',
+  'cont', 
+  'bfi', 
+  'psyeffect',
+  'sched',
+  'insec',
+  'prehabit',
+  'sl',
+  'exer',
+  'dt', 
+  'screen', 
+  'sm',
+  'subs',
+  'fri',
+  'work', 
+  'hobby', 
+  'fam'
+)
+
+habit <- data.frame(lapply(habit, function(x) as.numeric(as.character(x))))
+```
+First, a quick overview of the data. If you use your own dataset, you'll need to replace "habit" in the code with your dataset.
+
+```{r}
+nc <- max(5, ceiling(sqrt(ncol(habit))))
+nr <- ceiling(ncol(habit) / nc)
+par(mfrow = c(nr, nc), mgp = c(2, 0.6, 0), mar = c(2, 3, 3, 0.5))
+for (i in 1:ncol(habit)) {
+  if (is.numeric(habit[, i])) {
+    hist(habit[, i], nclass = 50, xlab = "",
+         main = paste0(names(habit[i]), " (",
+                       round(mean(is.na(habit[, i])) * 100, 2), "% NA)")
+    )
+  } else {
+    barplot(table(habit[, i]), ylab = "Frequency",
+            main = paste0(names(habit[i]), " (",
+                          round(mean(is.na(habit[, i])) * 100, 2), "% NA)"))
+  }
+}
+```
+
+You can first visualize missing data in R using packages like MICE. There are many others you can choose from but MICE has nice visualizations. 
+As usual with R, if you haven't installed a package yet, make sure you do. Once you have installed it, you can just load the package library (you need to load the package library every time you use a package, otherwise you will get an error saying that R doesn't recognize the function).
+
+```{r}
+install.packages("mice")
+library(mice)
+```
+
+
+```{r}
+
+md.pattern(habit)
+
+```
+
+This is a really cool output. Both windows show you the same information. On top, on the horizontal axis are the variables. On the left vertical axis are the sums of participants within a given missing data pattern across all variables. On the bottom horizontal axis are the sums of participants with missing data on each variable/column. A missing data pattern is basically each combination of missing data that we can find. That's represented on the righ tvertical axis. For example, you can see that there are 8 missing data patterns. The first is no missing data for 416 participants. The second is missing data on one 1 (right vertical axis) variable (age) for 7 participants (left vertical axis). The fourth missing data pattern is for 2 (right vertical axis) variables (age and race) for 1 participant (left vertical axis). And so on. 
+
+```{r}
+
+habit.sem <- 'disrupt =~ psyeffect + sched + insec # Our latent variable 1 with 3 indicators
+          sreg =~ init + inhib + cont + bfi # Our latent variable 2 with 4 indicators
+          
+          sl + exer + dt + subs ~ disrupt + sreg + prehabit + age + sex + white + child 
+          # Our regression with sl, exer, dt, and subs as endogenous variables and all else as exogenous
+          # Note that we have a combination of latent and observed variables for exogenous variables
+          # All endogeous are observed
+          
+          sreg ~~ disrupt + prehabit + age + sex + white + child # Covariances between exogenous variables
+          disrupt ~~ prehabit + age + sex + white + child 
+          prehabit ~~ age + sex + white + child
+          age ~~ sex + white + child
+          sex ~~ white + child
+          white ~~ child
+          '
+```
+
+Then we estimate the model as we did before
+
+```{r}
+
+cont.fit <- sem(
+  model = habit.sem, # tell R the model you're using (we specified it above and gave it a name)
+  data = habit, # Tell R the dataset you're using (we gave it a name above)
+  missing = "fiml", # Listiwse is the default, and we know there's a lot of missing data
+  estimator = "mlr" # Tell R the estimator we're using
+)
+
+summary(cont.fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE) # Tell R you want the standardized solution
+```
+
+We'll show you two options for MI in R. On the first, you'll create the imputed dataset using a flexible MI package called mice, then you'll fit your lavaan model to your datasets using semTools package. 
+
+In the second method, we'll just use the semTools package to do MI and fit the models. In both cases you'll need to download semTools (if your first time using it) and then load the library (every time you use it within an R session).
+
+We'll first do the two-part method in which we mice to do multiple imputation with Bayesian regression, as in Mplus. This is the Rubin (1987) and Schafer (1997) method. The function for this algorithm is called "norm".
+
+```{r}
+install.packages("semTools")
+library("semTools")
+```
+
+```{r}
+
+habit.imp <- mice(habit, # the dataframe name
+                 maxit = 0, # A scalar giving the number of iterations, default is 5
+                 m = 10, # Number of imputed datasets, default is 5
+                 defaultMethod = "norm") # The method we're choosing, which is norm
+```
+
+Now we use semTools package to fit a lavaan model using the imputed values we obtained in mice. To do this, we need to clean the mice output a little to create the 5 datasets it generated during imputation. That's the two lines of code below. 
+
+```{r}
+
+mice.imp <- NULL
+for(i in 1:5) mice.imp[[i]] <- complete(habit.imp, action=i, inc=FALSE) # On this line, you'll need to change the 1:5 (one through 5) if you have more than 5 datasets. E.g., if you have 10, you'll need to change this into 1:10.
+
+```
+
+We then fit the model.
+
+```{r}
+
+impsem <- runMI(habit.sem, # Tell R the model we specified earlier
+              data = mice.imp, # Tell R the imputed datasets that we created with mice
+              fun = "sem" # tell MI the
+              )
+```
+
+And we get our output
+
+```{r}
+
+summary(impsem, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE) # Tell R you want the standardized solution
+
+```
+
+Now let's do the second method, in which we use semTools to do MI and fit the model in one go.
+
+```{r}
+
+impsem2 <- runMI(habit.sem, # tell which model to estimate
+              data = habit, # tell which data to use
+              m = 5, # how many datasets we're creating
+              miPackage = "mice", # which package we're using to do MI
+              fun = "sem", # the sem function we're using to estimate the model
+              meanstructure = TRUE) # whether we also want the mean structure to be estimated
+
+summary(impsem2, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE) # Tell R you want the standardized solution
+
+```
+

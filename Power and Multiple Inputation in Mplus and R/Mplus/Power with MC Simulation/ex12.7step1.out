@@ -23,7 +23,7 @@ INPUT INSTRUCTIONS
           f2 ON x1*.5 x2*.3;
   OUTPUT:        TECH1;
   SAVEDATA:        ESTIMATES = ex12.7estimates.dat;
-  !parameter estiamtes from a real data analysis
+  !parameter estimates from a real data analysis
   !of a CFA with covariates for continuous factor
   !indicators are saved for use in data generation
   !in a subsequent Monte Carlo simulation study
