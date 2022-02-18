@@ -1,0 +1,39 @@
+DATA: 
+FILE = practice.csv;
+
+VARIABLE:
+NAMES = y1-y10 x1-x3;
+USEVARIABLES = y1-y7 x1-x2;
+MISSING = .;
+
+ANALYSIS:
+type = general;
+estimator = MLR;
+
+MODEL: 
+! latent variables
+f1 BY y1* y2-y4;
+f2 BY y5* y6-y7;
+
+! regressions
+f2 on f1 x1 x2;
+
+! variances
+f1@1;
+f2@1;
+
+! covariances
+
+f1 with x1@0 x2;
+x1 with x2;
+
+y3 with y4;
+
+OUTPUT:
+  standardized ! to get standardized output
+  modindices(0) ! to get mod indices (we set it to 0 between parentheses so
+                ! we can get all of them -- just relevant for practice today    
+  tech1 ! to get the parameter numbers (to answer which is parameter 30)
+        ! and to get start values
+  tech4; ! to get latent variable correlations (also available in body of
+         ! output.

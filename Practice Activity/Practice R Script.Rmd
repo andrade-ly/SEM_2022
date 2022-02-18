@@ -1,0 +1,184 @@
+---
+title: "Specification, Estimation, and Interpretation Practice"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+options(scipen=999)
+
+```
+
+```{r}
+
+library(lavaan)
+# Load your lavaan library
+
+```
+
+```{r}
+
+practice <- read.csv("practice.csv", header = FALSE)
+# load the practice data set. Remember that if it has headers, you can say that header is true (but it's the default, so it will happen even if you don't). If you don't have headers, you must say header = FALSE, otherwise it will read your first line of data as a header (i.e., variable names) 
+```
+
+This is a longer data set, so we'll add column names to the variables. Because we're using the same dataset as the one for Mplus, missing values are still "." At last line of code in this chunk tells R to turn all variables into numeric, which means that the "." (which are character) will be turned into NAs - and that's what we want.
+
+```{r}
+
+colnames(practice) <- c(
+  'y1',
+  'y2',
+  'y3',
+  'y4',
+  'y5',
+  'y6',
+  'y7',
+  'y8',
+  'y9',
+  'y10',
+  'x1',
+  'x2',
+  'x3'
+)
+
+# turning character variables into numeric variables (note that this will input NA if there is text in the cells)
+practice <- data.frame(lapply(practice, function(x) as.numeric(as.character(x)))) 
+```
+
+Specify the model first
+
+```{r}
+
+#
+practicemod <- 'f1 =~ NA*y1 + y2 + y3 + y4 # Latent variables
+                f2 =~ NA*y5 + y6 + y7
+                
+                f2 ~ f1 + x1 + x2 # Regressions
+                
+                f1 ~~ 1*f1 # Variances
+                f2 ~~ 1*f2
+                
+                f1 ~~ 0*x1 + x2 # Covariances
+                x1 ~~ x2
+                
+                y3 ~~ y4'
+```
+
+Then we fit the model as we did before
+
+```{r}
+
+practice.fit <- sem( # we call the sem() function
+  model = practicemod, #We tell lavaan which model we're using
+  data = practice, # tell lavaan which dataset we're using
+  missing = "fiml", # we're estimating misisng values with FIML
+  estimator = "mlr" # We're using MLR as the estimator.
+)
+
+# we're treating all variables as continuous and there's a little bit of skew and kurtosis, so we use ML with robust SE (MLR). Note that we can still use MLR if we have ordered categorical outcomes. No need to change estimator if X variables are categorical, only if the Y variables (endogenous) are categorical. In those cases, you also need to tell lavaan that the variables are categorical using the ordered= argument (see the estimation slides)
+
+```
+
+Call the output. Note that the fit indices and model parameters will be on the first window (the one that says R console). This is the output that looks a lot like Mplus's.
+
+The second window, the one that says data.frame ALSO has the model parameters, but it also includes the modification indices under the column that says mi. Click on the page numbers in that output to move to the next set of parameters. The covariance between the x1 and x2 should look like x1 ~~ x2.
+
+You probably noticed that the parameter numbers (1, 2, 3...) also appear on the left side of the output from which you get the MIs. But you probably also noticed that not all parameters are there. That's because ONLY the estimated parameters appear in that output, but not the ones fixed to 0.
+
+```{r} 
+
+summary(practice.fit, # Specify the fitted lavaan model
+        fit.measures = TRUE, # Get measures of fit so we can answer the question about RMSEA and its CI
+        standardized = TRUE, # Get standardized solution so we can answer the question about y1 and y5'std loadings
+        modindices = TRUE) # Get modification indices so we can answer the question about the MI for the covariance between y1 and y2.
+
+```
+
+Let's focus first on the first output, the one that looks like Mplus'. If you scroll down, you will see that the RMSEA is 0.02 and that the CI is [0.00, 0.05]. 
+
+Scroll down to the parameters estimates and to the header that says Latent Variables. There, on the left hand side, you'll the the Estimate column, which refers to the unstandardized loadings. The loading of y1 on f1 is .375, and of y5 on f2 is .646. 
+
+Now look at the last column to the right, where it says Std.all. There are the standardized estimates. The std loading of y1 on f1 is .538 and of y5 on f2 is .719. These values may differ slightly from those on the slides due to rounding in Mplus and lavaan.
+
+Finally, to get the correlation between the latent variables, you'll need to scroll down a bit until you get to covariances. Correlations are standardized covariances so you need to choose the values under the Std.all column. That's the first place you'll get latent variable correlations. We don't have any here because we didn't tell Mplus that the latent variables f1 and f2 are correlated (instead, f2 is regressed on f1; i.e., f1 predicts f2). But if we had any, they'd be here and below, in the code corresponding to the TECH4 output.
+
+Request additional model information using lavInspect() to answer other questions.
+
+Corresponding to Mplus' TECH1:
+
+```{r}
+
+# Get estimated parameters (top half of Mplus TECH1 output). 
+
+lavInspect(practice.fit) 
+
+```
+
+If you scroll down, you will see that paramater 30 is the mean of x2 (in the alpha section). Note that lavaan's numbering is different from Mplus simply because of the order in which they report the matrices (e.g., Mplus begins with NU values, and lavaan begins with LAMBDAS). 
+
+For a refresher, lambda are the loadings, thetas are the variances and covariances of uniquenesses, psi are the exogenous variable variances and covariances, beta are the regression paths, nu are the means, and alphas are the latent and exogenous variable means.
+
+```{r}
+
+# Get starting values (bottom half of Mplus TECH1 output)
+
+# Here you can get the staring va
+lavInspect(practice.fit, what = "start") 
+
+```
+
+The starting values appear in the same matrix format as the parameter numbers did above. Anything with a 0 means a parameter wasn't estimated (same applies to the output in the previous chunk). Anything with a value indicates a starting value. 
+
+To get the starting value for the loading of y3 on f1, you need to check the LAMBDA matrix (0.762). Notice that it shows not only the starting value for that loading, but also the values for loadings that were fixed to zero--which are, as you'd expect, 0.
+
+Corresponding to Mplus' TECH4:
+
+```{r}
+
+# Get implied/fitted covariance matrix of observed variables (top half of Mplus TECH4)
+lavInspect(practice.fit, what = "fitted") 
+```
+
+
+```{r}
+
+lavInspect(practice.fit, what = "cov.lv") # Get model implied/fitted unstandardized covariance matrix of latent variables (bottom half of Mplus TECH4)
+
+```
+
+```{r}
+
+lavInspect(practice.fit, what = "standardized") # Get standardized matrices of estimated model parameters (bottom half of Mplus TECH4)
+
+# Note that the reason for getting standardized matrices is that the covariances in the matrices are correlation coefficients. 
+
+#This means you can check the latent variable correlations to troubleshoot model issues such as latent variable correlations above 1.
+
+# Here's where you'll also find the standardized variances and covariances between latent variables.
+
+```
+
+Corresponding to Mplus' sampstat:
+
+```{r}
+
+lavInspect(practice.fit, what = "sampstat") # Get observed covariance matrices of observed and latent parameters (same as Mplus sampstat that appears on top of output)
+```
+
+Corresponding to Mplus' modindices (alternative to requesting in summary()):
+
+```{r}
+
+lavInspect(practice.fit, what = "modindices") # Get modification indices
+
+```
+
+Corresponding to Mplus' 'coverage' section on the top of the output:
+
+```{r}
+
+# Coverage is the proportion of available data points for each pair of variables
+lavInspect(practice.fit, what = "coverage") 
+
+```
