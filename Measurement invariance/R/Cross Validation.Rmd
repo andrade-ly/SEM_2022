@@ -1,0 +1,424 @@
+---
+title: "Cross Validation"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60), tidy=TRUE)
+options(scipen=999)
+```
+
+```{r Libraries}
+library(lavaan)
+library(readr)
+```
+
+The data we have today is a little more complicated because it's a text file with fixed width (fixed width is easy to manage), line breaks, leading and trailing spaces. You can use the code below to clean a file like this one and then load it using a simple function that reads fixed-width data. 
+
+If you have questions about this code, let me know. Make sure that once you run this chunk the first time, you save the output.txt file with a different name.
+
+```{r Read dataset}
+
+filepath = "elemind1.dat"
+line_number = 1
+con = file(filepath, "r")
+while ( TRUE ) {
+  line = trimws(readLines(con, n = 1), which="both")
+  if (line_number == 1) {
+    prev_line = gsub("[\r\n]", "", line)
+  }
+  if ( line_number == 2 ) {
+    all_line = paste(prev_line,line, sep="")
+    line_number = 1
+    write(all_line, file="output.txt", append=TRUE)
+    next
+  }
+  if ( length(line) == 0 ) {
+      break
+  } 
+  line_number = line_number + 1
+}
+
+close(con)
+
+```
+
+```{r}
+invar_data <- read.fwf("output.txt", header = FALSE,
+                        widths = c(4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+                                   4,4,4,4,4,4,4,4,4,4,4,4,4))
+```
+
+```{r}
+
+colnames(invar_data) <- c("rolea1", "rolea2", "rolec1", "rolec2", "work1", "work2", "cclim1", "cclim2", "cclim3",
+              "cclim4", "dec1", "dec2", "ssup1", "ssup2", "psup1", "psup2", "self1", "self2", "self3", "elc1",
+              "elc2", "elc3", "elc4", "elc5", "ee1", "ee2", "ee3", "dp1", "dp2", "pa1", "pa2", "pa3")
+```
+
+```{r}
+cvmodel1 <- 'f1 =~ rolea1 + rolea2
+             f2 =~ rolec1 + rolec2
+             f3 =~ work1 + work2
+             f4 =~ cclim1 + cclim2 + cclim3 + cclim4
+             f5 =~ dec1 + dec2
+             f6 =~ ssup1 + ssup2
+             f7 =~ psup1 + psup2
+             f8 =~ self1 + self2 + self3
+             f9 =~ elc1 + elc2 + elc3 + elc4 + elc5
+             f10 =~ ee1 + ee2 + ee3
+             f11 =~ dp1 + dp2
+             f12 =~ pa1 + pa2 + pa3
+             
+             f8 ~ f5 + f6 + f7
+             f9 ~ f5
+             f10 ~ f2 + f3 + f4
+             f11 ~ f2 + f10
+             f12 ~ f1 + f8 + f9 + f10 + f11'
+
+```
+
+An important note on lavaan vs. Mplus. While they are similar in many ways, some of the algorithms differ. That's not a problem in itself but it means it's important to specify your analysis software so your analysis can be reproduced.
+
+Mplus and Lavaan use the same algorithm for standard errors when using MLR estimator.
+
+When using MLM estimator, the default chi-square is the Satorra-Bentler scales chi-square.
+test = "satorra.bentler
+
+```{r}
+
+cvmodel1fit <- sem(
+  model = cvmodel1, # tell R the model you're using (we specified it above and gave it a name)
+  data = invar_data, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm" # Tell R the estimator we're using
+)
+```
+
+Notice the error above. 
+
+Likely source of problem involves Factor 3 (work overload). the likely cause is either that (a) its estimated residual is negative, or (b) its correlation with another factor exceeds 1.0; both problems represent a Heywood case, or an out-of-range estimated value. 
+
+If we look to the correlation btwn F3 and F2 in the STD.ALL results, we can see that the correlation btwn them is 1.005. This indicates an overlapping of variance btwn these factors such that discriminant validity btwn these two constructs is poor. 
+
+One approach to fixing this would be to combine these two factors into one.
+(note: Factor 2 = role conflict, Factor 3 = work overload). 
+
+```{r}
+summary(cvmodel1fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE) # Tell R you want the standardized solution
+```
+
+Based on previous model, we combined factors 2 & 3 (and then renumbered other factors)
+
+
+```{r}
+cvmodel2 <- 'f1 =~ rolea1 + rolea2
+             f2 =~ rolec1 + rolec2 + work1 + work2 # <-------- Here you can see the new combined factor
+             f3 =~ cclim1 + cclim2 + cclim3 + cclim4
+             f4 =~ dec1 + dec2
+             f5 =~ ssup1 + ssup2
+             f6 =~ psup1 + psup2
+             f7 =~ self1 + self2 + self3
+             f8 =~ elc1 + elc2 + elc3 + elc4 + elc5
+             f9 =~ ee1 + ee2 + ee3
+             f10 =~ dp1 + dp2
+             f11 =~ pa1 + pa2 + pa3
+             
+             f7 ~ f4 + f5 + f6
+             f8 ~ f4
+             f9 ~ f2 + f3
+             f10 ~ f2 + f9
+             f11 ~ f1 + f7 + f8 + f9 + f10'
+
+```
+
+```{r}
+
+cvmodel2fit <- sem(
+  model = cvmodel2, # tell R the model you're using (we specified it above and gave it a name)
+  data = invar_data, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm" # Tell R the estimator we're using
+)
+```
+
+```{r}
+summary(cvmodel2fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE,
+        modindices = TRUE) # Tell R you want the standardized solution
+```
+
+Check the modification indices tab and search for cross-loadings (indexed by =~). You'll see that the cross-loading of F8 by F2 is very large. It's a substantively meaningful structural path of external locus of control on role conflict/work overload.
+
+Now click toward the covariances (indexed by ~~). You'll also see a large MI & substantively meaningful covariance between residuals for observed variable EE1 and EE2 (items on emotional exhaustion scale).
+
+So next, let's fix the covariance of EE1 with EE2. We always make changes to MI one at a time.
+
+```{r}
+cvmodel2b <- 'f1 =~ rolea1 + rolea2
+             f2 =~ rolec1 + rolec2 + work1 + work2 # <-------- Here you can see the new combined factor
+             f3 =~ cclim1 + cclim2 + cclim3 + cclim4
+             f4 =~ dec1 + dec2
+             f5 =~ ssup1 + ssup2
+             f6 =~ psup1 + psup2
+             f7 =~ self1 + self2 + self3
+             f8 =~ elc1 + elc2 + elc3 + elc4 + elc5
+             f9 =~ ee1 + ee2 + ee3
+             f10 =~ dp1 + dp2
+             f11 =~ pa1 + pa2 + pa3
+             
+             f7 ~ f4 + f5 + f6
+             f8 ~ f4
+             f9 ~ f2 + f3
+             f10 ~ f2 + f9
+             f11 ~ f1 + f7 + f8 + f9 + f10
+
+            ee1 ~~ ee2 # <-------- Covariance of ee1 and ee2
+'
+```
+
+```{r}
+
+cvmodel2bfit <- sem(
+  model = cvmodel2b, # tell R the model you're using (we specified it above and gave it a name)
+  data = invar_data, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm" # Tell R the estimator we're using
+)
+```
+
+```{r}
+summary(cvmodel2bfit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE,
+        modindices = TRUE) # Tell R you want the standardized solution
+```
+
+Notice the non-significant regressions of (F7 on F6) (F8 on F4)  (F10 on F2) (F11 on F1) (F11 on F8). We'll delete them on our next model.
+We'd normally add all of these separately. But we deleted nonsignificant paths in interest of parsimony and then renumbered the factors accordingly.
+
+```{r}
+cvmodel3 <- 'f1 =~ rolec1 + rolec2 + work1 + work2 
+             f2 =~ cclim1 + cclim2 + cclim3 + cclim4
+             f3 =~ dec1 + dec2
+             f4 =~ ssup1 + ssup2
+             f5 =~ self1 + self2 + self3
+             f6 =~ elc1 + elc2 + elc3 + elc4 + elc5
+             f7 =~ ee1 + ee2 + ee3
+             f8 =~ dp1 + dp2
+             f9 =~ pa1 + pa2 + pa3
+             
+             f5 ~ f3 + f4
+             f6 ~ f1
+             f7 ~ f1 + f2
+             f8 ~ f7 + f2
+             f9 ~ f5 + f7 + f8
+
+             ee1 ~~ ee2'
+```
+
+```{r}
+
+cvmodel3fit <- sem(
+  model = cvmodel3, # tell R the model you're using (we specified it above and gave it a name)
+  data = invar_data, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm" # Tell R the estimator we're using
+)
+```
+
+```{r}
+summary(cvmodel3fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE,
+        modindices = TRUE) # Tell R you want the standardized solution
+```
+
+## Measurement Equivalence 
+
+Now are moving onto to testing equivalence across calibration & validation groups start with configural model which specifies no constraints
+
+This is super easy with lavaan. But first we need to make sure the dataset contains both the Calibration and the Validation samples. So let's load the second dataset for the Validation sample the same way we did for the Calibration one.
+
+Load data to fix the linebreaks and read values
+
+```{r Read second dataset}
+
+filepath = "elemind2.dat"
+line_number = 1
+con = file(filepath, "r")
+while ( TRUE ) {
+  line = trimws(readLines(con, n = 1), which="both")
+  if (line_number == 1) {
+    prev_line = gsub("[\r\n]", "", line)
+  }
+  if ( line_number == 2 ) {
+    all_line = paste(prev_line,line, sep="")
+    line_number = 1
+    write(all_line, file="output2.txt", append=TRUE)
+    next
+  }
+  if ( length(line) == 0 ) {
+      break
+  } 
+  line_number = line_number + 1
+}
+
+close(con)
+
+```
+
+Read the fixed-width data and split in columns
+
+```{r}
+validation_data <- read.fwf("output2.txt", header = FALSE,
+                        widths = c(4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+                                   4,4,4,4,4,4,4,4,4,4,4,4,4))
+```
+
+Label the columns
+
+```{r}
+
+colnames(validation_data) <- c("rolea1", "rolea2", "rolec1", "rolec2", "work1", "work2", "cclim1", "cclim2", "cclim3",
+              "cclim4", "dec1", "dec2", "ssup1", "ssup2", "psup1", "psup2", "self1", "self2", "self3", "elc1",
+              "elc2", "elc3", "elc4", "elc5", "ee1", "ee2", "ee3", "dp1", "dp2", "pa1", "pa2", "pa3")
+```
+
+Now we merge the data by column but first create names to identify the grouping variable.
+
+```{r}
+
+invar_data$group <- "Calib"
+validation_data$group <- "Valid"
+
+fulldata <- rbind(invar_data, validation_data)
+
+```
+
+We then estimate the model with a few differences to add the constraints. We don't want the loadings or the intercepts to be constrained equal across the two groups, so we'll estimate the model as we normally would and everything will be free to vary by default.
+
+```{r}
+cvmodel4 <- 'f1 =~ rolec1 + rolec2 + work1 + work2 
+             f2 =~ cclim1 + cclim2 + cclim3 + cclim4
+             f3 =~ dec1 + dec2
+             f4 =~ ssup1 + ssup2
+             f5 =~ self1 + self2 + self3
+             f6 =~ elc1 + elc2 + elc3 + elc4 + elc5
+             f7 =~ ee1 + ee2 + ee3
+             f8 =~ dp1 + dp2
+             f9 =~ pa1 + pa2 + pa3
+             
+             f5 ~ f3 + f4
+             f6 ~ f1
+             f7 ~ f1 + f2
+             f8 ~ f7
+             f9 ~ f5 + f7 + f8
+
+             ee1 ~~ ee2 
+             
+             f9 ~~ 0*f6 # fixing covariances to zero bc NS in final model
+
+             f1 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f2 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f3 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f4 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f5 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f6 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f7 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f8 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f9 ~ 0*1 # fixing factor intercepts (i.e., means) to zero'
+             
+```
+
+Here's where we'll tell Lavaan that we're using groups.
+
+```{r}
+
+cvmodel4fit <- sem(
+  model = cvmodel4, # tell R the model you're using (we specified it above and gave it a name)
+  data = fulldata, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm",
+  group = "group" # Tell R the estimator we're using
+)
+```
+
+```{r}
+summary(cvmodel4fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE,
+        modindices = TRUE) # Tell R you want the standardized solution
+```
+
+Note that the overall model fit not diff. from same model for just the calibration group (i.e., #3). This is evidence for a well-fitting model for combined calibration & validation groups.
+So we go ahead and test equivalence of factor loadings, etc. across groups.
+
+Again, this is easy in lavaan! We just need to use the command 'r group.equal = ' and tell lavaan what about them should be equal:
+
+The following keywords are supported in the group.equal argument:
+
+    'r intercepts': the intercepts of the observed variables
+    'r means': the intercepts/means of the latent variables
+    'r residuals': the residual variances of the observed variables
+    'r residual.covariances': the residual covariances of the observed variables
+    'r lv.variances': the (residual) variances of the latent variables
+    'r lv.covariances': the (residual) covariances of the latent varibles
+    'r regressions': all regression coefficients in the model
+
+If you do not include the 'r group.equal = 'argument, all parameters will be freely estimated as they were in Model 4.
+
+You can also fix some but not all loadings, variances etc., using the command 'r group.partial' 
+
+Now let's constrain all loadings, structural paths, and intercepts to be equal. 
+
+```{r}
+cvmodel5 <- 'f1 =~ rolec1 + rolec2 + work1 + work2 
+             f2 =~ cclim1 + cclim2 + cclim3 + cclim4
+             f3 =~ dec1 + dec2
+             f4 =~ ssup1 + ssup2
+             f5 =~ self1 + self2 + self3
+             f6 =~ elc1 + elc2 + elc3 + elc4 + elc5
+             f7 =~ ee1 + ee2 + ee3
+             f8 =~ dp1 + dp2
+             f9 =~ pa1 + pa2 + pa3
+             
+             f5 ~ f3 + f4
+             f6 ~ f1
+             f7 ~ f1 + f2
+             f8 ~ f7
+             f9 ~ f5 + f7 + f8
+
+             ee1 ~~ ee2 
+             
+             f9 ~~ 0*f6 # fixing covariances to zero bc NS in final mode
+
+             f1 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f2 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f3 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f4 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f5 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f6 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f7 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f8 ~ 0*1 # fixing factor intercepts (i.e., means) to zero
+             f9 ~ 0*1 # fixing factor intercepts (i.e., means) to zero'
+             
+```
+
+```{r}
+
+cvmodel5fit <- sem(
+  model = cvmodel5, # tell R the model you're using (we specified it above and gave it a name)
+  data = fulldata, # Tell R the data set you're using (we gave it a name above)
+  estimator = "mlm", # Tell R the estimator we're using
+  group = "group",
+  group.equal = c("loadings", "intercepts", "regressions")
+)
+```
+
+Notice that lavaan will tell you in the output which parameters are the same by identifying them with the same number
+
+```{r}
+summary(cvmodel5fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE,
+        modindices = TRUE) # Tell R you want the standardized solution
+```

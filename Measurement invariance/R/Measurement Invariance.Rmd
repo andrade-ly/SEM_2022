@@ -1,0 +1,416 @@
+---
+title: "Testing for Measurement Invariance"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60), tidy=TRUE)
+options(scipen=999)
+```
+
+```{r Libraries}
+library(lavaan)
+library(readr)
+```
+
+### Note: If you're using the PDF version, note that the modification indices are omitted from the output for brevity, but can be found in the .RMD file.
+
+We first load the datasets for this analysis. We'll merge them and create a column to indicate from where the data came (i.e., Elem or Sec). To do that, we need to first create a column called group in each data set and assign values to all rows so that every row in the elem data set gets a value of Elem in the "group" column, and all rows in the sec data set get a value of Sec for the "group" column.
+
+```{r}
+
+# Read files
+elem <- read.table("mbielm1.dat")
+sec <- read.table("mbisec1.dat")
+
+# Create columns and assign text values/labels
+elem$group <- "Elem"
+sec$group <- "Sec"
+
+```
+
+Now we merge the data sets - we need to have matching columns for this, which we do (they're all called V1-V22; group)
+
+```{r}
+
+teachers <- rbind(elem, sec)
+
+```
+
+We now need to name the variables. In this case, we're just trying to replace column names that already start at V1-V22 into item1-item22. So all we need to do is change the V into item. Below is a code to do that using the 'r gsub' function.
+
+```{r}
+
+names(teachers) <- gsub(x = names(teachers), pattern = "V", replacement = "item")  
+
+```
+
+# Testing for Measurement Invariance: Configural Invariance
+
+We'll start with the configural model = testing extent to which the same pattern (i.e., configuration) of fixed and free parameters holds across groups, thus no equality constraints.
+
+This is very easy in lavaan. By default, lavaan will estimate the same model for both groups but all parameters will be free to vary across groups. 
+
+If you have multiple groups and you want to impose model constraints, you need to:
+
+1) Specify the full model
+2) Indicate which parameters should be the same or different using the vector 'r c()*' before the parameter. We always use the 'r *' to indicate that we are modifying a parameter. The vector c() indicates what the parameter values should be for each of the groups.
+
+For example, because 'r (item7 ~~ c(NA, 0)*item4)' the covariance between item7 and item4 is set to be freely estimated for the first group (i.e., Elem) and to be 0 (i.e., not estimated, fixed to zero) for the second group (i.e., Sec).
+
+```{r}
+invar1 <-'  F1 =~ 1*item1 + item2 + item3 + item6 + item8 + item13 + item14 + item16 + item20 + item12
+            F2 =~ 1*item5 + item10 + item11 + item15 + item22
+            F3 =~ 1*item4 + item7 + item9 + item12 + item17 + item18 + item19 + item21
+            
+            item6 ~~ item16 
+            item1 ~~ item2
+            item10 ~~ item11 
+            
+            F1 ~ 0*1 #factor means constrained to zero
+            F2 ~ 0*1
+            F3 ~ 0*1
+            
+            # Group specific model parameters:
+             
+            item7 ~~ c(NA, 0)*item4
+            
+            F1 =~ c(0, NA)*item11
+            item9 ~~ c(0, NA)*item19
+'
+
+```
+
+```{r}
+
+invar1fit <- sem(
+  model = invar1, # tell R the model you're using (we specified it above and gave it a name)
+  data = teachers, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm",# Tell R the estimator we're using - MLM because of non-normality
+  group = "group" # Tell R that we have multiple groups
+  )
+```
+
+```{r}
+summary(invar1fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE
+        )
+```
+
+# Testing for Measurement Invariance: Factor Loadings Invariant
+
+We'll now test the measurement model for invariance. The key parameters of interest are factor loadings & the commonly specified residual covariances. 
+
+```{r}
+invar2 <-   invar2 <-'F1 =~ 1*item1 + item2 + item3 + item6 + item8 + item13 + item14 + item16 + item20 + item12
+            F2 =~ 1*item5 + item10 + item11 + item15 + item22
+            F3 =~ 1*item4 + item7 + item9 + item12 + item17 + item18 + item19 + item21
+            
+            item6 ~~ item16 
+            item1 ~~ item2
+            item10 ~~ item11 
+            
+            F1 ~ 0*1 #factor means constrained to zero
+            F2 ~ 0*1
+            F3 ~ 0*1
+            
+            # Group specific model parameters:
+             
+            item7 ~~ c(NA, 0)*item4
+            
+            F1 =~ c(0, NA)*item11
+            item9 ~~ c(0, NA)*item19
+'
+
+```
+
+```{r}
+
+invar2fit <- sem(
+  model = invar2, # tell R the model you're using (we specified it above and gave it a name)
+  data = teachers, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm", # Tell R the estimator we're using - MLM because of non-normality
+  group = "group", # Tell R that we have multiple groups
+  group.equal = c("loadings"), # Because everything is estimated by default, 
+                               # we need to tell lavaan that we want the loadings 
+                               # to be constrained to equality across groups
+  group.partial = c("F1 =~ item11") # We still want the loading of F1 by item11 to be freely estimated 
+                                    # as we specified despite the constraints to all loadings, so we tell 
+                                    # lavaan that all loadings should be equal but this one 
+                                    # (specified in group.partial)
+)
+```
+
+A few things to note: First, note that the output says that the model has 149 parameters, but 20 of those are constrained (i.e., the loadings). This means we estimated 129 parameters. We also gained 20 degrees of freedom from fixing those loadings to be equal across groups.
+
+Also notice that the CFI is slightly lower than that of the configural model. That's because, compared with configural model, this model doesn't fit as well as one with no factor loading constraints imposed. So, we expect to find evidence of non-invariance related to factor loadings.
+
+```{r}
+summary(invar2fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE # Tell R you want the standardized solution
+)
+```
+
+Because we have equality constraints, we need to use the 'r labTestScore()' function to find the values that, if set to be unequal, would improve fit. The usual 'r modindices()' considers only fixed-to-zero parameters.
+
+It's a little less obvious to see the MIs here compared to the usual 'r modindices()'. Note that any values above 0 appear.
+
+X2 is the chi-square value by which fit would improve if the parameter was not set to equality.
+
+```{r, include = FALSE}
+
+lavTestScore(invar2fit,
+             univariate = TRUE,
+             epc = TRUE,
+             warn = FALSE)
+
+```
+
+Take a look at the modification indices. Because we are only constraining factor loadings to be equal, we're only interested in MIs related to factor loadings (i.e., =~ rows). The table includes all factor loadings, but we're only interested in those that were constrained to be equal in the model and that-if not equal-would improve model fit.
+
+The highest X2 is for parameter .p13. which refers to F2 by item11, suggesting that allowing that parameter to be non-equal across groups would improve fit by X2 = 31.60.
+
+# Testing for Measurement Invariance: Partial Factor Loading Invariance
+
+We call this partial invariance because we are going to relax the equality constraint of the loading of F2 by item11. We don't need to make any changes to the model. 
+
+```{r}
+invar3 <- ' F1 =~ 1*item1 + item2 + item3 + item6 + item8 + item13 + item14 + item16 + item20 + item12
+            F2 =~ 1*item5 + item10 + item11 + item15 + item22
+            F3 =~ 1*item4 + item7 + item9 + item12 + item17 + item18 + item19 + item21
+            
+            item6 ~~ item16 
+            item1 ~~ item2
+            item10 ~~ item11 
+            
+            F1 ~ 0*1 #factor means constrained to zero
+            F2 ~ 0*1
+            F3 ~ 0*1
+            
+            # Group specific model parameters:
+            
+            item7 ~~ c(NA, 0)*item4
+            
+            F1 =~ c(0, NA)*item11
+            item9 ~~ c(0, NA)*item19
+            
+'
+
+```
+
+The only change we need to make is to which loadings should not be constrained equal by adding F2 by item11 to the command: 'r group.partial = c("F1 =~ item11", "F2 =~ item11")'.  
+
+```{r}
+
+invar3fit <- sem(
+  model = invar2, # tell R the model you're using (we specified it above and gave it a name)
+  data = teachers, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm", # Tell R the estimator we're using - MLM because of non-normality
+  group = "group", # Tell R that we have multiple groups
+  group.equal = c("loadings"), # Because everything is estimated by default, 
+                               # we need to tell lavaan that we want the loadings 
+                               # to be constrained to equality across groups
+  group.partial = c("F1 =~ item11", "F2 =~ item11") # We still want the loading of F1 by item11 
+                                                    # (and now of F2 by item11) to be freely estimated, 
+                                                    # so we tell lavaan that all loadings should be equal 
+                                                    # but this one (specified in group.partial)
+)
+```
+
+```{r}
+summary(invar3fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE # Tell R you want the standardized solution
+        ) 
+```
+
+You'll see that now the output doesn't have the number between parentheses indicating that F2 by item11 is constrained in both groups. You can also see that this coefficient is pretty different across groups (1.095 in Elem and 0.581 in Sec).
+
+The modification indices below still accuse one parameter that would be a good candidate for freeing the equality constraint: .p14., which refers to the F2 by item15 loading.
+
+```{r, include = FALSE}
+
+lavTestScore(invar3fit,
+             univariate = TRUE,
+             epc = TRUE,
+             warn = FALSE)
+
+```
+
+So we'll free that constraint in our next model by just adding it to the 'r group.partial()' command as: 'r group.partial = c("F1 =~ item11", "F2 =~ item11", "f2 =~ item15)'. We don't need to re-specify the model as it would be identical to what we already have.
+
+```{r}
+
+invar4fit <- sem(
+  model = invar2, # tell R the model you're using (we specified it above and gave it a name)
+  data = teachers, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm", # Tell R the estimator we're using - MLM because of non-normality
+  group = "group", # Tell R that we have multiple groups
+  group.equal = c("loadings"), # Because everything is estimated by default, 
+                               # we need to tell lavaan that we want the loadings 
+                               # to be constrained to equality across groups
+  group.partial = c("F1 =~ item11", "F2 =~ item11", "F2 =~ item15") # We still want the loading of F1 by item11 
+                                                    # (and now of F2 by item11 and item15) to be freely estimated, 
+                                                    # so we tell lavaan that all loadings should be equal 
+                                                    # but this one (specified in group.partial)
+)
+```
+
+Note in the output below that we lost another df by freeing that equality constraint. Note also that the (.14.) constraint associated with F2 by item 15 is now gone, indicating that there is no equality constraint on that parameter.
+
+```{r}
+summary(invar4fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE # Tell R you want the standardized solution
+        ) 
+```
+
+Before we move on, we can compute the scaled chi-square to compare model fit. This will help us decide if it is worth making any more changes given that the return for freeing parameters keeps going down.
+
+In lavaan, you can do a scaled chi-square difference test by using the anova function. Note that this must be the anova function from lavaan and not from other packages like stats, as the function is comparing lavaan objects.
+
+```{r}
+
+lavaan::anova(invar1fit, invar2fit, invar3fit, invar4fit)
+
+```
+
+Notice that freeing the equality constraint of F2 by item15 did not significantly improve model fit. This indicates that freeing other equality constraints wouldn't improve fit either, as all other MIs are smaller than this one. 
+
+# Testing for Measurement Invariance: Residual Variance Invariance
+
+Now that we know all constraints on loadings are freed/fixed as they should be, we can move on to equality of residual covariances. To do that, we'll could use the vector syntax again. This syntax tells Lavaan that we want the covariance between item6 and item16 to take the same value in groups 1 and 2 (Elem and Sec).
+
+```{r, eval=FALSE}
+item6 ~~ c(a, a)*item16
+```
+
+You could have simply added an alphabetic/alphanumeric label to indicate that a parameter should be equal. So instead of the above, you would have:
+
+```{r, eval=FALSE}
+item6 ~~ a*item16
+```
+
+Lavaan will read the above as an equality constraint. But I wouldn't recommend that syntax. It's easier to understand what is going on in the model if you spell it all out with vectors instead. 
+
+So the input with error covariances set to be equal would look like the following (the same as the one we've been using!):
+
+```{r}
+invar5 <- ' F1 =~ 1*item1 + item2 + item3 + item6 + item8 + item13 + item14 + item16 + item20 + item12
+            F2 =~ 1*item5 + item10 + item11 + item15 + item22
+            F3 =~ 1*item4 + item7 + item9 + item12 + item17 + item18 + item19 + item21
+            
+            item6 ~~ item16
+            item1 ~~ item2
+            item10 ~~ item11
+            
+            F1 ~ 0*1 #factor means constrained to zero
+            F2 ~ 0*1
+            F3 ~ 0*1
+            
+            # Group specific model parameters:
+            
+            item7 ~~ c(NA, 0)*item4
+            
+            F1 =~ c(0, NA)*item11
+            item9 ~~ c(0, NA)*item19
+            
+'
+```
+
+Our only changes are, again, to model estimation. We are now fixing residual covariances, which means we can tell lavaan to also fix ALL the residual covariances across groups with the following addition to the 'r sem()' syntax: 'r group.equal = c("loadings", "residual.covariances")'. Note that all we added was the instruction to fix residual covariances.
+
+But like with the loadings, there are some covariances we know are non-invariant and we don't want those to be constrained. So we need to add it to the 'r group.partial()' command:
+
+```{r}
+
+invar5fit <- sem(
+  model = invar5, # tell R the model you're using (we specified it above and gave it a name)
+  data = teachers, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm", # Tell R the estimator we're using - MLM because of non-normality
+  group = "group", # Tell R that we have multiple groups
+  group.equal = c("loadings", 
+                  "residual.covariances"), # Because everything is estimated by default, 
+                                           # we need to tell lavaan that we want the loadings 
+                                           # to be constrained to equality across groups
+                                           # And to constrain all residual covariances to equality
+  group.partial = c("F1 =~ item11", # We still want the loading of F1 by item11
+                    "F2 =~ item11", # We still want the loading of  F2 by item11
+                    "F2 =~ item15", # We still want the loading of  F2 by item15
+                    "item4 ~~ item7", # And we now add the covariance between item7 and item4
+                    "item9 ~~ item19") # And the covariance between item9 and item19
+                      )
+```
+
+Note in the output below that we lost another df by freeing that equality constraint. Note also that the (.14.) constraint associated with F2 by item 15 is now gone, indicating that there is no equality constraint on that parameter.
+
+```{r}
+summary(invar5fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE # Tell R you want the standardized solution
+        ) 
+```
+
+Next we check whether any residual variances should not have been constrained equal across groups. From the last frame of the output below, we know that fixed covariances are parameters p33 through p54. On the third panel, you can see that none of these parameters emerge as candidates for improving chi-square.
+
+```{r, include = FALSE}
+
+lavTestScore(invar5fit,
+             univariate = TRUE,
+             epc = TRUE,
+             warn = FALSE)
+
+```
+
+# Testing for Structural Invariance
+
+To test for structural invariance, we'll fix the factor variances and covariances to equality across groups. All else will remain the same. 
+
+We don't need to re-estimate the mode, just to tell lavaan to constrain the group variances and covariances to equality.
+
+```{r}
+
+invar6fit <- sem(
+  model = invar5, # tell R the model you're using (we specified it above and gave it a name)
+  data = teachers, # Tell R the dataset you're using (we gave it a name above)
+  estimator = "mlm", # Tell R the estimator we're using - MLM because of non-normality
+  group = "group", # Tell R that we have multiple groups
+  group.equal = c("loadings", 
+                  "residual.covariances", 
+                  "lv.variances", 
+                  "lv.covariances"), # Because everything is estimated by default, 
+                                     # we need to tell lavaan that we want the loadings 
+                                     # to be constrained to equality across groups
+                                     # to constrain all residual covariances to equality
+                                     # and to constrain all factor variances and covariances to equality
+  group.partial = c("F1 =~ item11", # We still want the loading of F1 by item11
+                    "F2 =~ item11", # We still want the loading of  F2 by item11
+                    "F2 =~ item15", # We still want the loading of  F2 by item15
+                    "item4 ~~ item7", # And we now add the covariance between item7 and item4
+                    "item9 ~~ item19") # And the covariance between item9 and item19
+                      )
+```
+
+Note in the output below that we lost another df by freeing that equality constraint. Note also that the (.14.) constraint associated with F2 by item 15 is now gone, indicating that there is no equality constraint on that parameter.
+
+```{r}
+summary(invar6fit, # Tell R which model to output
+        fit.measures = TRUE,# Tell R you want the fit measures (CFI, TLI etc.)
+        standardized = TRUE # Tell R you want the standardized solution
+        ) 
+```
+
+We know that it worked because we see the parentheses and parameter number next to the new parameters constrained to equality (variances and covariances of latent variables/factors).
+
+```{r, include = FALSE}
+
+lavTestScore(invar6fit,
+             univariate = TRUE,
+             epc = TRUE,
+             warn = FALSE)
+
+```
+
+From the last frame of the output below, we know that fixed factor variances are parameters p55 through p57, and covariances are parameters p58 through p60. On the third panel, you can see that these parameters appear, which suggests that they many not be equal across groups. We could fix them, but notice that the chi-square would change by very little if any (when we use the scaled chi-square). These small values suggest that the equality constraints are appropriate.

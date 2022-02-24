@@ -1,0 +1,332 @@
+VERSION 1.1.0
+INPUT
+TITLE:
+ MTMM Test for Construct Validity
+       Freely Correlated Traits Uncorrelated Methods;
+
+DATA:
+ File is ind7mt.dat;
+VARIABLE:
+NAMES ARE scself sctch scpar scpeer acself actch acpar acpeer
+  ecself ectch ecpar ecpeer mcself mctch mcpar mcpeer;
+USEVARIABLES ARE scself-mcpeer;
+OUTPUT:
+ stdyx; tech1;
+MODEL:
+F1 by scself* sctch scpar scpeer;
+F2 by acself* actch acpar acpeer;
+F3 by ecself* ectch ecpar ecpeer;
+F4 by mcself* mctch mcpar mcpeer;
+F5 by scself* acself ecself mcself;
+F6 by sctch* actch ectch mctch;
+F7 by scpar* acpar ecpar mcpar;
+F8 by scpeer* acpeer ecpeer mcpeer;
+F1-F8@1;
+F1 with F5@0;
+F1 with F6@0;
+F1 with F7@0;
+F1 with F8@0;
+F2 with F5@0;
+F2 with F6@0;
+F2 with F7@0;
+F2 with F8@0;
+F3 with F5@0;
+F3 with F6@0;
+F3 with F7@0;
+F3 with F8@0;
+F4 with F5@0;
+F4 with F6@0;
+F4 with F7@0;
+F4 with F8@0;
+F5 with F6@0;
+F5 with F7@0;
+F5 with F8@0;
+F6 with F7@0;
+F6 with F8@0;
+F7 with F8@0;
+ACSELF@0;
+INPUT_END
+2
+2
+0
+2
+ML
+1
+GENERAL
+0
+16
+8
+0
+scself sctch scpar scpeer acself actch acpar acpeer ecself ectch ecpar ecpeer mcself mctch mcpar mcpeer f1 f2 f3 f4 f5 f6 f7 f8
+1
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 0 0
+0
+8
+f1
+scself sctch scpar scpeer
+f2
+acself actch acpar acpeer
+f3
+ecself ectch ecpar ecpeer
+f4
+mcself mctch mcpar mcpeer
+f5
+scself acself ecself mcself
+f6
+sctch actch ectch mctch
+f7
+scpar acpar ecpar mcpar
+f8
+scpeer acpeer ecpeer mcpeer
+1 1 f1 scself    0.537    0.058
+1 1 f1 sctch    0.309    0.055
+1 1 f1 scpar    0.540    0.066
+1 1 f1 scpeer    0.427    0.088
+1 1 f2 acself    0.452    0.039
+1 1 f2 actch    0.424    0.053
+1 1 f2 acpar    0.415    0.047
+1 1 f2 acpeer    0.422    0.070
+1 1 f3 ecself    0.386    0.042
+1 1 f3 ectch    0.451    0.059
+1 1 f3 ecpar    0.507    0.053
+1 1 f3 ecpeer    0.430    0.079
+1 1 f4 mcself    0.616    0.056
+1 1 f4 mctch    0.536    0.061
+1 1 f4 mcpar    0.700    0.060
+1 1 f4 mcpeer    0.440    0.072
+1 1 f5 scself    0.158    0.053
+1 1 f5 acself    0.383    0.033
+1 1 f5 ecself    0.171    0.042
+1 1 f5 mcself    0.304    0.054
+1 1 f6 sctch    0.152    0.049
+1 1 f6 actch    0.571    0.054
+1 1 f6 ectch    0.425    0.058
+1 1 f6 mctch    0.333    0.059
+1 1 f7 scpar    0.161    0.075
+1 1 f7 acpar    0.380    0.079
+1 1 f7 ecpar    0.153    0.063
+1 1 f7 mcpar    0.315    0.079
+1 1 f8 scpeer    0.392    0.080
+1 1 f8 acpeer    0.854    0.067
+1 1 f8 ecpeer    0.570    0.073
+1 1 f8 mcpeer    0.624    0.068
+2 1 f1 f5    0.000    0.000
+2 1 f1 f6    0.000    0.000
+2 1 f1 f7    0.000    0.000
+2 1 f1 f8    0.000    0.000
+2 1 f2 f5    0.000    0.000
+2 1 f2 f6    0.000    0.000
+2 1 f2 f7    0.000    0.000
+2 1 f2 f8    0.000    0.000
+2 1 f2 f1    0.367    0.090
+2 1 f3 f5    0.000    0.000
+2 1 f3 f6    0.000    0.000
+2 1 f3 f7    0.000    0.000
+2 1 f3 f8    0.000    0.000
+2 1 f3 f1    0.225    0.096
+2 1 f3 f2    0.861    0.040
+2 1 f4 f5    0.000    0.000
+2 1 f4 f6    0.000    0.000
+2 1 f4 f7    0.000    0.000
+2 1 f4 f8    0.000    0.000
+2 1 f4 f1    0.307    0.091
+2 1 f4 f2    0.801    0.040
+2 1 f4 f3    0.577    0.072
+2 1 f5 f6    0.000    0.000
+2 1 f5 f7    0.000    0.000
+2 1 f5 f8    0.000    0.000
+2 1 f6 f7    0.000    0.000
+2 1 f6 f8    0.000    0.000
+2 1 f7 f8    0.000    0.000
+4 1 scself    0.196    0.045
+4 1 sctch    0.343    0.039
+4 1 scpar    0.331    0.054
+4 1 scpeer    0.904    0.102
+4 1 acself    0.000    0.000
+4 1 actch    0.003    0.045
+4 1 acpar    0.092    0.050
+4 1 acpeer    0.087    0.070
+4 1 ecself    0.152    0.020
+4 1 ectch    0.205    0.036
+4 1 ecpar    0.200    0.033
+4 1 ecpeer    0.529    0.067
+4 1 mcself    0.207    0.030
+4 1 mctch    0.320    0.042
+4 1 mcpar    0.176    0.046
+4 1 mcpeer    0.435    0.059
+5 1 f1    1.000    0.000
+5 1 f2    1.000    0.000
+5 1 f3    1.000    0.000
+5 1 f4    1.000    0.000
+5 1 f5    1.000    0.000
+5 1 f6    1.000    0.000
+5 1 f7    1.000    0.000
+5 1 f8    1.000    0.000
+11 1 f1 scself    0.752    0.063
+11 1 f1 sctch    0.455    0.073
+11 1 f1 scpar    0.670    0.066
+11 1 f1 scpeer    0.383    0.073
+11 1 f2 acself    0.763    0.044
+11 1 f2 actch    0.594    0.061
+11 1 f2 acpar    0.649    0.057
+11 1 f2 acpeer    0.424    0.066
+11 1 f3 ecself    0.672    0.055
+11 1 f3 ectch    0.588    0.065
+11 1 f3 ecpar    0.732    0.057
+11 1 f3 ecpeer    0.422    0.072
+11 1 f4 mcself    0.748    0.045
+11 1 f4 mctch    0.632    0.056
+11 1 f4 mcpar    0.800    0.044
+11 1 f4 mcpeer    0.436    0.064
+11 1 f5 scself    0.222    0.072
+11 1 f5 acself    0.646    0.052
+11 1 f5 ecself    0.297    0.070
+11 1 f5 mcself    0.368    0.062
+11 1 f6 sctch    0.224    0.070
+11 1 f6 actch    0.801    0.072
+11 1 f6 ectch    0.554    0.069
+11 1 f6 mctch    0.393    0.066
+11 1 f7 scpar    0.200    0.092
+11 1 f7 acpar    0.594    0.121
+11 1 f7 ecpar    0.220    0.090
+11 1 f7 mcpar    0.360    0.089
+11 1 f8 scpeer    0.352    0.066
+11 1 f8 acpeer    0.856    0.052
+11 1 f8 ecpeer    0.559    0.062
+11 1 f8 mcpeer    0.618    0.055
+12 1 f1 f5    0.000    0.000
+12 1 f1 f6    0.000    0.000
+12 1 f1 f7    0.000    0.000
+12 1 f1 f8    0.000    0.000
+12 1 f2 f5    0.000    0.000
+12 1 f2 f6    0.000    0.000
+12 1 f2 f7    0.000    0.000
+12 1 f2 f8    0.000    0.000
+12 1 f2 f1    0.367    0.090
+12 1 f3 f5    0.000    0.000
+12 1 f3 f6    0.000    0.000
+12 1 f3 f7    0.000    0.000
+12 1 f3 f8    0.000    0.000
+12 1 f3 f1    0.225    0.096
+12 1 f3 f2    0.861    0.040
+12 1 f4 f5    0.000    0.000
+12 1 f4 f6    0.000    0.000
+12 1 f4 f7    0.000    0.000
+12 1 f4 f8    0.000    0.000
+12 1 f4 f1    0.307    0.091
+12 1 f4 f2    0.801    0.040
+12 1 f4 f3    0.577    0.072
+12 1 f5 f6    0.000    0.000
+12 1 f5 f7    0.000    0.000
+12 1 f5 f8    0.000    0.000
+12 1 f6 f7    0.000    0.000
+12 1 f6 f8    0.000    0.000
+12 1 f7 f8    0.000    0.000
+14 1 scself    0.385    0.090
+14 1 sctch    0.743    0.064
+14 1 scpar    0.511    0.082
+14 1 scpeer    0.729    0.064
+14 1 acself    0.000  999.000
+14 1 actch    0.005    0.089
+14 1 acpar    0.225    0.123
+14 1 acpeer    0.087    0.070
+14 1 ecself    0.460    0.063
+14 1 ectch    0.348    0.065
+14 1 ecpar    0.416    0.072
+14 1 ecpeer    0.509    0.061
+14 1 mcself    0.305    0.049
+14 1 mctch    0.446    0.059
+14 1 mcpar    0.230    0.064
+14 1 mcpeer    0.428    0.059
+15 1 f1    1.000    0.000
+15 1 f2    1.000    0.000
+15 1 f3    1.000    0.000
+15 1 f4    1.000    0.000
+15 1 f5    1.000    0.000
+15 1 f6    1.000    0.000
+15 1 f7    1.000    0.000
+15 1 f8    1.000    0.000
+31 1 f1 scself    0.537    0.058
+31 1 f1 sctch    0.309    0.055
+31 1 f1 scpar    0.540    0.066
+31 1 f1 scpeer    0.427    0.088
+31 1 f2 acself    0.452    0.039
+31 1 f2 actch    0.424    0.053
+31 1 f2 acpar    0.415    0.047
+31 1 f2 acpeer    0.422    0.070
+31 1 f3 ecself    0.386    0.042
+31 1 f3 ectch    0.451    0.059
+31 1 f3 ecpar    0.507    0.053
+31 1 f3 ecpeer    0.430    0.079
+31 1 f4 mcself    0.616    0.056
+31 1 f4 mctch    0.536    0.061
+31 1 f4 mcpar    0.700    0.060
+31 1 f4 mcpeer    0.440    0.072
+31 1 f5 scself    0.158    0.053
+31 1 f5 acself    0.383    0.033
+31 1 f5 ecself    0.171    0.042
+31 1 f5 mcself    0.304    0.054
+31 1 f6 sctch    0.152    0.049
+31 1 f6 actch    0.571    0.054
+31 1 f6 ectch    0.425    0.058
+31 1 f6 mctch    0.333    0.059
+31 1 f7 scpar    0.161    0.075
+31 1 f7 acpar    0.380    0.079
+31 1 f7 ecpar    0.153    0.063
+31 1 f7 mcpar    0.315    0.079
+31 1 f8 scpeer    0.392    0.080
+31 1 f8 acpeer    0.854    0.067
+31 1 f8 ecpeer    0.570    0.073
+31 1 f8 mcpeer    0.624    0.068
+32 1 f1 f5    0.000    0.000
+32 1 f1 f6    0.000    0.000
+32 1 f1 f7    0.000    0.000
+32 1 f1 f8    0.000    0.000
+32 1 f2 f5    0.000    0.000
+32 1 f2 f6    0.000    0.000
+32 1 f2 f7    0.000    0.000
+32 1 f2 f8    0.000    0.000
+32 1 f2 f1    0.367    0.090
+32 1 f3 f5    0.000    0.000
+32 1 f3 f6    0.000    0.000
+32 1 f3 f7    0.000    0.000
+32 1 f3 f8    0.000    0.000
+32 1 f3 f1    0.225    0.096
+32 1 f3 f2    0.861    0.040
+32 1 f4 f5    0.000    0.000
+32 1 f4 f6    0.000    0.000
+32 1 f4 f7    0.000    0.000
+32 1 f4 f8    0.000    0.000
+32 1 f4 f1    0.307    0.091
+32 1 f4 f2    0.801    0.040
+32 1 f4 f3    0.577    0.072
+32 1 f5 f6    0.000    0.000
+32 1 f5 f7    0.000    0.000
+32 1 f5 f8    0.000    0.000
+32 1 f6 f7    0.000    0.000
+32 1 f6 f8    0.000    0.000
+32 1 f7 f8    0.000    0.000
+34 1 scself    0.196    0.045
+34 1 sctch    0.343    0.039
+34 1 scpar    0.331    0.054
+34 1 scpeer    0.904    0.102
+34 1 acself  999.000  999.000
+34 1 actch    0.003    0.045
+34 1 acpar    0.092    0.050
+34 1 acpeer    0.087    0.070
+34 1 ecself    0.152    0.020
+34 1 ectch    0.205    0.036
+34 1 ecpar    0.200    0.033
+34 1 ecpeer    0.529    0.067
+34 1 mcself    0.207    0.030
+34 1 mctch    0.320    0.042
+34 1 mcpar    0.176    0.046
+34 1 mcpeer    0.435    0.059
+35 1 f1    1.000    0.000
+35 1 f2    1.000    0.000
+35 1 f3    1.000    0.000
+35 1 f4    1.000    0.000
+35 1 f5    1.000    0.000
+35 1 f6    1.000    0.000
+35 1 f7    1.000    0.000
+35 1 f8    1.000    0.000
