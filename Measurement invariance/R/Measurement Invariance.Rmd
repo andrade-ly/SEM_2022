@@ -103,7 +103,7 @@ summary(invar1fit, # Tell R which model to output
 We'll now test the measurement model for invariance. The key parameters of interest are factor loadings & the commonly specified residual covariances. 
 
 ```{r}
-invar2 <-   invar2 <-'F1 =~ 1*item1 + item2 + item3 + item6 + item8 + item13 + item14 + item16 + item20 + item12
+invar2 <- 'F1 =~ 1*item1 + item2 + item3 + item6 + item8 + item13 + item14 + item16 + item20 + item12
             F2 =~ 1*item5 + item10 + item11 + item15 + item22
             F3 =~ 1*item4 + item7 + item9 + item12 + item17 + item18 + item19 + item21
             
