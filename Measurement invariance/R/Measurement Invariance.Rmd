@@ -1,6 +1,6 @@
 ---
 title: "Testing for Measurement Invariance"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -11,9 +11,8 @@ options(scipen=999)
 ```{r Libraries}
 library(lavaan)
 library(readr)
+library(semTools)
 ```
-
-### Note: If you're using the PDF version, note that the modification indices are omitted from the output for brevity, but can be found in the .RMD file.
 
 We first load the datasets for this analysis. We'll merge them and create a column to indicate from where the data came (i.e., Elem or Sec). To do that, we need to first create a column called group in each data set and assign values to all rows so that every row in the elem data set gets a value of Elem in the "group" column, and all rows in the sec data set get a value of Sec for the "group" column.
 
@@ -159,12 +158,11 @@ It's a little less obvious to see the MIs here compared to the usual 'r modindic
 
 X2 is the chi-square value by which fit would improve if the parameter was not set to equality.
 
-```{r, include = FALSE}
+```{r}
 
-lavTestScore(invar2fit,
+lavaan::lavTestScore(invar2fit,
              univariate = TRUE,
-             epc = TRUE,
-             warn = FALSE)
+             epc = TRUE)
 
 ```
 
@@ -230,9 +228,9 @@ You'll see that now the output doesn't have the number between parentheses indic
 
 The modification indices below still accuse one parameter that would be a good candidate for freeing the equality constraint: .p14., which refers to the F2 by item15 loading.
 
-```{r, include = FALSE}
+```{r}
 
-lavTestScore(invar3fit,
+lavaan::lavTestScore(invar3fit,
              univariate = TRUE,
              epc = TRUE,
              warn = FALSE)
@@ -355,9 +353,9 @@ summary(invar5fit, # Tell R which model to output
 
 Next we check whether any residual variances should not have been constrained equal across groups. From the last frame of the output below, we know that fixed covariances are parameters p33 through p54. On the third panel, you can see that none of these parameters emerge as candidates for improving chi-square.
 
-```{r, include = FALSE}
+```{r}
 
-lavTestScore(invar5fit,
+lavaan::lavTestScore(invar5fit,
              univariate = TRUE,
              epc = TRUE,
              warn = FALSE)
@@ -404,9 +402,9 @@ summary(invar6fit, # Tell R which model to output
 
 We know that it worked because we see the parentheses and parameter number next to the new parameters constrained to equality (variances and covariances of latent variables/factors).
 
-```{r, include = FALSE}
+```{r}
 
-lavTestScore(invar6fit,
+lavaan::lavTestScore(invar6fit,
              univariate = TRUE,
              epc = TRUE,
              warn = FALSE)
