@@ -1,0 +1,279 @@
+---
+title: "Bifactor Models"
+output:
+  word_document: default
+  html_document:
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(BifactorIndicesCalculator)
+library(lavaan)
+library(tidyverse)
+library(dplyr)
+library(psych)
+library(semTools)
+```
+
+```{r, include=FALSE}
+habit <- read.csv("habit development.csv", header = FALSE)
+```
+
+```{r, include=FALSE}
+colnames(habit) <- c("newhabit01",
+                     "newhabit02",
+                     "newhabit03",
+                     "newhabit04",
+                     "newhabit05",
+                     "newhabit06",
+                     "newhabit07",
+                     "newhabit08",
+                     "newhabit09"
+                     ) 
+```
+
+```{r, include=FALSE}
+habit <- data.frame(lapply(habit, function(x) as.numeric(as.character(x))))
+```
+
+The purpose of this exercise was to test the factor structure of a measure of habit development created for a study on behavior changes during the COVID-19 pandemic. The measure had 9 items and the response options were on a scale of 1-5.
+
+Response scale: *1, not at all true of me*, to *5, very true of me*
+
+Since the outbreak,
+
++ newhabit01 =	I have established a work or schoolwork routine
++ newhabit02 =	I have created a new schedule and have kept it somewhat consistently
++ newhabit03 =	I have restarted doing my usual tasks without realizing I'm doing them 
++ newhabit04 =	I have established new regular routines (e.g., morning, bedtime routines)
++ newhabit05 =	I have found ways to accomplish the same activities I used to get done before the outbreak
++ newhabit06 =	I have found ways to include new tasks or obligations in my schedule 
++ newhabit07 =	*I have created or assigned* a specific *space* to complete my work and school activities 
++ newhabit08 =	*I have created or assigned* a specific *place* to exercise or engage in my usual physical activities
++ newhabit09 =	*I have assigned* new *times* to complete my activities (e.g., work, study) 
+
+# One-Factor CFA
+
+We first fit a one-factor CFA to examine whether this was a one-factor model with no correlated residual covariances. From taking a peek at the scale items, you can imagine that it is unlikely that residuals are uncorrelated, as many items share the same stem (e.g., I have created...) 
+
+We first specified the model so that all indicators were freely estimated. This means we had to fix the variance of the factor to 1 for identification; 
+
+```{r}
+modelcfa <- 'f1 =~ NA*newhabit01 + newhabit02 + newhabit03 + newhabit04 + newhabit05 +
+                   newhabit06 + newhabit07 + newhabit08 + newhabit09
+
+                  f1~~1*f1'
+```
+
+Then we fit the model with MLR as the estimator and FIML to account for missing data;
+
+```{r}
+fitcfa <- cfa(modelcfa,
+              data = habit,
+              missing = "fiml",
+              estimator = "mlr")
+```
+
+- The lavaan warning is telling that two cases had no data on any of the variables. These two were excluded from the analysis.
+
+And requested the model summary with standardized estimates, fit indices, and r-square.
+
+```{r}
+summary(fitcfa,
+        standardized = TRUE,
+        fit.measures = TRUE,
+        rsquare = TRUE)
+```
+
+We can also request the residual covariance matrix to see the residual covariances.
+
+```{r}
+lavInspect(fitcfa, what = "resid") # Look at the residual covariances (estimated) 
+```
+
+Fit isn't good and you can see from the residual covariance matrix that items that share a question stem (or the same wording) are more strongly covarying (e.g., newhabit8 and newhabit9).  
+
+```{r}
+modindices(fitcfa, sort = TRUE) # The sort argument allows us to sort the indices from largest to smallest
+```
+
+If we look at the modification indices, these covariances are indeed associated with the highest MIs, which indicates that freeing these residual covariances would improve model fit.
+
+We can also request the omega coefficient. This function called reliability is from the semTools package. It provides several measures of reliability, including alpha, and three types of omega. The first and second omega estimates are calculated so that the denominator equals the model-implied variance of the total scores. The third omega is calculated so that the denominator equals the observed, sample variance of scores. 
+
+To the extent that the model is a good fitting one, these estimates of omega should be very similar (because the model-implied and observed matrices should be similar).
+
+Omega is interpreted as the proportion of total-score variance that is due to a single factor.
+
+Omega is high and equals .88.
+
+```{r}
+reliability(fitcfa) # Omega
+```
+
+# Two-Factor EFA
+
+To explore whether variables with similar stems cluster together, we can run a two-factor EFA.  
+
+We specify the CFA model as we did previously in the class:
+
+```{r}
+# these are exploratory blocks (you can give them any name), you'll need to specify them
+efa_model <- 'efa("block1")*F1 =~ newhabit01 + newhabit02 + newhabit03 + newhabit04 + newhabit05 +
+                   newhabit06 + newhabit07 + newhabit08 + newhabit09
+              efa("block1")*F2 =~ newhabit01 + newhabit02 + newhabit03 + newhabit04 + newhabit05 +
+                   newhabit06 + newhabit07 + newhabit08 + newhabit09'
+```
+
+We fit it.
+
+```{r}
+# Estimate the Model
+efa_f1 <- 
+  sem(model = efa_model,
+      data = habit,
+      rotation = "oblimin",
+      estimator = "MLR"
+  )
+```
+
+And request the output.
+
+```{r}
+summary(efa_f1, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
+The pattern of loadings is consistent with question wording: items 7-9 are loading on one factor and items 1-6 on another.
+
+If we check the items again, it appears that items 1-6 are assessing structuring one's schedules or routines, and items 7-9 are assessing whether someone has assigned new times and spaces for their activities. Both of these (routines, context stability) are features of habits.
+
+# Two-Correlated Factors CFA
+
+```{r}
+twofactor <- 'f1 =~ NA*newhabit01 + newhabit02 + newhabit03 + newhabit04 + newhabit05 +
+                    newhabit06 
+              f2 =~ NA*newhabit07 + newhabit08 + newhabit09
+                    
+                    f1~~1*f1
+                    f2~~1*f2
+'
+```
+
+```{r}
+twofactorfit <- cfa(twofactor,
+               data = habit,
+               missing = "fiml",
+               estimator = "mlr")
+```
+
+```{r}
+summary(twofactorfit,
+        standardized = TRUE,
+        fit.measures = TRUE,
+        rsquare = TRUE)
+```
+
+```{r}
+reliability(twofactorfit)
+```
+
+When we run a CFA with these two factors, you'll notice that fit improves compared to the one-factor model, as we accounted for the similarities between items. But you'll also notice that the correlation between the two factors is very high (*r* = .78), which suggests that they have a lot of overlap. 
+
+Omega has decreased slightly, but remains high at .86. 
+
+Given the improvement in fit when we split the measure into two factors, but the extensive overlap between factors, we estimated a bifactor model.
+
+# Bifactor Model
+
+The goal here is to examine whether a two-factor structure explains any variability in scores that hasn't been accounted for by the general (habit development) factor.
+
+We have to specify three factors: A general factor (g) and and our two specific factors (f1 and f2)
+
+```{r}
+
+bifactormodel <- 'g =~ newhabit01 + newhabit02 + newhabit03 + newhabit04 + newhabit05 + newhabit06 +
+              newhabit07 + newhabit08 + newhabit09 
+              f1 =~ newhabit01 + newhabit02 + newhabit03 + newhabit04 + newhabit05 + newhabit06
+              f2 =~ newhabit07 + newhabit08 + newhabit09'
+               
+```               
+
+When fitting the model, all latent variables should be uncorrelated (i.e., orthogonal). To get unstandardized loadings for all items, we can tell lavaan to standardize all factor variances with the code in the cfa fitting function ```cfa(..., std.lv = T)``` This will automatically free the first indicators of all latent variables.
+
+```{r}
+bifactorfit <- cfa(bifactormodel,
+               data = habit,
+               missing = "fiml",
+               estimator = "mlr",
+               orthogonal=T, # Making all latent variables uncorrelated
+               std.lv=T # Standardized factor variances, freely-estimated loadings
+               )
+```
+
+```{r}
+summary(bifactorfit,
+        standardized = TRUE,
+        fit.measures = TRUE,
+        rsquare = TRUE)
+```
+
+```{r}
+standardizedSolution(bifactorfit, ci = TRUE) # Get CI's if needed
+```
+
+Notice that when we fit the bifactor model, all loadings on the general factor fall between .53-.82 and are significantly different from zero, which suggests a general common factor. Moving on to the group factors, the first group factor (items 1-6) is not significant when we account for the general factor.
+
+We can see the omega hierarchical using the reliability function of the semTools package.
+
+```{r}
+
+reliability(bifactorfit) # Omega hierarchical is the second and third omegas. The first is based on the model implied covariance matrix, the second on the observed matrix
+```
+
+You can also get omega hierarchical for each item using this the Omega_H function of the BifactorIndicesCalculator package:
+
+```{r}
+lambda <- inspect(bifactorfit,what="std")$lambda 
+theta <- inspect(bifactorfit,what="std")$theta
+Omega_H(lambda, theta)
+```
+
+When it comes to omega hierarchical, values above .75  for the general factor and below .50 for the specific factors suggest a dominant general factor and little content attributable to specific factors. That is because omega hierarchical indexes how much variance in the composite of items is attributable to the each factor (Reise, Bonifay, & Haviland, 2013). 
+
+The same BifactorIndicesCalculator package will give you  ECVs:
+
+ECV_SG is the proportion of all common variance explained by that factor. For the general factor, this is simply "ECV." For specific factors, the ECV_S computes the strength of a specific factor relative to all explained variance of all items, even those not loading on the specific factor of interest 
+
+(from Dueber, D. M. (2017). Bifactor Indices Calculator: A Microsoft Excel-based tool to calculate various indices relevant to bifactor CFA models. https://dx.doi.org/10.13023/edp.tool.01 [Available at http://sites.education.uky.edu/apslab/resources/]).
+
+You can also get ECV's from Dueber's calculator.
+
+```{r}
+ECV_SG(lambda) 
+```
+
+ECV_SS is the proportion of all common variance explained by that factor. For the general factor, this is simply "ECV." For specific factors, this ECV_S computes the strength of a specific factor relative to all explained variance only of the items loading on that specific factor
+
+Because the factors in the bifactor model are orthogonal, the ECV values all sum to 1.0. Values of .70 or higher for the general factor suggest a unidimensional structure (Rodriguez et al., 2016). 
+
+```{r}
+ECV_SS(lambda) 
+```
+
+The omegas, ECV and loadings clearly point to a dominant general factor. 
+
+The fact that the second factor, though small, doesn't go away when the general factor is modeled is a strong argument against using alpha to index internal consistency.
+
+## References
+Dueber, D. M. (2017). Bifactor Indices Calculator: A Microsoft Excel-based tool to calculate various indices relevant to bifactor CFA models. https://dx.doi.org/10.13023/edp.tool.01 [Available at http://sites.education.uky.edu/apslab/resources/]
+
+Reise, S. P., Mansolf, M., & Haviland, M. G. (in press). Bifactor measurement models. In R. H. Hoyle (Ed.), Handbook of structural equation modeling (2nd ed). New York: Guilford Press.
+
+Rodriguez, A., Reise, S. P., & Haviland, M. G. (2016). Evaluating bifactor models: Calculating and interpreting statistical indices. Psychological Methods, 21, 137-150. https://doi.org/10.1037/met0000045

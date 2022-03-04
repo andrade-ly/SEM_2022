@@ -1,0 +1,20 @@
+Title: ESEM model of habit development measure;
+
+Data: 
+FILE = habit development.csv;
+
+Variable: 
+NAMES = x1-x9;
+USEVARIABLES = x1-x9;
+MISSING = .;
+
+Analysis: 
+ESTIMATOR = MLR;
+ROTATION = GEOMIN (.5);
+
+
+Model:
+f1 f2 by x1-x9 (*1);
+
+Output: 
+sampstat stdyx modindices;

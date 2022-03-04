@@ -1,0 +1,30 @@
+Title: Bifactor model of habit development measure;
+!bifactor CFA model with 2 factors
+
+Data: 
+FILE = habit development.csv;
+
+Variable: 
+NAMES = x1-x9;
+USEVARIABLES = x1-x9;
+MISSING = .;
+
+Analysis: 
+ESTIMATOR = MLR;
+
+Model:
+habitgen by x1-x9;
+!all items loading on global factor habitgen
+f1 by x1 x2 x3 x4 x5 x6;
+!items 1-6 loading on factor 1
+f2 by x7 x8 x9;
+!items 7-9 loading on factor 2
+
+!all factors are specified as orthogonal
+!corrs btwn factors constrained to be zero
+habitgen with f1@0;
+habitgen with f2@0;
+f1 with f2@0;
+
+Output: 
+sampstat stdyx modindices;

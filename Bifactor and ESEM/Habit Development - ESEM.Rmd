@@ -1,0 +1,101 @@
+---
+title: "ESEM with lavaan"
+output: 
+  html_document:
+    css: style.css
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(BifactorIndicesCalculator)
+library(lavaan)
+library(tidyverse)
+library(dplyr)
+library(psych)
+library(semTools)
+library(GPArotation)
+```
+
+```{r, include=FALSE}
+habit <- read.csv("habit development.csv", header = FALSE)
+```
+
+```{r, include=FALSE}
+habit <- data.frame(lapply(habit, function(x) as.numeric(as.character(x))))
+```
+
+```{r, include=FALSE}
+colnames(habit) <- c("newhabit01",
+                     "newhabit02",
+                     "newhabit03",
+                     "newhabit04",
+                     "newhabit05",
+                     "newhabit06",
+                     "newhabit07",
+                     "newhabit08",
+                     "newhabit09"
+                     ) 
+```
+
+ESEM with lavaan is very simple. We first specify a model that looks just like the one for EFA in lavaan. 
+
+```{r}
+# these are exploratory blocks (you can give them any name), you'll need to specify them
+
+esem_model <- 'efa("block1")*F1 =~ newhabit01 + newhabit02 + newhabit03 + newhabit04 + newhabit05 +
+                   newhabit06 + newhabit07 + newhabit08 + newhabit09
+              efa("block1")*F2 =~ newhabit01 + newhabit02 + newhabit03 + newhabit04 + newhabit05 +
+                   newhabit06 + newhabit07 + newhabit08 + newhabit09'
+```
+
+The difference in the code is here. When fitting the model, we need to use ```rotation = geomin``` because ```geomin``` does not assume uncorrelated residuals. Like other oblique estimators, geomin allows latent factors to covary. 
+
+In addition to changing the estimator, we need to tell lavaan to change the epsilon value so that it overrides its default of 0.001. This is **really** important. Changing epsilon allows to change the size of the cross-loadings or of the factor correlations. The lower the epsilon, the greater the inter-factor correlations, the lower the cross-loadings, and the less accurate the associations between the constructs (Morin et al., in press). To optimize the estimate of the inter-factor correlations, Morin et al. recommend epsilon = .5.
+
+To change epsilon, we need to change the features of the rotation method using ```rotation.args = list(geomin.epsilon = 0.50)```. 
+
+To find lavaan defaults and how to change defaults: https://github.com/yrosseel/lavaan/blob/master/R/lav_options.R
+
+We have missing data so we're telling lavaan to use FIML to estimate missing values and we're using MLR as our estimator.
+
+```{r, warning = FALSE}
+esemfit <- cfa(model = esem_model,
+                  data = habit,
+                  rotation = "geomin",
+                  rotation.args = list(geomin.epsilon = 0.50),
+                  estimator = "MLR",
+                  missing = "FIML")
+```
+
+Notice that the correlation between the two latent variables is much lower in the ESEM model (*r* = .55) than in the EFA model (*r* = .71), and in the CFA model (*r* = .78) which makes sense given our use of geomin and specification of the value of epsilon. In the context of ESEM, it also makes sense that correlations would be lower in the ESEM model, as not allowing cross-loadings leads to inflation of the correlation between latent factors.
+
+Cross-loadings are fairly small in the ESEM solution. They range from .01-.14 for the first factor (and are all non-significant), and .11-36 for the second factor (all but one are significant).
+
+Model fit is good, but it is lower than that of the Bifactor Model and CFA when we consider the TLI and RMSEA (which tax low parsimony).
+
+```{r Create Simple Table, echo = FALSE}
+
+CFI = c(.96, .98, .96)
+TLI = c(.94, .97, .93)
+RMSEA = c(.06, .05, .07)
+SRMR = c(.04, .02, .03)
+Model = c("CFA", "Bifactor", "ESEM")
+df <- data.frame(Model, CFI, TLI, RMSEA, SRMR)
+
+knitr::kable(df) %>%
+  kableExtra::kable_styling(full_width = F)
+```
+
+The factors are fairly well-defined in the ESEM solution: the loadings on f1 range from .38-.77 (*M* = .57), and on f2 range from .63-.73 (*M* = .69).
+
+```{r}
+lavaan::summary(esemfit, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
