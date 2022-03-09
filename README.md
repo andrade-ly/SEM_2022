@@ -3,6 +3,7 @@ You can find the R and Mplus codes for the course PSY 768: Applied Structural Eq
 Data files will be available on the Sakai course page.
 
 Authors: 
+
 R scripts created and annotated by Fernanda C. Andrade, M.A.
 
 Mplus scripts created and annotated by Erin K. Davisson, Ph.D.
