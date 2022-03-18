@@ -95,7 +95,7 @@ modelcfa <- '
             F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
             F11 =~ dp1 + dp2 #depersonalization
             F12 =~ pa1 + pa2 + pa3 #personal accomplishment
-            '
+'
 ```
 
 Then we fit the model with MLR as the estimator and FIML to account for missing data.
@@ -612,25 +612,26 @@ modindices(fullsem7_fit,
 ```{r}
 fullsem8 <- '
             # Measurement Model
-            F1 =~ rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
-            F2 =~ rolec1 + rolec2 #role conflict
-            F3 =~ work1 + work2 #work overload
-            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
-            F5 =~ dec1 + dec2 #decision-making
-            F6 =~ ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
-            F7 =~ psup1 + psup2 #peer support
-            F8 =~ self1 + self2 + self3 #self-esteem
-            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
-            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
-            F11 =~ dp1 + dp2 #depersonalization
-            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            F1 =~ NA*rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
+            F2 =~ NA*rolec1 + rolec2 #role conflict
+            F3 =~ NA*work1 + work2 #work overload
+            F4 =~ NA*cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ NA*dec1 + dec2 #decision-making
+            F6 =~ NA*ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
+            F7 =~ NA*psup1 + psup2 #peer support
+            F8 =~ NA*self1 + self2 + self3 #self-esteem
+            F9 =~ NA*elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ NA*ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ NA*dp1 + dp2 #depersonalization
+            F12 =~ NA*pa1 + pa2 + pa3 #personal accomplishment
             
             # Structural Model
             F8 ~ F5 + F6 + 0*F7 # Deleting path from F7 to F8
-            F9 ~ F5 + F2 + F8 # Adding the path from F2 to F9, and F8 to F9
-            F10 ~ F2 + F3 + F4 + F8 #Adding the path from F8 to F10
-            F11 ~ F2 + F10 + F4 #Adding here the path from F4 to F11
-            F12 ~ 0*F1 + F8 + F9 + F10 + F11 + F5 + F2 #Adding here the path from F5 to F12, and F2 to F12, deleting path from F1 to F12
+            F9 ~ F5 + F2 + F8 # Adding path from F2 to F9, and F8 to F9
+            F10 ~ F2 + F3 + F4 + F8 #Adding path from F8 to F10
+            F11 ~ F2 + F10 + F4 #Adding here path from F4 to F11
+            F12 ~ F8 + 0*F1 + F9 + F10 + F11 + F5 + F2 
+            #Adding path from F5 to F12, and F2 to F12, deleting path from F1 to F12
             '
 ```
 
@@ -642,7 +643,8 @@ fullsem8_fit <-
   sem(model = fullsem8,
       data = teachers,
       estimator = "MLM",
-      meanstructure = TRUE
+      meanstructure = TRUE,
+     std.lv = TRUE
   )
 ```
 
