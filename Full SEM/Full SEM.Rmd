@@ -1,0 +1,674 @@
+---
+title: "Full SEM"
+output:
+  html_document:
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This script is to perform the full SEM models from Chapter 6 of Byrne (2012), which examine burnout in secondary teachers
+
+# Load Packages
+
+```{r}
+library(lavaan)
+library(tidyverse)
+library(dplyr)
+library(psych)
+library(semTools)
+```
+
+# Load Data
+
+You can change how you read the file if you are using the data in csv format, for example. There are different ways to do this but read.csv, which is part of base R, is probably the easiest. If using read.csv, remember to use ```header = FALSE``` so that R doesn't read the first row as variable names.
+
+```{r, include=FALSE}
+teachers <- read.table("allsecondary.dat")
+```
+
+The dat file doesn't have variable names, so we need to add them.
+
+```{r, include=FALSE}
+colnames(teachers) <- c("rolea1", 
+                     "rolea2", 
+                     "rolec1", 
+                     "rolec2", 
+                     "work1", 
+                     "work2", 
+                     "cclim1", 
+                     "cclim2", 
+                     "cclim3",
+                     "cclim4", 
+                     "dec1", 
+                     "dec2", 
+                     "ssup1", 
+                     "ssup2", 
+                     "psup1", 
+                     "psup2", 
+                     "self1", 
+                     "self2", 
+                     "self3", 
+                     "elc1",
+                     "elc2", 
+                     "elc3", 
+                     "elc4", 
+                     "elc5", 
+                     "ee1", 
+                     "ee2", 
+                     "ee3", 
+                     "dp1", 
+                     "dp2", 
+                     "pa1", 
+                     "pa2", 
+                     "pa3"
+                     ) 
+```
+
+The dataset uses "." for missing values. One easy way to turn them into NAs is to convert the full dataset in to numeric values, which will replace text with NAs.
+
+```{r}
+teachers <- data.frame(lapply(teachers, function(x) as.numeric(as.character(x))))
+```
+
+# CFA
+
+Following Chapter 6 of Byrne (2012), we need to specify the measurement model before testing the structural model. This is to test the validity of the measurement model before we proceed to test relationships between the variables in the model.
+
+The model has 12 latent variables defined below.
+
+## Specify the Model
+
+```{r}
+modelcfa <- '
+            F1 =~ rolea1 + rolea2 #role ambiguity
+            F2 =~ rolec1 + rolec2 #role conflict
+            F3 =~ work1 + work2 #work overload
+            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ dec1 + dec2 #decision-making
+            F6 =~ ssup1 + ssup2 #superior support
+            F7 =~ psup1 + psup2 #peer support
+            F8 =~ self1 + self2 + self3 #self-esteem
+            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ dp1 + dp2 #depersonalization
+            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            '
+```
+
+Then we fit the model with MLR as the estimator and FIML to account for missing data.
+
+To account for non-normality in this data, we'll use MLM estimator.
+
+## Fit the Model
+
+```{r}
+fitcfa <- cfa(modelcfa,
+              data = teachers,
+              estimator = "mlm",
+              meanstructure = TRUE)
+```
+
+## Request the Output
+
+We'll request the model summary with standardized estimates, fit indices, r-square and ```meanstructure = TRUE```. Requesting the mean structure will give us the intercepts of the variables in the model.
+
+The fit indices look good in this model.
+
+```{r}
+summary(fitcfa,
+        standardized = TRUE,
+        fit.measures = TRUE,
+        rsquare = TRUE)
+```
+
+## Request Modification Indices
+
+Despite good fit, modification indices show that the indicator of the variable DEC2 cross-loads significantly on F1 and F6. Because these are all subscales of the same measure, it isn't surprising that we had cross-loadings. If we estimate a second and third CFAs with these cross-loadings freely-estimated, we'd see that it would substantially improve model fit. We won't do this in a separate step, but you will see that we make this adjustment in the structural model.
+
+```{r}
+modindices(fitcfa, 
+           sort = TRUE) # The sort argument allows us to sort the indices from largest to smallest
+```
+
+## Request Sample Statistics
+
+```{r}
+lavInspect(fitcfa, 
+           what = "sampstat")
+```
+
+## Request List of Estimated Parameters (equivalent to top-half of Mplus' TECH1)
+
+```{r}
+lavInspect(fitcfa) 
+```
+
+# Structural Model 1
+
+We'll now test the full SEM model (i.e., the structural model) of burnout in secondary teachers. To do that, we add the regression paths using ```~```. 
+
+In this analysis, we'll look for the best fitting and most parsimonious model. 
+
+## Specify the Model
+
+```{r}
+fullsem1 <- '
+            # Measurement Model
+            F1 =~ rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
+            F2 =~ rolec1 + rolec2 #role conflict
+            F3 =~ work1 + work2 #work overload
+            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ dec1 + dec2 #decision-making
+            F6 =~ ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
+            F7 =~ psup1 + psup2 #peer support
+            F8 =~ self1 + self2 + self3 #self-esteem
+            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ dp1 + dp2 #depersonalization
+            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            
+            # Structural Model
+            F8 ~ F5 + F6 + F7
+            F9 ~ F5
+            F10 ~ F2 + F3 + F4
+            F11 ~ F2 + F10
+            F12 ~ F1 + F8 + F9 + F10 + F11
+            '
+```
+
+## Fit the Model
+
+Notice that we get a warning that there is a negative latent variable variance. Lavaan doesn't tell us which variable may be the problem, so we need to do some detective work by scrolling down to the variances in the output. This will show us the value of the variances and which is negative.
+
+```{r}
+# Estimate the Model
+fullsem1_fit <- 
+  sem(model = fullsem1,
+      data = teachers,
+      estimator = "MLM",
+      meanstructure = TRUE
+  )
+```
+## Request the Output
+
+Remember that we used MLM as our estimator. When using MLM, the chi-square difference tests of nested models are inappropriate because values are not actually distributed as chi-square. The scaling correction factor indicates that if the MLM chi-square were multiplied by the scaling factor, it would approximate the uncorrected ML chi-square value. We can thus use the chi-square and scaling correction factor to compute the Satorra and Bentler (2001) corrected chi-square difference test. 
+
+Nested models are models with fewer constraints than another model with the same variables and same cases. Constraints are fixed parameters. This means that a nested model has more free parameters (i.e., fewer constraints/restrictions) than another model. We call this nested model the reduced model (because it has fewer constraints and thus fewer dfs) and the other model the full model. 
+
+We use nested models and difference tests all the time when using hierarchical multiple regressions. In hierarchical regressions, each additional model is nested in the previous, which is more constrained than the next. 
+
+Imagine a hierarchical multiple model with ```Y ~ X1 + X2 + X3``` and we enter the variables sequentially like: 
+
+```Y ~ X1 + X2```
+```Y ~ X1 + X2 + X3```
+
+The first model is more constrained because we are essentially treating the regression of X3 on Y to take the value of 0. That is, we could rewrite the equations above as:
+
+```Y ~ X1 + X2 + 0*X3```
+```Y ~ X1 + X2 + X3```
+
+When we allow ```Y ~ X3``` to be estimated, we have one additional free parameter and one fewer df. This means that the second model (the one with more freely estimated parameters/fewer constraints/fewer dfs) is the reduced model.
+
+## Request the Output
+
+First, we can see that model fit is good. But we'll check the MIs later to see if there are any paths that should be freed.
+
+Next, if we scroll to the variances in the output, we can see that the variance of F10 is negative.
+  
+```{r}
+summary(fullsem1_fit, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
+## Request MIs
+
+We'll request only the MIs for the regression paths, as that's the part of the model we're testing now. Additionally, we're only interested in paths that make theoretical sense. Here, F4 is an IV and making it a DV may not make sense.
+
+For example, F11 (depersonalization) is an IV and F4 (scores on classroom climate) is a DV. As you can see from the output, allowing F11 to be regressed on F4 (i.e., F4 --> F11) would improve fit substantially. But allowing F4 to be regressed on F11 (i.e., F11 --> F4) doesn't make theoretical sense. In the next model, we'll free the path from F4 to F11. The reason we ignore all other MIs is, besides theoretical reasons, the fact that we only change 1 path at a time, recheck the MIs, and continue making changes 1 at a time, if sensible.
+
+```{r}
+modindices(fullsem1_fit, 
+           sort = TRUE,# The sort argument allows us to sort the indices from largest to smallest
+           op = "~") # The op argument lets us ask for specific MIs
+```
+
+# Structural Model 2
+
+```{r}
+fullsem2 <- '
+            # Measurement Model
+            F1 =~ rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
+            F2 =~ rolec1 + rolec2 #role conflict
+            F3 =~ work1 + work2 #work overload
+            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ dec1 + dec2 #decision-making
+            F6 =~ ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
+            F7 =~ psup1 + psup2 #peer support
+            F8 =~ self1 + self2 + self3 #self-esteem
+            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ dp1 + dp2 #depersonalization
+            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            
+            # Structural Model
+            F8 ~ F5 + F6 + F7
+            F9 ~ F5
+            F10 ~ F2 + F3 + F4
+            F11 ~ F2 + F10 + F4 #Adding here the path from F4 to F11
+            F12 ~ F1 + F8 + F9 + F10 + F11
+            '
+```
+
+## Fit the Model
+
+We still get the warning about the negative variance. 
+
+```{r}
+# Estimate the Model
+fullsem2_fit <- 
+  sem(model = fullsem2,
+      data = teachers,
+      estimator = "MLM",
+      meanstructure = TRUE
+  )
+```
+
+## Request the Output
+
+Notice in the output, that we also have several non-significant paths from IVs to DVs. To create a more parsimonious model, we can delete them from the model, but we'll leave them for now.
+  
+```{r}
+summary(fullsem2_fit, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
+## Request MIs
+
+We'll look again at the MIs only for the regression paths. The largest one is from F8 to F12. We'll leave that one alone because, in this dataset and theory, it doesn't make sense to change it. The largest and meaningful MI (in this model, with this theory) is the regression path going from F5 to F12, or the regression of F12 on F5. This path suggests that when teachers have more opportunities to make decisions about their work environment, they have a stronger sense of personal accomplishment. We'll free this path in our next model.
+
+```{r}
+modindices(fullsem2_fit, 
+           sort = TRUE,# The sort argument allows us to sort the indices from largest to smallest
+           op = "~") # The op argument lets us ask for specific MIs
+```
+
+# Structural Model 3
+
+```{r}
+fullsem3 <- '
+            # Measurement Model
+            F1 =~ rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
+            F2 =~ rolec1 + rolec2 #role conflict
+            F3 =~ work1 + work2 #work overload
+            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ dec1 + dec2 #decision-making
+            F6 =~ ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
+            F7 =~ psup1 + psup2 #peer support
+            F8 =~ self1 + self2 + self3 #self-esteem
+            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ dp1 + dp2 #depersonalization
+            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            
+            # Structural Model
+            F8 ~ F5 + F6 + F7
+            F9 ~ F5
+            F10 ~ F2 + F3 + F4
+            F11 ~ F2 + F10 + F4 #Adding here the path from F4 to F11
+            F12 ~ F1 + F8 + F9 + F10 + F11 + F5 #Adding here the path from F5 to F12
+            '
+```
+
+## Fit the Model
+
+We still get the warning about the negative variance. 
+
+```{r}
+# Estimate the Model
+fullsem3_fit <- 
+  sem(model = fullsem3,
+      data = teachers,
+      estimator = "MLM",
+      meanstructure = TRUE
+  )
+```
+
+## Request the Output
+
+Check the output again. Remember we had some non-significant regression paths. Notice that two of them (F3 --> F10; F1 --> F12) is now significant and another (F2 --> F10) is trending in the right direction. This is why we don't eliminate non-significant paths until we're done checking if other paths should be freed, as freeing a path can change the relationships between other variables.
+  
+```{r}
+summary(fullsem3_fit, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
+## Request MIs
+
+We'll look again at the MIs for the regression paths. The largest and perhaps most meaningful MI (in this model, with this theory) is that of F9 ~ F2 (i.e., F2 --> F9), which suggests that role conflict would be associated with external locus of control. We'll free this path in the next model.
+
+```{r}
+modindices(fullsem3_fit, 
+           sort = TRUE,# The sort argument allows us to sort the indices from largest to smallest
+           op = "~") # The op argument lets us ask for specific MIs
+```
+
+# Structural Model 4
+
+```{r}
+fullsem4 <- '
+            # Measurement Model
+            F1 =~ rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
+            F2 =~ rolec1 + rolec2 #role conflict
+            F3 =~ work1 + work2 #work overload
+            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ dec1 + dec2 #decision-making
+            F6 =~ ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
+            F7 =~ psup1 + psup2 #peer support
+            F8 =~ self1 + self2 + self3 #self-esteem
+            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ dp1 + dp2 #depersonalization
+            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            
+            # Structural Model
+            F8 ~ F5 + F6 + F7
+            F9 ~ F5 + F2 # Adding the path from F2 to F9
+            F10 ~ F2 + F3 + F4
+            F11 ~ F2 + F10 + F4 #Adding here the path from F4 to F11
+            F12 ~ F1 + F8 + F9 + F10 + F11 + F5 #Adding here the path from F5 to F12
+            '
+```
+
+## Fit the Model
+
+We still get the warning about the negative variance. 
+
+```{r}
+# Estimate the Model
+fullsem4_fit <- 
+  sem(model = fullsem4,
+      data = teachers,
+      estimator = "MLM",
+      meanstructure = TRUE
+  )
+```
+
+## Request the Output
+
+Notice that the number of dfs is decreasing. Each model we're estimating is less restricted compared to the previous, as it has more freely estimated parameters (all those parameters we freely estimated based on the MIs). This means we have more unknowns in our model even though our knowns didn't change, leaving us with fewer dfs. Also notice that model fit is improving little by little, as would be expected from freeing the paths we freed (given what the MIs told us). 
+  
+```{r}
+summary(fullsem4_fit, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
+## Request MIs
+
+We'll look again at the MIs for the regression paths. The largest and perhaps most meaningful MI (in this model, with this theory) is that of F9 ~ F8, which suggests that lower self-esteem is associated with greater external locus of control. We'll free this path in our next model.
+
+```{r}
+modindices(fullsem4_fit, 
+           sort = TRUE,# The sort argument allows us to sort the indices from largest to smallest
+           op = "~") # The op argument lets us ask for specific MIs
+```
+
+# Structural Model 5
+
+```{r}
+fullsem5 <- '
+            # Measurement Model
+            F1 =~ rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
+            F2 =~ rolec1 + rolec2 #role conflict
+            F3 =~ work1 + work2 #work overload
+            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ dec1 + dec2 #decision-making
+            F6 =~ ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
+            F7 =~ psup1 + psup2 #peer support
+            F8 =~ self1 + self2 + self3 #self-esteem
+            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ dp1 + dp2 #depersonalization
+            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            
+            # Structural Model
+            F8 ~ F5 + F6 + F7
+            F9 ~ F5 + F2 + F8 # Adding the path from F2 to F9, and F8 to F9
+            F10 ~ F2 + F3 + F4
+            F11 ~ F2 + F10 + F4 #Adding here the path from F4 to F11
+            F12 ~ F1 + F8 + F9 + F10 + F11 + F5 #Adding here the path from F5 to F12
+            '
+```
+
+## Fit the Model
+
+We still get the warning about the negative variance. 
+
+```{r}
+# Estimate the Model
+fullsem5_fit <- 
+  sem(model = fullsem5,
+      data = teachers,
+      estimator = "MLM",
+      meanstructure = TRUE
+  )
+```
+
+## Request the Output
+
+Model fit continues improving. Some regression paths are also becoming significant while others are not.
+  
+```{r}
+summary(fullsem5_fit, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
+## Request MIs
+
+We'll look again at the MIs for the regression paths. The largest and perhaps most meaningful MI (in this model, with this theory) is that of F10 ~ F8, which suggests that high levels of self-esteem associated with low levels of emotional exhaustion. We'll free this in our next model. 
+
+```{r}
+modindices(fullsem5_fit, 
+           sort = TRUE,# The sort argument allows us to sort the indices from largest to smallest
+           op = "~") # The op argument lets us ask for specific MIs
+```
+
+# Structural Model 6
+
+```{r}
+fullsem6 <- '
+            # Measurement Model
+            F1 =~ rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
+            F2 =~ rolec1 + rolec2 #role conflict
+            F3 =~ work1 + work2 #work overload
+            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ dec1 + dec2 #decision-making
+            F6 =~ ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
+            F7 =~ psup1 + psup2 #peer support
+            F8 =~ self1 + self2 + self3 #self-esteem
+            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ dp1 + dp2 #depersonalization
+            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            
+            # Structural Model
+            F8 ~ F5 + F6 + F7
+            F9 ~ F5 + F2 + F8 # Adding the path from F2 to F9, and F8 to F9
+            F10 ~ F2 + F3 + F4 + F8 #Adding the path from F8 to F10
+            F11 ~ F2 + F10 + F4 #Adding here the path from F4 to F11
+            F12 ~ F1 + F8 + F9 + F10 + F11 + F5 #Adding here the path from F5 to F12
+            '
+```
+
+## Fit the Model
+
+We still get the warning about the negative variance. 
+
+```{r}
+# Estimate the Model
+fullsem6_fit <- 
+  sem(model = fullsem6,
+      data = teachers,
+      estimator = "MLM",
+      meanstructure = TRUE
+  )
+```
+
+## Request the Output
+
+Model fit continues improving. Some regression paths are also becoming significant while others are not.
+  
+```{r}
+summary(fullsem6_fit, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
+## Request MIs
+
+We'll look again at the MIs for the regression paths. The MIs are getting pretty small, and there are only a few to be made. The MI of F8 ~ F11 doesn't make sense because high self-esteem shouldn't cause depersonalization. But we'll make one more addition of F12 ~ F2 because it makes sense that high role conflict is associated with reduced personal accomplishment.
+
+```{r}
+modindices(fullsem6_fit, 
+           sort = TRUE,# The sort argument allows us to sort the indices from largest to smallest
+           op = "~") # The op argument lets us ask for specific MIs
+```
+
+# Structural Model 7
+
+```{r}
+fullsem7 <- '
+            # Measurement Model
+            F1 =~ rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
+            F2 =~ rolec1 + rolec2 #role conflict
+            F3 =~ work1 + work2 #work overload
+            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ dec1 + dec2 #decision-making
+            F6 =~ ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
+            F7 =~ psup1 + psup2 #peer support
+            F8 =~ self1 + self2 + self3 #self-esteem
+            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ dp1 + dp2 #depersonalization
+            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            
+            # Structural Model
+            F8 ~ F5 + F6 + F7
+            F9 ~ F5 + F2 + F8 # Adding the path from F2 to F9, and F8 to F9
+            F10 ~ F2 + F3 + F4 + F8 #Adding the path from F8 to F10
+            F11 ~ F2 + F10 + F4 #Adding here the path from F4 to F11
+            F12 ~ F1 + F8 + F9 + F10 + F11 + F5 + F2 #Adding here the path from F5 to F12, and F2 to F12
+            '
+```
+
+## Fit the Model
+
+We're no longer getting that negative variance warning.
+
+```{r}
+# Estimate the Model
+fullsem7_fit <- 
+  sem(model = fullsem7,
+      data = teachers,
+      estimator = "MLM",
+      meanstructure = TRUE
+  )
+```
+
+## Request the Output
+
+```{r}
+summary(fullsem7_fit, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
+## Request MIs
+
+At this point, there isn't anything in the MIs that indicates we should make more modifications that would be sensible for this model. We have two regression paths, however, that is non-significant (F8 ~ F7 and F12 ~ F1). We can delete them for parsimony.
+
+```{r}
+modindices(fullsem7_fit, 
+           sort = TRUE,# The sort argument allows us to sort the indices from largest to smallest
+           op = "~") # The op argument lets us ask for specific MIs
+```
+
+# Structural Model 8 (Final)
+
+```{r}
+fullsem8 <- '
+            # Measurement Model
+            F1 =~ rolea1 + rolea2 + dec2 #role ambiguity with DEC2 cross-loading
+            F2 =~ rolec1 + rolec2 #role conflict
+            F3 =~ work1 + work2 #work overload
+            F4 =~ cclim1 + cclim2 + cclim3 + cclim4 #classroom climate
+            F5 =~ dec1 + dec2 #decision-making
+            F6 =~ ssup1 + ssup2 + dec2 #superior support with DEC2 cross-loading
+            F7 =~ psup1 + psup2 #peer support
+            F8 =~ self1 + self2 + self3 #self-esteem
+            F9 =~ elc1 + elc2 + elc3 + elc4 + elc5 #external loc of control
+            F10 =~ ee1 + ee2 + ee3 #emotional exhaustion
+            F11 =~ dp1 + dp2 #depersonalization
+            F12 =~ pa1 + pa2 + pa3 #personal accomplishment
+            
+            # Structural Model
+            F8 ~ F5 + F6 + 0*F7 # Deleting path from F7 to F8
+            F9 ~ F5 + F2 + F8 # Adding the path from F2 to F9, and F8 to F9
+            F10 ~ F2 + F3 + F4 + F8 #Adding the path from F8 to F10
+            F11 ~ F2 + F10 + F4 #Adding here the path from F4 to F11
+            F12 ~ 0*F1 + F8 + F9 + F10 + F11 + F5 + F2 #Adding here the path from F5 to F12, and F2 to F12, deleting path from F1 to F12
+            '
+```
+
+## Fit the Model
+
+```{r}
+# Estimate the Model
+fullsem8_fit <- 
+  sem(model = fullsem8,
+      data = teachers,
+      estimator = "MLM",
+      meanstructure = TRUE
+  )
+```
+
+## Request the Output
+
+```{r}
+summary(fullsem8_fit, 
+        fit.measures = TRUE, 
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+
+# Model Comparisons
+
+In lavaan, you can do a scaled chi-square difference test by using the anova function. Note that this must be the anova function from lavaan and not from other packages like stats, as the function is comparing lavaan objects.
+
+```{r}
+
+lavaan::anova(
+  fullsem1_fit,
+  fullsem2_fit,
+  fullsem3_fit,
+  fullsem4_fit,
+  fullsem5_fit,
+  fullsem6_fit,
+  fullsem7_fit,
+  fullsem8_fit
+)
+```
