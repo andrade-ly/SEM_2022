@@ -1,0 +1,149 @@
+---
+title: "Mediation in lavaan"
+output:
+  html_document:
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Packages
+
+```{r}
+library(lavaan)
+library(dplyr)
+```
+
+# Load Data
+
+You can change how you read the file if you are using the data in csv format, for example. There are different ways to do this but read.csv, which is part of base R, is probably the easiest. If using read.csv, remember to use ```header = FALSE``` so that R doesn't read the first row as variable names.
+
+```{r, include=FALSE}
+thesis <- read.csv("Thesis.csv", header = TRUE)
+```
+
+The dataset uses "." for missing values. One easy way to turn them into NAs is to convert the full dataset in to numeric values, which will replace text with NAs.
+
+```{r}
+thesis <- data.frame(lapply(thesis, function(x) as.numeric(as.character(x))))
+```
+
+# Specify the Model
+
+To specify a mediation model in lavaan, we need to tell it which paths are a, b, and c. You could give them any name you wanted, but we'll go with the typical notation for mediation.
+
+First, we specified the measurement model with four latent variables and one covariance between ```att_anx ~~ att_avo```.
+
+We next specified the structural model. In this model, att_anx is X, rum is M, and forr is Y. This means that *c'* will be our direct effect from X (att_anx) on Y (forr); *a* will be the effect of X (att_anx) on M (rum); and *b* is the effect of M (rum) on Y (forr). To indicate the paths, we'll use an operator you're familiar with by now, which is ```*``` to indicate that we're doing something to a variable in the model.  
+
+Remember:
++ If we want to free a variable to be estimated when it's typically fixed (by default), we can use ```NA``` followed by ```*```, like ```f1 =~ NA*x1```.
++ If we want to fix a parameter to a given value, we can use ```1``` (or any value we want) followed by ```*```, like ```f1 ~~ 1*f1```.
++ If we want to set starting values, we can use ```start()``` (for any value we want) followed by ```*```, like ```x1 ~~ start(0.5)*x2```.
++ If we want to give a parameter a name or use it in other operations, we can use any alphanumeric character (must start with a letter) followed by ```*```. This alphanumeric value *must be different across parameters you're trying to label*, otherwise lavaan will understand it as an equality constraint between those parameters with the same alphanumeric label (next up).
++ If we want to fix parameters to equality, we can use any alphanumeric character (must start with a letter) followed by ```*``` in *both* parameters we want to be equal. Remember that if you are doing multiple groups, we can also use ```c(value 1, value 2, ...)*``` to specify the values we want each parameter to take in each group.
+
+In the Structural Model section below, you can see from the alphanumeric characters before the asterisk ```*``` that that we first specify the direct effect (c') ```forr ~ c*att_anx```, followed by the effect of X on M (a) ```rum ~ a*att_anx``` , and last by the effect of M on Y (b) ```forr ~ b*rum```.
+
+The syntax ```forr ~ c*att_anx``` and ```forr ~ b*rum``` could have been written as ```forr ~ b*rum + c*att_anx```.
+
+We then need to specify our indirect effect ```(a*b)``` and the total effect ```(a*b + c')```. To do that, we'll use the operator ```:=```. From the lavaan documentation, "this operator ‘defines’ new parameters which take on values that are an arbitrary function of the original model parameters." This is the same as what would happen if you defined variables under the Mplus command ```Model constraint: NEW();```.
+
+We first specify the indirect effect equation, which is labeled ab: ```ab := a*b```. Then the total effect equation,which is labeled total: ```total := c + (a*b)```. 
+
+```{r}
+med <- '
+        # Measurement Model
+        rum =~ rrq5 + rrq6 + rrq1 + rrq3 + rrq2 + rrq4r
+        forr =~ tfs10 + tfs2 + tfs9 + tfs1r + tfs5
+        att_avo =~ ecr24r + ecr34r + ecr5 + ecr2 + ecr30r
+        att_anx =~ ecr3 + ecr36 + ecr6 + ecr1 + ecr11
+        att_anx ~~ att_avo
+                    
+        # Structural Model
+        # Direct Effect
+        forr ~ c*att_anx # regress outcome IV
+                    
+        # Mediator
+        rum ~ a*att_anx # regress mediator on IV
+        forr ~ b*rum # regress outcome on mediator
+
+        # Indirect Effect
+        ab := a*b
+        
+        # Total Effect
+        total := c + (a*b)
+                    
+        # Other Effects
+        rum ~ 0*att_avo # specifying no relationship between rumination & attach. avoidance
+        '
+```
+
+## Fit the Model
+
+It's recommended to request bias-corrected bootstrap confidence intervals, so we'll use lavaan's own function under ```sem(se = "boot", boostrap = 1000)```. 
+
+```{r}
+# Estimate the Model
+med_fit <- 
+  sem(model = med,
+      data = thesis,
+      estimator = "ML",
+      meanstructure = TRUE,
+      se = "boot",
+      bootstrap = 1000)
+```
+
+We can then request the boostrapped estimates. ```boot.ci.type = "bca.simple"``` produces adjusted bootstrap intervals without correction for acceleration (only bias correction). This is the same type of CI that Mplus uses when we request ```cinterval (bcboostrap)``` in Mplus. Lavaan currently doesn't have the capacity to compute bias corrected and accelerated CIs. Other packages, like boot, can do that.
+
+```{r}
+parameterEstimates(med_fit, 
+                   boot.ci.type = "bca.simple",
+                   level = 0.95)
+# bca simple produces adjusted bootstrap intervals without correction for acceleration (only bias correction)
+```
+
+## Request the Output
+
+The cool (and perhaps confusing) thing about lavaan is that it lets you see your paths and parameters in many places in your output.
+
+Notice that where it says Regressions, lavaan gives you the labels that you created for each of the variables. You saw something similar when in the measurement invariance outputs. 
+
+From this portion of the output, you can see that the path from X (att_anx) to M (rum) is significant, but the path from M to Y and the path from X to Y are not.
+
+```
+Regressions:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  forr ~                                                                
+    att_anx    (c)   -0.058    0.038   -1.520    0.129   -0.148   -0.148
+  rum ~                                                                 
+    att_anx    (a)    0.256    0.070    3.631    0.000    0.279    0.279
+  forr ~                                                                
+    rum        (b)   -0.064    0.039   -1.624    0.104   -0.148   -0.148
+  rum ~                                                                 
+    att_avo           0.000                               0.000    0.000
+
+```
+
+At the very bottom of the output, you'll see a section called Defined Parameters. This is where the parameters that you created using the ```:=``` operator will appear: 
+
+```
+Defined Parameters:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    ab               -0.016    0.010   -1.551    0.121   -0.041   -0.041
+    total            -0.074    0.040   -1.872    0.061   -0.189   -0.189
+```
+
+The parameter called ab is our indirect effect of attachment anxiety on forgiveness through rumination, and you can see that it's not significant. This is to be expected, as the path as IV-->DV and M-->DV paths were also not significant. Finally, the parameter called total is our total effect.
+
+You can see these very same defined parameters in ```parameterEstimates()```.
+
+```{r}
+summary(med_fit, 
+        fit.measures = TRUE,
+        standardized = TRUE,
+        rsquare = TRUE)
+```
+

@@ -1,0 +1,842 @@
+Mplus VERSION 8.7
+MUTHEN & MUTHEN
+03/23/2022   1:32 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: Mediation Model 2;
+
+  DATA: file=thesis.dat;
+        format = 160F8;
+
+  variable:
+  NAMES = sex year race rstatus rlength rdist rcommit ls1-ls5
+  rs1-rs3 tfs1-tfs10 ecr1-ecr36 blength bhurt bupset bsever brum
+  temp1-temp7 semp1-semp8 rrq1-rrq12 fdegree trim1-trim18
+  dep1-dep20 tfs1r tfs3r tfs6r tfs7r tfs8r temp2r temp4r temp6r
+  dep4r dep8r dep12r dep16r rrq4r rrq9r ecr4r ecr7r ecr15r ecr17r
+  ecr18r ecr19r ecr21r ecr23r ecr24r ecr27r ecr30r ecr32r
+  ecr34r ecr35r;
+
+  USEVARIABLES = rrq2 rrq4r rrq5 rrq6 rrq1 rrq3
+  tfs10 tfs2 tfs9 tfs1r tfs5
+  ecr24r ecr34r ecr5 ecr2 ecr30r ecr3 ecr36 ecr6 ecr1 ecr11;
+
+  MISSING IS .;
+
+  Analysis:
+  estimator = ML;
+  bootstrap = 1000;
+  !bootstrap recommended
+
+  Model:
+  !specifying our model
+
+  !measurement model
+  rum by rrq5 rrq6 rrq1 rrq3 rrq2 rrq4r;
+
+  for by tfs10 tfs2 tfs9 tfs1r tfs5;
+  att_avo by ecr24r ecr34r ecr5 ecr2 ecr30r;
+  att_anx by ecr3 ecr36 ecr6 ecr1 ecr11;
+  att_anx with att_avo;
+
+  !IGNORE NEXT THREE LINES:
+  !emp by temp4r temp1 temp2r temp7;
+  !dep by dep6 dep3 dep14 dep18 dep1 dep19;
+  !emp with att_anx@0;
+
+  !structural model
+  !regress mediator on IV
+  rum on att_anx;
+  !regress outcome on mediator & IV
+  for on rum att_anx;
+  !specifying no relationship btwn
+  !rumination & attach. avoid.
+  rum on att_avo@0;
+
+
+  Model indirect:
+  !requesting significance test for indirect effect of
+  !x on y via m
+  for ind rum att_anx;
+  !indirect effect of interest ending in y, starting with x
+
+
+  Output: stdyx; cinterval(bcbootstrap);
+  !requesting bias-corrected bootstrap confidence intervals
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Mediation Model 2;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         226
+
+Number of dependent variables                                   21
+Number of independent variables                                  0
+Number of continuous latent variables                            4
+
+Observed dependent variables
+
+  Continuous
+   RRQ2        RRQ4R       RRQ5        RRQ6        RRQ1        RRQ3
+   TFS10       TFS2        TFS9        TFS1R       TFS5        ECR24R
+   ECR34R      ECR5        ECR2        ECR30R      ECR3        ECR36
+   ECR6        ECR1        ECR11
+
+Continuous latent variables
+   RUM         FOR         ATT_AVO     ATT_ANX
+
+
+Estimator                                                       ML
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+Number of bootstrap draws
+    Requested                                                 1000
+    Completed                                                 1000
+
+Input data file(s)
+  thesis.dat
+
+Input data format
+  (160F8)
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns             1
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              RRQ2          RRQ4R         RRQ5          RRQ6          RRQ1
+              ________      ________      ________      ________      ________
+ RRQ2           1.000
+ RRQ4R          1.000         1.000
+ RRQ5           1.000         1.000         1.000
+ RRQ6           1.000         1.000         1.000         1.000
+ RRQ1           1.000         1.000         1.000         1.000         1.000
+ RRQ3           1.000         1.000         1.000         1.000         1.000
+ TFS10          1.000         1.000         1.000         1.000         1.000
+ TFS2           1.000         1.000         1.000         1.000         1.000
+ TFS9           1.000         1.000         1.000         1.000         1.000
+ TFS1R          1.000         1.000         1.000         1.000         1.000
+ TFS5           1.000         1.000         1.000         1.000         1.000
+ ECR24R         1.000         1.000         1.000         1.000         1.000
+ ECR34R         1.000         1.000         1.000         1.000         1.000
+ ECR5           1.000         1.000         1.000         1.000         1.000
+ ECR2           1.000         1.000         1.000         1.000         1.000
+ ECR30R         1.000         1.000         1.000         1.000         1.000
+ ECR3           1.000         1.000         1.000         1.000         1.000
+ ECR36          1.000         1.000         1.000         1.000         1.000
+ ECR6           1.000         1.000         1.000         1.000         1.000
+ ECR1           1.000         1.000         1.000         1.000         1.000
+ ECR11          1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              RRQ3          TFS10         TFS2          TFS9          TFS1R
+              ________      ________      ________      ________      ________
+ RRQ3           1.000
+ TFS10          1.000         1.000
+ TFS2           1.000         1.000         1.000
+ TFS9           1.000         1.000         1.000         1.000
+ TFS1R          1.000         1.000         1.000         1.000         1.000
+ TFS5           1.000         1.000         1.000         1.000         1.000
+ ECR24R         1.000         1.000         1.000         1.000         1.000
+ ECR34R         1.000         1.000         1.000         1.000         1.000
+ ECR5           1.000         1.000         1.000         1.000         1.000
+ ECR2           1.000         1.000         1.000         1.000         1.000
+ ECR30R         1.000         1.000         1.000         1.000         1.000
+ ECR3           1.000         1.000         1.000         1.000         1.000
+ ECR36          1.000         1.000         1.000         1.000         1.000
+ ECR6           1.000         1.000         1.000         1.000         1.000
+ ECR1           1.000         1.000         1.000         1.000         1.000
+ ECR11          1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              TFS5          ECR24R        ECR34R        ECR5          ECR2
+              ________      ________      ________      ________      ________
+ TFS5           1.000
+ ECR24R         1.000         1.000
+ ECR34R         1.000         1.000         1.000
+ ECR5           1.000         1.000         1.000         1.000
+ ECR2           1.000         1.000         1.000         1.000         1.000
+ ECR30R         1.000         1.000         1.000         1.000         1.000
+ ECR3           1.000         1.000         1.000         1.000         1.000
+ ECR36          1.000         1.000         1.000         1.000         1.000
+ ECR6           1.000         1.000         1.000         1.000         1.000
+ ECR1           1.000         1.000         1.000         1.000         1.000
+ ECR11          1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              ECR30R        ECR3          ECR36         ECR6          ECR1
+              ________      ________      ________      ________      ________
+ ECR30R         1.000
+ ECR3           1.000         1.000
+ ECR36          1.000         1.000         1.000
+ ECR6           1.000         1.000         1.000         1.000
+ ECR1           1.000         1.000         1.000         1.000         1.000
+ ECR11          1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              ECR11
+              ________
+ ECR11          1.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     RRQ2                  4.588      -0.549       0.000    0.44%       3.000      5.000      5.000
+             226.000       2.614      -0.560       7.000    9.29%       5.000      6.000
+     RRQ4R                 4.558      -0.550       0.000    0.44%       3.000      5.000      5.000
+             226.000       2.494      -0.581       7.000    6.19%       5.000      6.000
+     RRQ5                  4.699      -0.775       0.000    0.44%       3.000      5.000      5.000
+             226.000       2.352      -0.184       7.000    6.64%       5.000      6.000
+     RRQ6                  4.867      -0.938       0.000    0.44%       4.000      5.000      5.000
+             226.000       2.044       0.333       7.000    6.64%       5.000      6.000
+     RRQ1                  4.655      -0.634       0.000    0.44%       3.000      5.000      5.000
+             226.000       2.784      -0.475       7.000   11.06%       5.000      6.000
+     RRQ3                  4.350      -0.321       0.000    0.44%       3.000      4.000      5.000
+             226.000       2.652      -0.865       7.000    6.64%       5.000      6.000
+     TFS10                 3.748      -0.874       1.000    1.77%       3.000      4.000      4.000
+             226.000       0.622       1.555       5.000   12.39%       4.000      4.000
+     TFS2                  3.381      -0.594       1.000    3.54%       2.000      3.000      4.000
+             226.000       0.961      -0.429       5.000    7.08%       4.000      4.000
+     TFS9                  2.836       0.219       1.000    4.87%       2.000      2.000      3.000
+             226.000       0.960      -0.914       5.000    3.10%       3.000      4.000
+     TFS1R                 3.637      -0.715       1.000    2.65%       3.000      4.000      4.000
+             226.000       0.975      -0.025       5.000   15.93%       4.000      4.000
+     TFS5                  3.310      -0.283       1.000    2.65%       2.000      3.000      4.000
+             226.000       1.063      -0.917       5.000    9.29%       4.000      4.000
+     ECR24R                2.407       1.341       1.000   30.09%       1.000      2.000      2.000
+             226.000       2.135       1.420       7.000    2.21%       2.000      3.000
+     ECR34R                3.071       0.641       1.000   13.72%       2.000      2.000      3.000
+             226.000       2.473      -0.578       7.000    1.33%       3.000      5.000
+     ECR5                  3.341       0.378       1.000   16.81%       2.000      2.000      3.000
+             226.000       3.233      -1.060       7.000    3.98%       4.000      5.000
+     ECR2                  2.912       0.663       1.000   22.12%       1.000      2.000      2.000
+             226.000       2.851      -0.729       7.000    2.21%       3.000      5.000
+     ECR30R                2.956       0.674       1.000   15.49%       2.000      2.000      3.000
+             226.000       2.343      -0.498       7.000    0.88%       3.000      4.000
+     ECR3                  3.204       0.506       1.000   15.93%       2.000      2.000      3.000
+             226.000       2.879      -0.773       7.000    3.98%       3.000      5.000
+     ECR36                 3.018       0.765       1.000   15.04%       2.000      2.000      2.000
+             226.000       2.734      -0.430       7.000    3.54%       3.000      5.000
+     ECR6                  2.646       1.033       1.000   22.12%       1.000      2.000      2.000
+             226.000       2.353       0.209       7.000    1.77%       2.000      4.000
+     ECR1                  3.465       0.283       1.000   11.95%       2.000      2.000      3.000
+             226.000       3.072      -1.133       7.000    4.42%       4.000      5.000
+     ECR11                 3.106       0.618       1.000   17.70%       2.000      2.000      2.000
+             226.000       3.095      -0.807       7.000    3.98%       3.000      5.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       67
+
+Loglikelihood
+
+          H0 Value                       -7197.654
+          H1 Value                       -7028.134
+
+Information Criteria
+
+          Akaike (AIC)                   14529.308
+          Bayesian (BIC)                 14758.484
+          Sample-Size Adjusted BIC       14546.144
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                            339.040
+          Degrees of Freedom                   185
+          P-Value                           0.0000
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.061
+          90 Percent C.I.                    0.050  0.071
+          Probability RMSEA <= .05           0.044
+
+CFI/TLI
+
+          CFI                                0.940
+          TLI                                0.932
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           2764.446
+          Degrees of Freedom                   210
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.063
+!our fit looks pretty good (I'm showing you an abbreviated model, 
+!hence all of the unused variables on the variables are line.
+!the actual model is slightly better fitting)
+
+
+
+MODEL RESULTS
+!reminder that these results are unstandardized
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ RUM      BY
+    RRQ5               1.000      0.000    999.000    999.000
+    RRQ6               0.855      0.048     17.679      0.000
+    RRQ1               0.982      0.054     18.272      0.000
+    RRQ3               0.951      0.054     17.624      0.000
+    RRQ2               0.927      0.059     15.700      0.000
+    RRQ4R              0.755      0.073     10.352      0.000
+
+ FOR      BY
+    TFS10              1.000      0.000    999.000    999.000
+    TFS2               0.985      0.172      5.715      0.000
+    TFS9               0.940      0.117      8.067      0.000
+    TFS1R              0.834      0.209      3.989      0.000
+    TFS5               0.799      0.162      4.935      0.000
+
+ ATT_AVO  BY
+    ECR24R             1.000      0.000    999.000    999.000
+    ECR34R             1.512      0.209      7.228      0.000
+    ECR5               1.498      0.199      7.523      0.000
+    ECR2               1.159      0.136      8.507      0.000
+    ECR30R             1.357      0.195      6.961      0.000
+
+ ATT_ANX  BY
+    ECR3               1.000      0.000    999.000    999.000
+    ECR36              0.796      0.064     12.376      0.000
+    ECR6               0.720      0.063     11.480      0.000
+    ECR1               0.975      0.035     27.718      0.000
+    ECR11              0.800      0.066     12.201      0.000
+
+ RUM      ON
+    ATT_ANX            0.256      0.071      3.580      0.000
+    !significant path from IV to mediator
+    ATT_AVO            0.000      0.000    999.000    999.000
+    !recall we specified this to be zero in our model
+
+ FOR      ON
+    RUM               -0.064      0.040     -1.605      0.108
+    !BUT path from mediator to DV is non-significant
+    ATT_ANX           -0.058      0.040     -1.451      0.147
+    !and path from IV to DV also non-significant
+
+ ATT_ANX  WITH
+    ATT_AVO            0.326      0.124      2.617      0.009
+    !we specified this in our measurement model & they are
+    !in fact related so we keep this here
+
+ Intercepts
+    RRQ2               4.588      0.106     43.481      0.000
+    RRQ4R              4.558      0.101     44.996      0.000
+    RRQ5               4.699      0.101     46.528      0.000
+    RRQ6               4.867      0.094     51.730      0.000
+    RRQ1               4.655      0.109     42.646      0.000
+    RRQ3               4.350      0.102     42.453      0.000
+    TFS10              3.748      0.050     74.478      0.000
+    TFS2               3.381      0.064     52.969      0.000
+    TFS9               2.836      0.065     43.359      0.000
+    TFS1R              3.637      0.066     55.489      0.000
+    TFS5               3.310      0.066     50.032      0.000
+    ECR24R             2.407      0.096     25.124      0.000
+    ECR34R             3.071      0.105     29.204      0.000
+    ECR5               3.341      0.118     28.390      0.000
+    ECR2               2.912      0.111     26.122      0.000
+    ECR30R             2.956      0.099     29.909      0.000
+    ECR3               3.204      0.109     29.337      0.000
+    ECR36              3.018      0.108     28.009      0.000
+    ECR6               2.646      0.101     26.091      0.000
+    ECR1               3.465      0.115     30.059      0.000
+    ECR11              3.106      0.111     28.075      0.000
+
+ Variances
+    ATT_AVO            0.858      0.205      4.192      0.000
+    ATT_ANX            2.397      0.223     10.773      0.000
+
+ Residual Variances
+    RRQ2               0.887      0.149      5.948      0.000
+    RRQ4R              1.349      0.228      5.918      0.000
+    RRQ5               0.342      0.062      5.488      0.000
+    RRQ6               0.574      0.091      6.303      0.000
+    RRQ1               0.846      0.149      5.689      0.000
+    RRQ3               0.834      0.145      5.744      0.000
+    TFS10              0.252      0.055      4.612      0.000
+    TFS2               0.602      0.099      6.074      0.000
+    TFS9               0.632      0.059     10.746      0.000
+    TFS1R              0.717      0.124      5.780      0.000
+    TFS5               0.827      0.097      8.522      0.000
+    ECR24R             1.278      0.148      8.651      0.000
+    ECR34R             0.511      0.140      3.655      0.000
+    ECR5               1.308      0.216      6.059      0.000
+    ECR2               1.698      0.206      8.242      0.000
+    ECR30R             0.765      0.190      4.018      0.000
+    ECR3               0.482      0.094      5.126      0.000
+    ECR36              1.216      0.193      6.316      0.000
+    ECR6               1.108      0.157      7.048      0.000
+    ECR1               0.794      0.143      5.538      0.000
+    ECR11              1.561      0.178      8.760      0.000
+    RUM                1.853      0.221      8.399      0.000
+    FOR                0.350      0.080      4.397      0.000
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ RUM      BY
+ !factor loadings
+    RRQ5               0.924      0.016     58.142      0.000
+    RRQ6               0.848      0.031     27.451      0.000
+    RRQ1               0.834      0.033     25.213      0.000
+    RRQ3               0.828      0.034     24.078      0.000
+    RRQ2               0.813      0.038     21.637      0.000
+    RRQ4R              0.678      0.063     10.724      0.000
+
+ FOR      BY
+ !factor loadings
+    TFS10              0.772      0.055     14.041      0.000
+    TFS2               0.611      0.075      8.112      0.000
+    TFS9               0.584      0.056     10.446      0.000
+    TFS1R              0.514      0.104      4.948      0.000
+    TFS5               0.471      0.078      6.045      0.000
+
+ ATT_AVO  BY
+ !factor loadings
+    ECR24R             0.634      0.050     12.661      0.000
+    ECR34R             0.891      0.032     27.641      0.000
+    ECR5               0.772      0.044     17.596      0.000
+    ECR2               0.636      0.054     11.775      0.000
+    ECR30R             0.821      0.051     16.005      0.000
+
+ ATT_ANX  BY
+ !factor loadings
+    ECR3               0.912      0.019     48.295      0.000
+    ECR36              0.745      0.048     15.445      0.000
+    ECR6               0.727      0.047     15.571      0.000
+    ECR1               0.861      0.029     30.057      0.000
+    ECR11              0.704      0.045     15.736      0.000
+
+ RUM      ON
+    ATT_ANX            0.279      0.077      3.629      0.000
+    ATT_AVO            0.000      0.000      0.000      1.000
+    !again, we specified this to be zero
+
+ FOR      ON
+    RUM               -0.148      0.093     -1.586      0.113
+    ATT_ANX           -0.148      0.100     -1.482      0.138
+
+ ATT_ANX  WITH
+    ATT_AVO            0.227      0.078      2.902      0.004
+
+ Intercepts
+    RRQ2               2.838      0.158     17.969      0.000
+    RRQ4R              2.886      0.160     18.018      0.000
+    RRQ5               3.064      0.185     16.536      0.000
+    RRQ6               3.404      0.224     15.211      0.000
+    RRQ1               2.790      0.161     17.298      0.000
+    RRQ3               2.671      0.131     20.386      0.000
+    TFS10              4.751      0.335     14.162      0.000
+    TFS2               3.448      0.187     18.440      0.000
+    TFS9               2.895      0.108     26.827      0.000
+    TFS1R              3.684      0.220     16.759      0.000
+    TFS5               3.210      0.146     21.972      0.000
+    ECR24R             1.647      0.073     22.568      0.000
+    ECR34R             1.953      0.070     28.059      0.000
+    ECR5               1.858      0.072     25.883      0.000
+    ECR2               1.724      0.059     29.264      0.000
+    ECR30R             1.931      0.068     28.282      0.000
+    ECR3               1.888      0.072     26.163      0.000
+    ECR36              1.825      0.065     28.053      0.000
+    ECR6               1.725      0.064     26.759      0.000
+    ECR1               1.977      0.076     26.072      0.000
+    ECR11              1.766      0.061     28.712      0.000
+
+ Variances
+    ATT_AVO            1.000      0.000    999.000    999.000
+    ATT_ANX            1.000      0.000    999.000    999.000
+
+ Residual Variances
+    RRQ2               0.339      0.060      5.616      0.000
+    RRQ4R              0.541      0.085      6.345      0.000
+    RRQ5               0.145      0.029      4.960      0.000
+    RRQ6               0.281      0.052      5.391      0.000
+    RRQ1               0.304      0.055      5.540      0.000
+    RRQ3               0.314      0.056      5.593      0.000
+    TFS10              0.404      0.085      4.763      0.000
+    TFS2               0.626      0.092      6.843      0.000
+    TFS9               0.659      0.064     10.225      0.000
+    TFS1R              0.736      0.105      6.976      0.000
+    TFS5               0.778      0.073     10.619      0.000
+    ECR24R             0.598      0.063      9.559      0.000
+    ECR34R             0.207      0.057      3.647      0.000
+    ECR5               0.405      0.067      6.045      0.000
+    ECR2               0.596      0.068      8.744      0.000
+    ECR30R             0.326      0.082      3.976      0.000
+    ECR3               0.167      0.034      4.886      0.000
+    ECR36              0.445      0.071      6.251      0.000
+    ECR6               0.471      0.067      7.000      0.000
+    ECR1               0.258      0.049      5.279      0.000
+    ECR11              0.504      0.063      8.052      0.000
+    RUM                0.922      0.042     21.948      0.000
+    FOR                0.944      0.052     17.984      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    RRQ2               0.661      0.060     10.942      0.000
+    RRQ4R              0.459      0.085      5.392      0.000
+    RRQ5               0.855      0.029     29.140      0.000
+    RRQ6               0.719      0.052     13.798      0.000
+    RRQ1               0.696      0.055     12.694      0.000
+    RRQ3               0.686      0.056     12.192      0.000
+    TFS10              0.596      0.085      7.014      0.000
+    TFS2               0.374      0.092      4.084      0.000
+    TFS9               0.341      0.064      5.298      0.000
+    TFS1R              0.264      0.105      2.505      0.012
+    TFS5               0.222      0.073      3.035      0.002
+    ECR24R             0.402      0.063      6.416      0.000
+    ECR34R             0.793      0.057     13.986      0.000
+    ECR5               0.595      0.067      8.897      0.000
+    ECR2               0.404      0.068      5.938      0.000
+    ECR30R             0.674      0.082      8.207      0.000
+    ECR3               0.833      0.034     24.306      0.000
+    ECR36              0.555      0.071      7.807      0.000
+    ECR6               0.529      0.067      7.859      0.000
+    ECR1               0.742      0.049     15.148      0.000
+    ECR11              0.496      0.063      7.916      0.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    RUM                0.078      0.042      1.854      0.064
+    FOR                0.056      0.052      1.065      0.287
+    !this is the r-square for our DV (forgiveness) showing that our 
+    !model is only explaining 6% of the variance in forgiveness
+    !this is bc I am showing you the abbreviated model, this 
+    !goes up when we include the rest of the model (this demo
+    !is for simplicity)
+
+
+TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ATT_ANX to FOR
+
+  Indirect            -0.016      0.011     -1.501      0.133
+  !because we only include one indirect path in the model, only
+  !one showing here. would have multiple if we had additional
+  !potential mediators in the model
+
+  !this is the indirect effect of attachment anxiety on forgiveness
+  !through rumination, and is not significant (which we would expect
+  !because the IV-->DV and M-->DV paths were also not significant)
+
+
+STANDARDIZED TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ATT_ANX to FOR
+
+  Indirect            -0.041      0.028     -1.490      0.136
+
+!same as above, these are just the standardized ones bc we requested them
+
+CONFIDENCE INTERVALS OF MODEL RESULTS
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ RUM      BY
+    RRQ5             1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RRQ6             0.729       0.753       0.768       0.855       0.930       0.946       0.974
+    RRQ1             0.845       0.876       0.895       0.982       1.074       1.093       1.127
+    RRQ3             0.808       0.840       0.858       0.951       1.039       1.059       1.101
+    RRQ2             0.772       0.814       0.833       0.927       1.027       1.044       1.068
+    RRQ4R            0.573       0.617       0.638       0.755       0.879       0.898       0.954
+
+ FOR      BY
+    TFS10            1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    TFS2             0.558       0.654       0.711       0.985       1.252       1.299       1.443
+    TFS9             0.700       0.737       0.763       0.940       1.154       1.206       1.315
+    TFS1R            0.313       0.428       0.500       0.834       1.192       1.240       1.362
+    TFS5             0.405       0.498       0.553       0.799       1.085       1.133       1.257
+
+ ATT_AVO  BY
+    ECR24R           1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    ECR34R           1.116       1.200       1.237       1.512       1.903       2.010       2.136
+    ECR5             1.048       1.169       1.210       1.498       1.838       1.936       2.125
+    ECR2             0.840       0.926       0.961       1.159       1.391       1.444       1.578
+    ECR30R           0.987       1.063       1.104       1.357       1.755       1.841       1.991
+
+ ATT_ANX  BY
+    ECR3             1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    ECR36            0.601       0.647       0.677       0.796       0.892       0.910       0.945
+    ECR6             0.551       0.582       0.601       0.720       0.810       0.830       0.866
+    ECR1             0.872       0.908       0.916       0.975       1.033       1.046       1.065
+    ECR11            0.627       0.663       0.685       0.800       0.905       0.921       0.955
+
+ RUM      ON
+    ATT_ANX          0.061       0.114       0.137       0.256       0.377       0.397       0.427
+    ATT_AVO          0.000       0.000       0.000       0.000       0.000       0.000       0.000
+
+ FOR      ON
+    RUM             -0.172      -0.133      -0.123      -0.064       0.004       0.026       0.044
+    ATT_ANX         -0.165      -0.140      -0.125      -0.058       0.006       0.019       0.044
+
+ ATT_ANX  WITH
+    ATT_AVO          0.027       0.099       0.122       0.326       0.528       0.583       0.634
+
+ Intercepts
+    RRQ2             4.319       4.367       4.407       4.588       4.752       4.783       4.858
+    RRQ4R            4.243       4.354       4.381       4.558       4.717       4.748       4.801
+    RRQ5             4.420       4.496       4.527       4.699       4.858       4.894       4.956
+    RRQ6             4.606       4.668       4.704       4.867       5.013       5.035       5.097
+    RRQ1             4.345       4.420       4.451       4.655       4.819       4.850       4.889
+    RRQ3             4.071       4.142       4.177       4.350       4.522       4.549       4.593
+    TFS10            3.615       3.655       3.673       3.748       3.836       3.850       3.881
+    TFS2             3.212       3.257       3.274       3.381       3.491       3.509       3.544
+    TFS9             2.664       2.704       2.726       2.836       2.942       2.960       2.991
+    TFS1R            3.456       3.496       3.518       3.637       3.730       3.752       3.792
+    TFS5             3.142       3.181       3.199       3.310       3.425       3.442       3.473
+    ECR24R           2.164       2.217       2.252       2.407       2.562       2.593       2.646
+    ECR34R           2.788       2.858       2.885       3.071       3.235       3.265       3.336
+    ECR5             3.062       3.119       3.155       3.341       3.540       3.593       3.642
+    ECR2             2.624       2.704       2.735       2.912       3.102       3.142       3.212
+    ECR30R           2.704       2.761       2.788       2.956       3.111       3.142       3.204
+    ECR3             2.938       2.991       3.018       3.204       3.385       3.420       3.487
+    ECR36            2.748       2.810       2.845       3.018       3.208       3.234       3.301
+    ECR6             2.385       2.442       2.473       2.646       2.805       2.845       2.925
+    ECR1             3.195       3.248       3.279       3.465       3.659       3.690       3.779
+    ECR11            2.845       2.903       2.938       3.106       3.310       3.341       3.407
+
+ Variances
+    ATT_AVO          0.435       0.510       0.563       0.858       1.265       1.336       1.442
+    ATT_ANX          1.854       1.989       2.045       2.397       2.778       2.840       3.029
+
+ Residual Variances
+    RRQ2             0.566       0.635       0.668       0.887       1.172       1.222       1.318
+    RRQ4R            0.843       0.945       0.998       1.349       1.757       1.839       1.934
+    RRQ5             0.207       0.236       0.250       0.342       0.461       0.482       0.516
+    RRQ6             0.364       0.411       0.435       0.574       0.742       0.768       0.798
+    RRQ1             0.526       0.593       0.628       0.846       1.121       1.180       1.250
+    RRQ3             0.538       0.596       0.624       0.834       1.124       1.178       1.264
+    TFS10            0.119       0.155       0.173       0.252       0.351       0.369       0.411
+    TFS2             0.369       0.432       0.459       0.602       0.786       0.836       0.883
+    TFS9             0.489       0.529       0.547       0.632       0.736       0.760       0.785
+    TFS1R            0.449       0.497       0.524       0.717       0.929       0.973       1.034
+    TFS5             0.607       0.654       0.683       0.827       0.999       1.023       1.074
+    ECR24R           0.938       1.026       1.067       1.278       1.557       1.609       1.690
+    ECR34R           0.207       0.299       0.325       0.511       0.798       0.865       0.996
+    ECR5             0.876       0.979       1.036       1.308       1.783       1.836       1.970
+    ECR2             1.289       1.381       1.428       1.698       2.158       2.237       2.327
+    ECR30R           0.402       0.452       0.504       0.765       1.144       1.203       1.328
+    ECR3             0.279       0.325       0.349       0.482       0.653       0.696       0.799
+    ECR36            0.771       0.896       0.955       1.216       1.607       1.680       1.772
+    ECR6             0.766       0.839       0.878       1.108       1.416       1.474       1.617
+    ECR1             0.478       0.543       0.578       0.794       1.070       1.105       1.174
+    ECR11            1.113       1.240       1.290       1.561       1.874       1.906       1.998
+    RUM              1.306       1.452       1.520       1.853       2.243       2.322       2.433
+    FOR              0.206       0.234       0.249       0.350       0.518       0.551       0.612
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ RUM      BY
+    RRQ5             0.875       0.886       0.891       0.924       0.946       0.950       0.956
+    RRQ6             0.755       0.779       0.793       0.848       0.894       0.902       0.914
+    RRQ1             0.723       0.758       0.771       0.834       0.881       0.890       0.901
+    RRQ3             0.720       0.743       0.756       0.828       0.874       0.883       0.896
+    RRQ2             0.696       0.721       0.736       0.813       0.864       0.872       0.884
+    RRQ4R            0.504       0.548       0.559       0.678       0.772       0.790       0.810
+
+ FOR      BY
+    TFS10            0.639       0.667       0.684       0.772       0.864       0.881       0.911
+    TFS2             0.384       0.434       0.464       0.611       0.718       0.739       0.783
+    TFS9             0.420       0.473       0.491       0.584       0.671       0.685       0.714
+    TFS1R            0.215       0.285       0.319       0.514       0.666       0.692       0.731
+    TFS5             0.236       0.296       0.332       0.471       0.592       0.613       0.648
+
+ ATT_AVO  BY
+    ECR24R           0.484       0.529       0.549       0.634       0.711       0.723       0.756
+    ECR34R           0.745       0.803       0.821       0.891       0.930       0.938       0.954
+    ECR5             0.643       0.661       0.678       0.772       0.831       0.842       0.857
+    ECR2             0.483       0.508       0.529       0.636       0.714       0.727       0.753
+    ECR30R           0.650       0.688       0.721       0.821       0.886       0.901       0.915
+
+ ATT_ANX  BY
+    ECR3             0.843       0.871       0.879       0.912       0.939       0.944       0.950
+    ECR36            0.573       0.625       0.653       0.745       0.814       0.823       0.851
+    ECR6             0.591       0.623       0.640       0.727       0.796       0.807       0.825
+    ECR1             0.780       0.797       0.805       0.861       0.902       0.908       0.920
+    ECR11            0.584       0.605       0.625       0.704       0.771       0.781       0.800
+
+ RUM      ON
+    ATT_ANX          0.064       0.121       0.147       0.279       0.405       0.421       0.457
+    ATT_AVO          0.000       0.000       0.000       0.000       0.000       0.000       0.000
+
+ FOR      ON
+    RUM             -0.370      -0.315      -0.288      -0.148       0.016       0.053       0.104
+    ATT_ANX         -0.405      -0.343      -0.317      -0.148       0.011       0.048       0.105
+
+ ATT_ANX  WITH
+    ATT_AVO          0.021       0.067       0.092       0.227       0.346       0.380       0.415
+
+ Intercepts
+    RRQ2             2.488       2.562       2.605       2.838       3.128       3.189       3.304
+    RRQ4R            2.537       2.590       2.638       2.886       3.151       3.220       3.396
+    RRQ5             2.658       2.754       2.801       3.064       3.408       3.478       3.625
+    RRQ6             2.940       3.045       3.097       3.404       3.826       3.925       4.089
+    RRQ1             2.430       2.508       2.550       2.790       3.092       3.138       3.236
+    RRQ3             2.347       2.436       2.465       2.671       2.913       2.952       3.016
+    TFS10            3.980       4.163       4.244       4.751       5.331       5.453       5.611
+    TFS2             3.025       3.107       3.161       3.448       3.767       3.837       3.946
+    TFS9             2.640       2.689       2.718       2.895       3.080       3.110       3.155
+    TFS1R            3.156       3.284       3.344       3.684       4.043       4.112       4.231
+    TFS5             2.838       2.933       2.974       3.210       3.443       3.520       3.616
+    ECR24R           1.477       1.506       1.521       1.647       1.759       1.784       1.831
+    ECR34R           1.764       1.815       1.845       1.953       2.061       2.087       2.140
+    ECR5             1.692       1.717       1.738       1.858       1.973       1.993       2.036
+    ECR2             1.579       1.603       1.622       1.724       1.818       1.843       1.878
+    ECR30R           1.761       1.803       1.827       1.931       2.045       2.066       2.112
+    ECR3             1.721       1.756       1.767       1.888       2.007       2.032       2.063
+    ECR36            1.664       1.708       1.728       1.825       1.938       1.963       1.997
+    ECR6             1.575       1.602       1.619       1.725       1.835       1.859       1.906
+    ECR1             1.799       1.833       1.859       1.977       2.102       2.126       2.181
+    ECR11            1.614       1.655       1.668       1.766       1.862       1.882       1.919
+
+ Variances
+    ATT_AVO          1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    ATT_ANX          1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    RRQ2             0.218       0.239       0.254       0.339       0.458       0.475       0.513
+    RRQ4R            0.342       0.376       0.403       0.541       0.688       0.700       0.745
+    RRQ5             0.085       0.097       0.105       0.145       0.206       0.214       0.234
+    RRQ6             0.165       0.187       0.201       0.281       0.371       0.391       0.425
+    RRQ1             0.185       0.208       0.223       0.304       0.403       0.425       0.466
+    RRQ3             0.196       0.220       0.236       0.314       0.428       0.448       0.481
+    TFS10            0.169       0.221       0.253       0.404       0.531       0.555       0.592
+    TFS2             0.387       0.453       0.484       0.626       0.784       0.809       0.844
+    TFS9             0.487       0.531       0.549       0.659       0.759       0.775       0.822
+    TFS1R            0.464       0.520       0.556       0.736       0.896       0.918       0.949
+    TFS5             0.576       0.623       0.649       0.778       0.889       0.912       0.943
+    ECR24R           0.427       0.476       0.493       0.598       0.699       0.720       0.754
+    ECR34R           0.087       0.121       0.134       0.207       0.325       0.352       0.411
+    ECR5             0.262       0.290       0.310       0.405       0.537       0.563       0.585
+    ECR2             0.431       0.469       0.490       0.596       0.720       0.741       0.767
+    ECR30R           0.162       0.189       0.213       0.326       0.479       0.525       0.575
+    ECR3             0.097       0.109       0.118       0.167       0.228       0.239       0.284
+    ECR36            0.272       0.323       0.337       0.445       0.573       0.608       0.666
+    ECR6             0.315       0.348       0.365       0.471       0.588       0.610       0.648
+    ECR1             0.151       0.175       0.186       0.258       0.351       0.364       0.391
+    ECR11            0.359       0.388       0.406       0.504       0.610       0.633       0.658
+    RUM              0.790       0.823       0.836       0.922       0.978       0.985       0.995
+    FOR              0.772       0.826       0.846       0.944       0.995       0.997       0.999
+
+
+CONFIDENCE INTERVALS OF TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+!these are the CIs we requested. they show the interval includes 0, which you would expect
+!given that we had non-significant effects above. in the more complex model, when we 
+!include attachment avoidance as an additional moderator and depressive symptoms
+!as a more distal outcome, the effect becomes significant and zero is no longer
+!included in the CI
+
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ATT_ANX to FOR
+
+  Indirect          -0.058      -0.043      -0.037      -0.016      -0.002       0.001       0.010
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ATT_ANX to FOR
+
+  Indirect          -0.135      -0.108      -0.099      -0.041      -0.006       0.003       0.023
+
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\users\ekb8\box\spring 2022 sem lab\2022 materials\3.25.22 mediation\mediation 2.dgm
+
+     Beginning Time:  13:32:50
+        Ending Time:  13:32:57
+       Elapsed Time:  00:00:07
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2021 Muthen & Muthen
