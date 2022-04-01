@@ -1,0 +1,610 @@
+Mplus VERSION 8.2
+MUTHEN & MUTHEN
+03/26/2019   8:27 AM
+
+INPUT INSTRUCTIONS
+
+  Title: Model 1, with interaction;
+
+  Data: file=PCL_MR.dat;
+  type is individual;
+
+  Variable:
+  NAMES ARE PANASNEG neurot AIMN ces ptgi closure pcl;
+  !variables: PANAS negative affect (PANASNEG),
+  !neuroticism (neurot), negative intensity/negative
+  !affect (AIMN), centrality of events (ces - extent
+  !to which a traumatic memory forms a central
+  !component of personal identity), posttraumatic
+  !growth (ptgi), closure (closure), PTSD checklist
+  !(pcl)
+  USEVARIABLES ARE PANASNEG neurot AIMN ces ptgi closure pcl;
+
+  Analysis:
+  Estimator = ML;
+  ALGORITHM = integration; !specifies we are using the expectation
+  !maximization (EM) algorithm, which uses integration to estimate
+  !the distribution of the latent outcome variable & its indicators
+  TYPE = random; !for use with XWITH
+
+  Define: Standardize PANASNEG neurot AIMN ces ptgi closure pcl;
+
+  Model:
+  NA by PANASNEG neurot AIMN;
+  !specifying negative affectivity factor
+  Narr by ces ptgi closure;
+  !specifying personal narrative factor
+  NAXNarr | NA XWITH Narr;
+  !specifying interaction
+
+  !paths
+  pcl on NA;
+  pcl on Narr;
+  pcl on NAXNarr;
+
+  !variances
+  NA;
+  narr;
+
+
+  Output: sampstat standardized tech1;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Model 1, with interaction;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         488
+
+Number of dependent variables                                    7
+Number of independent variables                                  0
+Number of continuous latent variables                            3
+
+Observed dependent variables
+
+  Continuous
+   PANASNEG    NEUROT      AIMN        CES         PTGI        CLOSURE
+   PCL
+
+Continuous latent variables
+   NA          NARR        NAXNARR
+
+
+Estimator                                                       ML
+Information matrix                                        OBSERVED
+Optimization Specifications for the Quasi-Newton Algorithm for
+Continuous Outcomes
+  Maximum number of iterations                                 100
+  Convergence criterion                                  0.100D-05
+Optimization Specifications for the EM Algorithm
+  Maximum number of iterations                                 500
+  Convergence criteria
+    Loglikelihood change                                 0.100D-02
+    Relative loglikelihood change                        0.100D-05
+    Derivative                                           0.100D-02
+Optimization Specifications for the M step of the EM Algorithm for
+Categorical Latent variables
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+Optimization Specifications for the M step of the EM Algorithm for
+Censored, Binary or Ordered Categorical (Ordinal), Unordered
+Categorical (Nominal) and Count Outcomes
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+  Maximum value for logit thresholds                            15
+  Minimum value for logit thresholds                           -15
+  Minimum expected cell size for chi-square              0.100D-01
+Optimization algorithm                                         EMA
+Integration Specifications
+  Type                                                    STANDARD
+  Number of integration points                                  15
+  Dimensions of numerical integration                            2
+  Adaptive quadrature                                           ON
+Cholesky                                                       OFF
+
+Input data file(s)
+  PCL_MR.dat
+Input data format  FREE
+
+
+SAMPLE STATISTICS
+
+
+     SAMPLE STATISTICS
+
+
+           Means
+              PANASNEG      NEUROT        AIMN          CES           PTGI
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           Means
+              CLOSURE       PCL
+              ________      ________
+                0.000         0.000
+
+
+           Covariances
+              PANASNEG      NEUROT        AIMN          CES           PTGI
+              ________      ________      ________      ________      ________
+ PANASNEG       1.000
+ NEUROT         0.518         1.000
+ AIMN           0.465         0.701         1.000
+ CES            0.184         0.197         0.192         1.000
+ PTGI           0.039        -0.026        -0.006         0.591         1.000
+ CLOSURE        0.200         0.210         0.194         0.456         0.216
+ PCL            0.386         0.286         0.293         0.558         0.381
+
+
+           Covariances
+              CLOSURE       PCL
+              ________      ________
+ CLOSURE        1.000
+ PCL            0.441         1.000
+
+
+           Correlations
+              PANASNEG      NEUROT        AIMN          CES           PTGI
+              ________      ________      ________      ________      ________
+ PANASNEG       1.000
+ NEUROT         0.518         1.000
+ AIMN           0.465         0.701         1.000
+ CES            0.184         0.197         0.192         1.000
+ PTGI           0.039        -0.026        -0.006         0.591         1.000
+ CLOSURE        0.200         0.210         0.194         0.456         0.216
+ PCL            0.386         0.286         0.293         0.558         0.381
+
+
+           Correlations
+              CLOSURE       PCL
+              ________      ________
+ CLOSURE        1.000
+ PCL            0.441         1.000
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     PANASNEG              0.000       0.805      -1.596    1.43%      -0.946     -0.427     -0.167
+             488.000       1.000       0.386       3.601    0.41%       0.093      0.873
+     NEUROT                0.000      -0.072      -2.409    0.41%      -0.965     -0.232     -0.003
+             488.000       1.000      -0.484       2.563    0.20%       0.317      0.959
+     AIMN                  0.000       0.338      -2.614    0.20%      -0.949     -0.272      0.022
+             488.000       1.000       0.225       3.630    0.20%       0.300      0.716
+     CES                   0.000      -0.205      -1.659    9.02%      -1.060     -0.101      0.179
+             488.000       1.000      -0.950       2.017    1.23%       0.339      0.898
+     PTGI                  0.000       0.135      -1.393   12.70%      -1.127     -0.326      0.007
+             488.000       1.000      -1.107       2.108    0.82%       0.340      0.952
+     CLOSURE               0.000       0.053      -1.437   12.09%      -1.136     -0.381      0.072
+             488.000       1.000      -1.200       1.958    1.43%       0.373      0.977
+     PCL                   0.000       0.957      -1.008   19.26%      -0.944     -0.557     -0.363
+             488.000       1.000       0.130       3.377    0.20%       0.024      0.926
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+!notice here - none of the traditional fit indices (e.g., CFI, RMSEA, etc.)
+!are available. instead, we can use the loglikelihood ratio test to compare
+!fit of the model without the latent interaction specified (Model 0) to the
+!fit of this model with the latent interaction specified (Model 1)
+!see slides for formula
+
+Number of Free Parameters                       24
+
+Loglikelihood
+
+          H0 Value                       -4301.686
+
+Information Criteria
+
+          Akaike (AIC)                    8651.371
+          Bayesian (BIC)                  8751.939
+          Sample-Size Adjusted BIC        8675.764
+            (n* = (n + 2) / 24)
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ NA       BY
+    PANASNEG           1.000      0.000    999.000    999.000
+    NEUROT             1.377      0.107     12.859      0.000
+    AIMN               1.317      0.104     12.637      0.000
+
+ NARR     BY
+    CES                1.000      0.000    999.000    999.000
+    PTGI               0.718      0.054     13.272      0.000
+    CLOSURE            0.583      0.058     10.078      0.000
+
+ PCL        ON
+    NA                 0.398      0.071      5.627      0.000
+    !sig main effect
+    NARR               0.683      0.064     10.602      0.000
+    !sig main effect
+    NAXNARR            0.334      0.084      3.997      0.000
+    !sig interaction
+
+ NARR     WITH
+    NA                 0.138      0.032      4.326      0.000
+
+ Intercepts
+    PANASNEG           0.000      0.045     -0.003      0.998
+    NEUROT             0.000      0.045     -0.004      0.997
+    AIMN               0.000      0.045     -0.004      0.997
+    CES                0.000      0.045     -0.005      0.996
+    PTGI               0.000      0.045     -0.004      0.997
+    CLOSURE            0.000      0.045     -0.003      0.998
+    PCL               -0.047      0.047     -1.000      0.317
+
+ Variances
+    NA                 0.376      0.055      6.847      0.000
+    NARR               0.785      0.079      9.925      0.000
+
+ Residual Variances
+    PANASNEG           0.622      0.046     13.564      0.000
+    NEUROT             0.287      0.038      7.450      0.000
+    AIMN               0.348      0.037      9.387      0.000
+    CES                0.215      0.050      4.259      0.000
+    PTGI               0.595      0.044     13.524      0.000
+    CLOSURE            0.733      0.051     14.283      0.000
+    PCL                0.481      0.048      9.939      0.000
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ NA       BY
+    PANASNEG           0.614      0.034     18.161      0.000
+    NEUROT             0.845      0.024     35.412      0.000
+    AIMN               0.808      0.024     33.427      0.000
+
+ NARR     BY
+    CES                0.886      0.029     30.523      0.000
+    PTGI               0.636      0.032     19.854      0.000
+    CLOSURE            0.516      0.039     13.301      0.000
+
+ PCL        ON
+ !these are your betas
+ !will plug into the formula from Maslowsky paper to calc. R-square
+    NA                 0.242      0.041      5.956      0.000
+    !coeff for main effect 1
+    NARR               0.600      0.038     15.790      0.000
+    !coeff for main effect 2
+    NAXNARR            0.180      0.041      4.369      0.000
+    !coeff for interaction
+ 
+
+ NARR     WITH
+    NA                 0.255      0.052      4.904      0.000
+    !covariance between latent variables
+
+ Intercepts
+    PANASNEG           0.000      0.045     -0.003      0.998
+    NEUROT             0.000      0.045     -0.004      0.997
+    AIMN               0.000      0.045     -0.004      0.997
+    CES                0.000      0.045     -0.005      0.996
+    PTGI               0.000      0.045     -0.004      0.997
+    CLOSURE            0.000      0.045     -0.003      0.998
+    PCL               -0.046      0.046     -0.997      0.319
+
+ Variances
+    NA                 1.000      0.000    999.000    999.000
+    !variance of main effect 1
+    NARR               1.000      0.000    999.000    999.000
+    !variance of main effect 2
+
+ Residual Variances
+    PANASNEG           0.623      0.041     15.017      0.000
+    NEUROT             0.287      0.040      7.116      0.000
+    AIMN               0.348      0.039      8.914      0.000
+    CES                0.215      0.051      4.171      0.000
+    PTGI               0.595      0.041     14.610      0.000
+    CLOSURE            0.733      0.040     18.290      0.000
+    PCL                0.473      0.051      9.341      0.000
+    !residual variance for the DV
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ NA       BY
+    PANASNEG           0.614      0.034     18.161      0.000
+    NEUROT             0.845      0.024     35.412      0.000
+    AIMN               0.808      0.024     33.427      0.000
+
+ NARR     BY
+    CES                0.886      0.029     30.523      0.000
+    PTGI               0.636      0.032     19.854      0.000
+    CLOSURE            0.516      0.039     13.301      0.000
+
+ PCL        ON
+    NA                 0.242      0.041      5.956      0.000
+    NARR               0.600      0.038     15.790      0.000
+    NAXNARR            0.180      0.041      4.369      0.000
+
+ NARR     WITH
+    NA                 0.255      0.052      4.904      0.000
+
+ Intercepts
+    PANASNEG           0.000      0.045     -0.003      0.998
+    NEUROT             0.000      0.045     -0.004      0.997
+    AIMN               0.000      0.045     -0.004      0.997
+    CES                0.000      0.045     -0.005      0.996
+    PTGI               0.000      0.045     -0.004      0.997
+    CLOSURE            0.000      0.045     -0.003      0.998
+    PCL               -0.046      0.046     -0.997      0.319
+
+ Variances
+    NA                 1.000      0.000    999.000    999.000
+    NARR               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    PANASNEG           0.623      0.041     15.017      0.000
+    NEUROT             0.287      0.040      7.116      0.000
+    AIMN               0.348      0.039      8.914      0.000
+    CES                0.215      0.051      4.171      0.000
+    PTGI               0.595      0.041     14.610      0.000
+    CLOSURE            0.733      0.040     18.290      0.000
+    PCL                0.473      0.051      9.341      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ NA       BY
+    PANASNEG           0.613      0.045     13.694      0.000
+    NEUROT             0.845      0.041     20.380      0.000
+    AIMN               0.808      0.041     19.497      0.000
+
+ NARR     BY
+    CES                0.886      0.045     19.849      0.000
+    PTGI               0.636      0.044     14.462      0.000
+    CLOSURE            0.516      0.047     11.057      0.000
+
+ PCL        ON
+    NA                 0.244      0.042      5.799      0.000
+    NARR               0.605      0.048     12.663      0.000
+    NAXNARR            0.182      0.043      4.206      0.000
+
+ NARR     WITH
+    NA                 0.255      0.052      4.904      0.000
+
+ Intercepts
+    PANASNEG           0.000      0.045     -0.003      0.998
+    NEUROT             0.000      0.045     -0.004      0.997
+    AIMN               0.000      0.045     -0.004      0.997
+    CES                0.000      0.045     -0.005      0.996
+    PTGI               0.000      0.045     -0.004      0.997
+    CLOSURE            0.000      0.045     -0.003      0.998
+    PCL               -0.047      0.047     -1.000      0.317
+
+ Variances
+    NA                 1.000      0.000    999.000    999.000
+    NARR               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    PANASNEG           0.622      0.046     13.564      0.000
+    NEUROT             0.287      0.038      7.450      0.000
+    AIMN               0.348      0.037      9.387      0.000
+    CES                0.215      0.050      4.259      0.000
+    PTGI               0.595      0.044     13.524      0.000
+    CLOSURE            0.733      0.051     14.283      0.000
+    PCL                0.481      0.048      9.939      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    PANASNEG           0.377      0.041      9.080      0.000
+    NEUROT             0.713      0.040     17.706      0.000
+    AIMN               0.652      0.039     16.713      0.000
+    CES                0.785      0.051     15.261      0.000
+    PTGI               0.405      0.041      9.927      0.000
+    CLOSURE            0.267      0.040      6.651      0.000
+    PCL                0.527      0.051     10.420      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.139E-03
+       (ratio of smallest to largest eigenvalue)
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              PANASNEG      NEUROT        AIMN          CES           PTGI
+              ________      ________      ________      ________      ________
+                    1             2             3             4             5
+
+
+           NU
+              CLOSURE       PCL
+              ________      ________
+                    6             0
+
+
+           LAMBDA
+              NA            NARR          NAXNARR       PCL
+              ________      ________      ________      ________
+ PANASNEG           0             0             0             0
+ NEUROT             7             0             0             0
+ AIMN               8             0             0             0
+ CES                0             0             0             0
+ PTGI               0             9             0             0
+ CLOSURE            0            10             0             0
+ PCL                0             0             0             0
+
+
+           THETA
+              PANASNEG      NEUROT        AIMN          CES           PTGI
+              ________      ________      ________      ________      ________
+ PANASNEG          11
+ NEUROT             0            12
+ AIMN               0             0            13
+ CES                0             0             0            14
+ PTGI               0             0             0             0            15
+ CLOSURE            0             0             0             0             0
+ PCL                0             0             0             0             0
+
+
+           THETA
+              CLOSURE       PCL
+              ________      ________
+ CLOSURE           16
+ PCL                0             0
+
+
+           ALPHA
+              NA            NARR          NAXNARR       PCL
+              ________      ________      ________      ________
+                    0             0             0            17
+
+
+           BETA
+              NA            NARR          NAXNARR       PCL
+              ________      ________      ________      ________
+ NA                 0             0             0             0
+ NARR               0             0             0             0
+ NAXNARR            0             0             0             0
+ PCL               18            19            20             0
+
+
+           PSI
+              NA            NARR          NAXNARR       PCL
+              ________      ________      ________      ________
+ NA                21
+ NARR              22            23
+ NAXNARR            0             0             0
+ PCL                0             0             0            24
+
+
+     STARTING VALUES
+
+
+           NU
+              PANASNEG      NEUROT        AIMN          CES           PTGI
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              CLOSURE       PCL
+              ________      ________
+                0.000         0.000
+
+
+           LAMBDA
+              NA            NARR          NAXNARR       PCL
+              ________      ________      ________      ________
+ PANASNEG       1.000         0.000         0.000         0.000
+ NEUROT         1.000         0.000         0.000         0.000
+ AIMN           1.000         0.000         0.000         0.000
+ CES            0.000         1.000         0.000         0.000
+ PTGI           0.000         1.000         0.000         0.000
+ CLOSURE        0.000         1.000         0.000         0.000
+ PCL            0.000         0.000         0.000         1.000
+
+
+           THETA
+              PANASNEG      NEUROT        AIMN          CES           PTGI
+              ________      ________      ________      ________      ________
+ PANASNEG       0.500
+ NEUROT         0.000         0.500
+ AIMN           0.000         0.000         0.500
+ CES            0.000         0.000         0.000         0.500
+ PTGI           0.000         0.000         0.000         0.000         0.500
+ CLOSURE        0.000         0.000         0.000         0.000         0.000
+ PCL            0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              CLOSURE       PCL
+              ________      ________
+ CLOSURE        0.500
+ PCL            0.000         0.000
+
+
+           ALPHA
+              NA            NARR          NAXNARR       PCL
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           BETA
+              NA            NARR          NAXNARR       PCL
+              ________      ________      ________      ________
+ NA             0.000         0.000         0.000         0.000
+ NARR           0.000         0.000         0.000         0.000
+ NAXNARR        0.000         0.000         0.000         0.000
+ PCL            0.000         0.000         0.000         0.000
+
+
+           PSI
+              NA            NARR          NAXNARR       PCL
+              ________      ________      ________      ________
+ NA             0.050
+ NARR           0.000         0.050
+ NAXNARR        0.000         0.000         0.000
+ PCL            0.000         0.000         0.000         0.500
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    h:\sem ta lab & lecture 2019\3.26.19 moderation and mediation\pcl with interaction 44.dgm
+
+     Beginning Time:  08:27:30
+        Ending Time:  08:27:34
+       Elapsed Time:  00:00:04
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2018 Muthen & Muthen

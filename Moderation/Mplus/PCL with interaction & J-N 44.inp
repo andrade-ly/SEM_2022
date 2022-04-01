@@ -1,0 +1,67 @@
+Title: Model 1, with interaction;
+
+Data: file=PCL_MR.dat;
+type is individual;
+
+Variable: 
+NAMES ARE PANASNEG neurot AIMN ces ptgi closure pcl;
+!variables: PANAS negative affect (PANASNEG), 
+!neuroticism (neurot), negative intensity/negative
+!affect (AIMN), centrality of events (ces - extent
+!to which a traumatic memory forms a central
+!component of personal identity), posttraumatic
+!growth (ptgi), closure (closure), PTSD checklist
+!(pcl)
+USEVARIABLES ARE PANASNEG neurot AIMN ces ptgi closure pcl;
+
+Analysis:
+Estimator = ML;
+ALGORITHM = integration; !specifies we are using the expectation
+!maximization (EM) algorithm, which uses integration to estimate
+!the distribution of the latent outcome variable & its indicators
+TYPE = random; !for use with XWITH
+
+Define: Standardize PANASNEG neurot AIMN ces ptgi closure pcl;
+
+Model: 
+NA by PANASNEG neurot AIMN; 
+!specifying negative affectivity factor
+Narr by ces ptgi closure;
+!specifying personal narrative factor
+NAXNarr | NA XWITH Narr;
+!specifying interaction
+
+!paths 
+pcl on NA (b1);
+pcl on Narr (b2);
+pcl on NAXNarr (b3);
+
+!variances
+NA;
+narr;
+
+MODEL CONSTRAINT:
+
+!declare new names for Narr values and simple slopes;
+!if a new name is missing from this list, Mplus will output an error;
+NEW(LOW_Narr HIGH_Narr int_low int_high);
+
+!Narr mean is 0 obtained from the TECH4 output (var=0.785, SD=0.886);
+LOW_Narr = 0 - 1*(0.886) ; !-1 SD below mean of Narr;
+HIGH_Narr = 0 + 1*(0.886) ; !+1 SD above mean of Narr;
+
+!simple slopes
+int_low = b1+b3*(LOW_Narr); ! low Narrative
+int_high = b1+b3*(HIGH_Narr); ! high Narrative
+
+!plot Johnson-Neyman CI's
+PLOT(Narr_JN); !tell Mplus which equation you will plot - name is below
+LOOP(Narr,-3,3,0.1); 
+!The loop function must include the X variable, 
+!the lower value of the X to be plotted, the highest value to be plotted,
+!and the units at which the moderator should be tested
+Narr_JN = b1 + b3*(Narr);
+
+PLOT: TYPE = PLOT2; !use plot2 for to get predicted values with CI
+
+Output: sampstat standardized tech1 tech4 cinterval;

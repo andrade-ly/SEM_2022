@@ -1,0 +1,35 @@
+Title: Model 0, no interaction;
+
+Data: file=PCL_MR.dat;
+type is individual;
+
+Variable: 
+NAMES ARE PANASNEG neurot AIMN ces ptgi closure pcl;
+!variables: PANAS negative affect (PANASNEG), 
+!neuroticism (neurot), negative intensity/negative
+!affect (AIMN), centrality of events (ces - extent
+!to which a traumatic memory forms a central
+!component of personal identity), posttraumatic
+!growth (ptgi), closure (closure), PTSD checklist
+!(pcl)
+USEVARIABLES ARE PANASNEG neurot AIMN ces ptgi closure pcl;
+
+Analysis:
+
+Define: Standardize PANASNEG neurot AIMN ces ptgi closure pcl;
+
+Model: 
+NA by PANASNEG neurot AIMN; 
+!specifying negative affectivity factor
+Narr by ces ptgi closure;
+!specifying personal narrative factor
+
+!paths 
+pcl on NA;
+pcl on Narr;
+
+!variances
+NA;
+narr;
+
+Output: sampstat tech1 tech4 residual standardized modindices;

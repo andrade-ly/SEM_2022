@@ -1,0 +1,239 @@
+---
+title: "Moderation"
+output:
+  html_document:
+    css: style.css
+---
+
+There aren't many options for latent variable interaction in R - at least not readily available. The two most common ones, LMS and product indicator approach, can be done in R with existing packages. Besides those, the authors of the book chapter have created multiple functions for other forms of latent variable interactions. 
+
+This script covers LMS and product indicator approaches.
+
+# LMS approach
+
+https://cran.r-project.org/web/packages/nlsem/nlsem.pdf
+
+NLSEM can be used to perform latent variable interactions in models with **latent variables and latent interactions only**. The model cannot have observed variables as outcomes, latent variables with fewer than 3 indicators, and entering constraints is less straightforward than in *Mplus* or *lavaan*.
+
+For this reason, we're using a different dataset to show this package.
+
+```{r}
+library(nlsem)
+```
+
+```{r}
+dataset <- read.csv("sample_timms2015.csv", header = TRUE)
+```
+
+The package cannot read variable names. You have to have your variables in order from x to y variables and with names x1, x2, x3, ... y1, y2, ..., and so on. So we're changing the variable names.
+
+```{r}
+colnames(dataset) <- c(
+                      "x1",
+                      "x2",
+                      "x3",
+                      "x4",
+                      "x5",
+                      "x6",
+                      "y1",
+                      "y2",
+                      "y3"
+                      )
+```
+
+There are a couple of ways of specifying models with NLSEM, one of them is to specify a lavaan type of model, and then use the ```lav2nlsem()` function turn it into an object that can be read by the NLSEM package.
+
+You also need to name the latent variables xi1, xi2, ..., for the exogenous latent variables (as in LISREL notation), and eta1, eta2, ..., for the endogenous latent variables. 
+
+```{r}
+lav_model <- 'xi1 =~ x1 + x2 + x3
+              xi2 =~ x4 + x5 + x6
+              eta1 =~ y1 + y2 + y3
+              eta1 ~ xi1 + xi2 + xi1:xi2'
+
+model <- lav2nlsem(lav_model)
+model
+              
+```
+
+According to the NLSEM documentation, we then fit the model along with starting values, which we compute using the ```runif()``` function. Then we fit the model using the ```em()``` function.
+
+```{r}
+# fit model
+set.seed(123)
+start <- runif(count_free_parameters(model))
+start
+```
+
+If you run this code, you will notice that there are lots of errors during model fitting and that the process takes a **very** long time. This model can be fitted properly in Mplus, so here's a plug to go to Mplus if you can.
+
+```{r}
+model_fit <- em(model = model, 
+                data = dataset, 
+                start = start, 
+                m = 16, 
+                max.iter = 500
+                )
+
+summary(model_fit)
+```
+
+# Product indicator approach
+
+As mentioned in lecture, if LMS is not possible, the product indicator approach is the next best option. the *semTools* package can do this in combination with lavaan.
+
+semTools: https://cran.r-project.org/web/packages/semTools/semTools.pdf
+
+## Load packages
+
+```{r}
+library(semTools)
+library(lavaan)
+```
+
+## Load data and give variable names
+
+```{r}
+narr_data <- read.table("PCL_MR.dat")
+```
+
+```{r}
+colnames(narr_data) <- c(
+                      "PANASNEG",
+                      "neurot",
+                      "AIMN",
+                      "ces",
+                      "ptgi",
+                      "closure",
+                      "pcl"
+                      )
+```
+
+Create a new dataframe with new variables for the product of the indicators of the X and Z variables. To do this, we use the ```indProd()``` function of *semTools*.
+
+```{r}
+prod_data <- indProd(
+                  data = narr_data, #create a new data.frame with the interaction indicators
+                  var1 = 1:3, #interaction indicators from the first latent
+                  var2 = 4:6, #interaction indicators from the second latent
+                  match = T, #use match-paired approach 
+                  meanC = T, # mean centering the main effect indicator before making the products
+                  #residualC = T, #residual centering the products by the main effect indicators
+                  #doubleMC = T #centering the resulting products
+                  ) 
+
+head(prod_data[,(ncol(prod_data)-2):ncol(prod_data)]) #check the last three columns of the new data.frame
+
+```
+
+## Specify a lavaan model 
+
+We'll now specify a lavaan model by creating a third latent variable for the interaction between X and Z. The indicators are the product terms created in the previous step.
+
+```{r}
+product_model <- '
+          NA_var =~ PANASNEG + neurot + AIMN
+          Narr =~ ces + ptgi + closure
+          NAxNarr =~ PANASNEG.ces + neurot.ptgi + AIMN.closure
+          NAxNarr ~~ 0*NA_var + 0*Narr
+          
+          # Lines below necessary for model identification
+          pcl ~ NA_var + Narr + NAxNarr # No correlation between int and xi1 xi2
+          NA_var + Narr + NAxNarr ~ 0*1 # Intercept of latent variables fixed to 0
+          '
+```
+
+# Fit the model
+
+```{r}
+product_fit <- sem(product_model, 
+                   data = prod_data,
+                   estimator = "MLR",
+                   meanstructure = TRUE)
+```
+
+## Request the output
+
+Note that, although the parameter estimates are not identical to Mplus's LMS approach, they have the same pattern and direction.
+
+```{r}
+summary(product_fit,
+        standardized = TRUE,
+        rsquare = TRUE
+        )
+```
+
+## Probe the interaction
+
+```{r}
+probe2way <- probe2WayMC(product_fit, # fitted lavaan model
+                nameX = c("NA_var", "Narr", "NAxNarr"), # X variables
+                nameY = "pcl", # Y variable
+                modVar = "Narr", # moderator
+                valProbe = c(-1, 0, 1)) # levels of the Z value at which to probe the interaction
+
+probe2way
+```
+
+# Using factor scores from Mplus
+
+Finally, we can use Mplus factor scores to plot interactions in R. We'll use the same packages and approaches presented in lecture, which cover both spotlight (pick-a-point) and floodlight (Johnson-Neyman) approaches. 
+
+We create the factor scores in Mplus by fitting an LMS model, then request the saved factor scores. We can use the names in the Mplus output to determine the names of the columns in the dataset.
+
+```{r}
+narr_scores <- read.csv("pcl_factorscores.csv", header = TRUE)
+```
+
+## With *probemod* package
+
+```{r}
+#install.packages("probemod")
+library(probemod)
+```
+
+```{r}
+mod <- lm(PCL ~ NA_var + NARR + NA_var*NARR, 
+          data = narr_scores)
+```
+
+```{r}
+plotmod <- jn(mod, dv = "PCL", iv = "NA_var", mod = "NARR")
+plot(plotmod)
+```
+
+```{r}
+spot1 <- pickapoint(mod, dv = "PCL", iv = "NA_var", mod = "NARR", method = "meansd")
+plot(spot1)
+spot1
+```
+
+## With *interactions* package
+
+```{r}
+#install.packages("interactions")
+library(interactions)
+```
+
+```{r}
+johnson_neyman(mod, pred = NA_var, modx = NARR)
+```
+
+```{r}
+interact_plot(mod, pred = NA_var, modx = NARR, interval = TRUE)
+```
+
+```{r}
+interact_plot(mod, pred = NA_var, modx = NARR, plot.points = TRUE)
+```
+
+## With *sandwich* package
+
+```{r}
+library(sandwich)
+```
+
+```{r}
+sim_slopes(mod, pred = NA_var, modx = NARR, jnplot = TRUE)
+```
+
