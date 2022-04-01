@@ -1,0 +1,50 @@
+TITLE:    Latent interaction LMS
+
+DATA:	  ! read data
+          FILE = mplus.dat;
+            
+VARIABLE: 
+          NAMES = math1 math2 math3                 ! math indicators
+                  exp1 exp2 exp3                    ! students' expectancies
+                  intrinsic1 intrinsic2 intrinsic3; ! intrinsic values
+
+
+          MISSING = ALL(999);                       ! missing data
+          
+
+ANALYSIS: TYPE = RANDOM;                            ! random effects for interaction term
+          ALGORITHM = INTEGRATION;                  ! integration algorithm 
+          INTEGRATION = gaussHermite(10);           ! here Gauss Hermite with 10 integration points
+          !INTEGRATION = MONTECARLO;                ! alternative integration (simulation based, does not work well)
+          ADAPTIVE = ON;                            ! adaptive process for integration points
+          PROCESSORS = 4;                           ! parallel computing
+          !Iterations = 300;                        ! iterations for alternative montecarlo integration
+          
+ 
+MODEL:     ! measurement models
+           xi1 BY exp1 exp2 exp3;
+           xi2 BY intrinsic1 intrinsic2 intrinsic3;
+           eta BY math1 math2 math3;
+
+           ! interaction term
+           xi1xi2 | xi1 xwith xi2;
+           
+           ! structural model
+           eta on xi1 xi2 xi1xi2;
+
+           ! for consistency with other approaches
+           ! first indicators have zero intercepts
+           [math1@0];
+           [exp1@0];
+           [intrinsic1@0];
+
+           ! intercept for latent DV
+           [eta*];
+           ! means for latent predictors
+           [xi1-xi2*] ;
+           
+
+
+
+       
+

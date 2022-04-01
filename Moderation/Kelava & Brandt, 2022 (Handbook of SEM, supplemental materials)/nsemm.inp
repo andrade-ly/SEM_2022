@@ -1,0 +1,80 @@
+TITLE:    Latent interaction NSEMM
+  
+DATA:	 ! read data
+          FILE = mplus.dat;
+             
+VARIABLE: 
+          NAMES = math1 math2 math3                 ! math indicators
+                  exp1 exp2 exp3                    ! students' expectancies
+                  intrinsic1 intrinsic2 intrinsic3; ! intrinsic values
+
+          MISSING = ALL(999);                       ! missing data
+          CLASSES = c(2);                           ! latent class for mixture (2 components)
+
+
+ANALYSIS: TYPE = RANDOM;                            ! random effects for interaction term
+          TYPE= MIXTURE;                            ! turn on mixture modeling
+          ALGORITHM = INTEGRATION;                  ! integration algorithm 
+          ALGORITHM=EMA;                            ! accelerated expectation maximization algorithm with Quasi-Newton and Fisher Scoring optimization steps when needed
+          INTEGRATION = gaussHermite(10);           ! here Gauss Hermite with 10 integration points
+          ADAPTIVE = ON;                            ! adaptive process for integration points
+          STARTS = 10 4;                            ! No. of set of random starting values for initial and final stage (for mixture)
+          PROCESSORS = 4;                           ! parallel computing
+ 
+MODEL:     !##########################################
+           ! First: overall model across mixtures components
+           !##########################################
+           %OVERALL%
+           !measurement models
+           xi1 BY exp1 exp2 exp3;
+           xi2 BY intrinsic1 intrinsic2 intrinsic3;
+           eta BY math1 math2 math3;
+
+           ! interaction term
+           xi1xi2 | xi1 xwith xi2;
+           
+           !structural model
+           eta on xi1 xi2 xi1xi2;
+
+           ! first indicators have zero intercepts
+           [math1@0];
+           [exp1@0];
+           [intrinsic1@0];
+           
+           ! constrain intercept for latent DV (for "parametric" interpretation)
+           [eta*] (alpha);
+
+           !##########################################
+           ! Second: mixture component specific parameters
+           !##########################################
+           ! component no. 1
+           !##########################################
+           %c#1%
+           
+           ! means for latent predictors
+           [xi1-xi2*] ;
+           ! (co)-variances for latent predictors
+           xi1-xi2*;
+           xi1 with xi2*;
+           
+           ! constrain intercept for latent DV (for "parametric" interpretation)
+           [eta*] (alpha);
+
+           !##########################################
+           ! component no. 2
+           !##########################################
+           %c#2%
+           ! means for latent predictors
+           [xi1-xi2*] ;
+           ! (co)-variances for latent predictors
+           xi1-xi2*;
+           xi1 with xi2*;
+           ! constrain intercept for latent DV (for "parametric" interpretation)
+           [eta*] (alpha);           
+
+! optional tech1 output provides overview on parameters             
+! (helps to ensure that mixture model is correctly constrained)
+OUTPUT:     tech1;
+
+       
+
