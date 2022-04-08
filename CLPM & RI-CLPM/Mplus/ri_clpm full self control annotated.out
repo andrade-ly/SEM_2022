@@ -1,0 +1,1349 @@
+Mplus VERSION 8.7
+MUTHEN & MUTHEN
+04/07/2022   9:45 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE: RI-CLPM with self-control and technology impairment;
+
+  DATA:FILE IS MPlus3.csv;
+
+  VARIABLE: Names are RAISEID ext read math inctile Gender Age1 frl_cat
+  race_cat SC1 INH1 INI1 CON1 TI1 SC2 INH2 INI2 CON2 TI2 SC3 INH3 INI3 CON3
+  TI3 SC4 INH4 INI4 CON4 TI4;
+
+  Missing are ALL (-999);
+
+  USEVARIABLES ARE
+  SC4 TI4 SC3 TI3 SC2 TI2 SC1 TI1;
+
+  ANALYSIS:
+  Estimator = MLR;
+  MODEL = NOCOV; ! Sets all default covariances to zero
+  ! This command is to override Mplus' defaults. You don't
+  ! need to use it. If you don't, make sure to check your parameters and
+  ! dfs, because you may need to fix more paths than you expected
+
+  MODEL:
+  ! Create two individual factors (random intercepts)
+  RI_TI BY TI1@1 TI2@1 TI3@1 TI4@1;
+  RI_SC BY SC1@1 SC2@1 SC3@1 SC4@1;
+
+  ! Create within-person centered variables
+  ! We are centering the variables by fixing their variances to 1.
+  ! This will fix their means to 0, so that M = 0, SD = 1.
+  cTI1 BY TI1@1;
+  cTI2 BY TI2@1;
+  cTI3 BY TI3@1;
+  cTI4 BY TI4@1;
+  cSC1 BY SC1@1;
+  cSC2 BY SC2@1;
+  cSC3 BY SC3@1;
+  cSC4 BY SC4@1;
+
+  ! Estimate the covariance between the random interceptss
+  RI_SC WITH RI_TI;
+
+  ! Constrain the measurement error variances to zero
+  SC4-TI1@0;
+
+  ! Estimate the lagged effects between
+  ! the within-person centered variables
+  cTI2 cSC2 ON cTI1 cSC1;
+  cTI3 cSC3 ON cTI2 cSC2;
+  cTI4 cSC4 on cTI3 cSC3;
+
+  ! Estimate the covariance between the within-person
+  ! centered variables at the first wave
+  cTI1 WITH cSC1;
+
+  ! Estimate the covariances between the residuals of
+  ! the within-person centered variables (the innovations)
+  cTI2 WITH cSC2;
+  cTI3 WITH cSC3;
+  cTI4 WITH cSC4;
+
+  OUTPUT: TECH1 TECH4 STDYX SAMPSTAT CINTERVAL;
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+RI-CLPM with self-control and technology impairment;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2104
+
+Number of dependent variables                                    8
+Number of independent variables                                  0
+Number of continuous latent variables                           10
+
+Observed dependent variables
+
+  Continuous
+   SC4         TI4         SC3         TI3         SC2         TI2
+   SC1         TI1
+
+Continuous latent variables
+   RI_TI       RI_SC       CTI1        CTI2        CTI3        CTI4
+   CSC1        CSC2        CSC3        CSC4
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  MPlus3.csv
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            23
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            0.412
+ TI4            0.394         0.394
+ SC3            0.266         0.260         0.332
+ TI3            0.263         0.258         0.324         0.325
+ SC2            0.273         0.266         0.261         0.259         0.347
+ TI2            0.273         0.267         0.262         0.259         0.347
+ SC1            0.412         0.394         0.332         0.325         0.347
+ TI1            0.412         0.394         0.331         0.325         0.346
+
+
+           Covariance Coverage
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2            0.347
+ SC1            0.347         1.000
+ TI1            0.347         1.000         1.000
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+                3.187         0.862         3.255         0.763         3.331
+
+
+           Means
+              TI2           SC1           TI1
+              ________      ________      ________
+                0.745         3.501         0.634
+
+
+           Covariances
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            0.412
+ TI4           -0.109         0.205
+ SC3            0.251        -0.099         0.459
+ TI3           -0.081         0.108        -0.141         0.230
+ SC2            0.202        -0.070         0.261        -0.094         0.457
+ TI2           -0.099         0.091        -0.115         0.126        -0.139
+ SC1            0.101        -0.038         0.171        -0.060         0.207
+ TI1           -0.047         0.042        -0.083         0.072        -0.086
+
+
+           Covariances
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2            0.210
+ SC1           -0.078         0.473
+ TI1            0.075        -0.102         0.179
+
+
+           Correlations
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            1.000
+ TI4           -0.376         1.000
+ SC3            0.578        -0.323         1.000
+ TI3           -0.263         0.496        -0.436         1.000
+ SC2            0.465        -0.229         0.570        -0.291         1.000
+ TI2           -0.336         0.437        -0.370         0.574        -0.450
+ SC1            0.229        -0.122         0.367        -0.181         0.444
+ TI1           -0.173         0.221        -0.290         0.356        -0.302
+
+
+           Correlations
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2            1.000
+ SC1           -0.248         1.000
+ TI1            0.386        -0.349         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -6212.782
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     SC4                   3.197       0.076       1.000    0.12%       2.667      3.000      3.222
+             867.000       0.401       0.083       5.000    0.35%       3.333      3.667
+     TI4                   0.860       0.161       0.000    4.22%       0.500      0.667      0.833
+             830.000       0.204      -0.416       2.000    1.45%       1.000      1.167
+     SC3                   3.283      -0.005       1.111    0.14%       2.667      3.111      3.333
+             698.000       0.458       0.076       5.000    1.15%       3.444      3.778
+     TI3                   0.752       0.412       0.000    9.06%       0.333      0.667      0.667
+             684.000       0.230      -0.260       2.000    2.05%       0.833      1.167
+     SC2                   3.356      -0.088       1.111    0.14%       2.778      3.222      3.333
+             730.000       0.466      -0.152       5.000    0.41%       3.556      3.889
+     TI2                   0.737       0.396       0.000    6.57%       0.333      0.500      0.667
+             731.000       0.210      -0.383       2.000    0.96%       0.833      1.167
+     SC1                   3.501      -0.111       1.000    0.05%       2.889      3.333      3.444
+            2104.000       0.473      -0.201       5.000    1.33%       3.667      4.111
+     TI1                   0.634       0.570       0.000    9.03%       0.333      0.500      0.500
+            2103.000       0.179      -0.087       2.000    0.48%       0.667      1.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       35
+
+Loglikelihood
+
+          H0 Value                       -6237.426
+          H0 Scaling Correction Factor      1.1576
+            for MLR
+          H1 Value                       -6212.782
+          H1 Scaling Correction Factor      1.1375
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   12544.851
+          Bayesian (BIC)                 12742.657
+          Sample-Size Adjusted BIC       12631.459
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             46.521*
+          Degrees of Freedom                     9
+          P-Value                           0.0000
+          Scaling Correction Factor         1.0595
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.045
+          90 Percent C.I.                    0.032  0.058
+          Probability RMSEA <= .05           0.741
+
+CFI/TLI
+
+          CFI                                0.974
+          TLI                                0.920
+! Model fit is okay
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           1493.307
+          Degrees of Freedom                    28
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.035
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+! These are the paths that we fixed to 1
+! These are the loadings from the observed variables to the 
+! random intercepts
+ RI_TI    BY
+    TI1                1.000      0.000    999.000    999.000
+    TI2                1.000      0.000    999.000    999.000
+    TI3                1.000      0.000    999.000    999.000
+    TI4                1.000      0.000    999.000    999.000
+
+ RI_SC    BY
+    SC1                1.000      0.000    999.000    999.000
+    SC2                1.000      0.000    999.000    999.000
+    SC3                1.000      0.000    999.000    999.000
+    SC4                1.000      0.000    999.000    999.000
+
+! These are the loadings from the observed variables to each of 
+! the centered latent variables 
+ CTI1     BY
+    TI1                1.000      0.000    999.000    999.000
+
+ CTI2     BY
+    TI2                1.000      0.000    999.000    999.000
+
+ CTI3     BY
+    TI3                1.000      0.000    999.000    999.000
+
+ CTI4     BY
+    TI4                1.000      0.000    999.000    999.000
+
+ CSC1     BY
+    SC1                1.000      0.000    999.000    999.000
+
+ CSC2     BY
+    SC2                1.000      0.000    999.000    999.000
+
+ CSC3     BY
+    SC3                1.000      0.000    999.000    999.000
+
+ CSC4     BY
+    SC4                1.000      0.000    999.000    999.000
+
+! These are the autoregressive paths and cross-lagged paths
+! Notice that only the autoregressive paths seem to be significant
+! with the exception of TI1 on SC2.
+ CTI2     ON
+    CTI1               0.158      0.080      1.967      0.049
+    CSC1              -0.061      0.037     -1.652      0.099
+
+ CSC2     ON
+! This is a cross-lagged path going from cTI1 to cSC2
+    CTI1              -0.210      0.089     -2.347      0.019
+! This is an autoregressive path going from cSC1 to cSC2 
+    CSC1               0.235      0.063      3.745      0.000
+
+ CTI3     ON
+    CTI2               0.451      0.069      6.585      0.000
+    CSC2              -0.021      0.042     -0.499      0.618
+
+ CSC3     ON
+    CTI2              -0.181      0.091     -1.996      0.046
+    CSC2               0.385      0.068      5.624      0.000
+
+ CTI4     ON
+    CTI3               0.294      0.061      4.858      0.000
+    CSC3              -0.064      0.042     -1.520      0.128
+
+ CSC4     ON
+    CTI3               0.009      0.072      0.127      0.899
+    CSC3               0.408      0.060      6.761      0.000
+
+! The covariances between our variables
+
+! Covariance between the intercepts of SC and TI. 
+! This indicates that adolescents lower in self-control, on average,
+! report more disruptive technology use
+ RI_SC    WITH
+    RI_TI             -0.043      0.011     -3.845      0.000
+
+! Covariance between the time 1's residuals
+ CTI1     WITH
+    CSC1              -0.060      0.012     -5.112      0.000
+
+! Covariance between the time 2's residuals
+ CTI2     WITH
+    CSC2              -0.076      0.013     -5.925      0.000
+
+! Covariance between the time 3's residuals
+ CTI3     WITH
+    CSC3              -0.061      0.010     -6.210      0.000
+
+! Covariance between the time 4's residuals
+ CTI4     WITH
+    CSC4              -0.047      0.009     -5.085      0.000
+
+! The mean structure
+ Intercepts
+    SC4                3.186      0.021    152.763      0.000
+    TI4                0.863      0.015     56.859      0.000
+    SC3                3.258      0.023    141.964      0.000
+    TI3                0.763      0.017     45.572      0.000
+    SC2                3.332      0.022    148.295      0.000
+    TI2                0.744      0.016     47.668      0.000
+    SC1                3.501      0.015    233.358      0.000
+    TI1                0.634      0.009     68.695      0.000
+
+! Because SC2-SC4 and TI2-TI4 are endogenous, we only have
+! variances for the random intercepts and time 1's variables
+! cTI1 and cSC1. 
+ Variances
+! The variance of TI is significant, which means that there is 
+! a non-zero amount of stable between-person variability.
+! that the CLPM cannot account for
+! If this had been NS, it would mean little between-person 
+! variability and this model would be redundant with the CLPM.
+    RI_TI              0.048      0.009      5.387      0.000
+! The variance of TI is significant, which means that there is 
+! a non-zero amount of variability at the between-person level
+    RI_SC              0.104      0.024      4.383      0.000
+    CTI1               0.132      0.009     14.679      0.000
+    CSC1               0.372      0.025     14.807      0.000
+
+ Residual Variances
+! The residual variances of SC1-SC4 and TI1-TI4 are all fixed to
+! zero because we created the centered latent variables by fixing the 
+! loadings of SC1 to cSC1 to 1. This means that the residual variace
+! must be 0 (all variance is accounter for by the latent variable).
+    SC4                0.000      0.000    999.000    999.000
+    TI4                0.000      0.000    999.000    999.000
+    SC3                0.000      0.000    999.000    999.000
+    TI3                0.000      0.000    999.000    999.000
+    SC2                0.000      0.000    999.000    999.000
+    TI2                0.000      0.000    999.000    999.000
+    SC1                0.000      0.000    999.000    999.000
+    TI1                0.000      0.000    999.000    999.000
+    CTI2               0.149      0.011     13.649      0.000
+    CTI3               0.142      0.009     15.281      0.000
+    CTI4               0.139      0.009     15.421      0.000
+    CSC2               0.310      0.024     12.935      0.000
+    CSC3               0.276      0.019     14.193      0.000
+    CSC4               0.250      0.016     16.034      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.558E-03
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ RI_TI    BY
+    TI1                0.515      0.046     11.141      0.000
+    TI2                0.485      0.048     10.138      0.000
+    TI3                0.462      0.044     10.393      0.000
+    TI4                0.481      0.043     11.120      0.000
+
+ RI_SC    BY
+    SC1                0.467      0.052      8.913      0.000
+    SC2                0.482      0.058      8.389      0.000
+    SC3                0.481      0.057      8.441      0.000
+    SC4                0.503      0.055      9.178      0.000
+
+ CTI1     BY
+    TI1                0.857      0.028     30.945      0.000
+
+ CTI2     BY
+    TI2                0.874      0.027     32.952      0.000
+
+ CTI3     BY
+    TI3                0.887      0.023     38.288      0.000
+
+ CTI4     BY
+    TI4                0.877      0.024     37.026      0.000
+
+ CSC1     BY
+    SC1                0.884      0.028     31.976      0.000
+
+ CSC2     BY
+    SC2                0.876      0.032     27.658      0.000
+
+ CSC3     BY
+    SC3                0.877      0.031     28.019      0.000
+
+ CSC4     BY
+    SC4                0.864      0.032     27.133      0.000
+
+ CTI2     ON
+    CTI1               0.146      0.073      1.994      0.046
+    CSC1              -0.094      0.058     -1.635      0.102
+
+ CSC2     ON
+    CTI1              -0.131      0.056     -2.338      0.019
+    CSC1               0.245      0.063      3.905      0.000
+
+ CTI3     ON
+    CTI2               0.424      0.064      6.634      0.000
+    CSC2              -0.029      0.059     -0.498      0.619
+
+ CSC3     ON
+    CTI2              -0.122      0.061     -1.996      0.046
+    CSC2               0.383      0.068      5.675      0.000
+
+ CTI4     ON
+    CTI3               0.309      0.064      4.847      0.000
+    CSC3              -0.094      0.061     -1.528      0.127
+
+ CSC4     ON
+    CTI3               0.007      0.054      0.127      0.899
+    CSC3               0.432      0.063      6.898      0.000
+
+ RI_SC    WITH
+    RI_TI             -0.609      0.102     -6.003      0.000
+
+ CTI1     WITH
+    CSC1              -0.270      0.044     -6.093      0.000
+
+ CTI2     WITH
+    CSC2              -0.355      0.050     -7.121      0.000
+
+ CTI3     WITH
+    CSC3              -0.305      0.044     -6.922      0.000
+
+ CTI4     WITH
+    CSC4              -0.252      0.045     -5.546      0.000
+
+ Intercepts
+    SC4                4.972      0.127     39.098      0.000
+    TI4                1.900      0.050     38.047      0.000
+    SC3                4.866      0.134     36.304      0.000
+    TI3                1.613      0.044     36.596      0.000
+    SC2                4.989      0.130     38.378      0.000
+    TI2                1.653      0.044     37.633      0.000
+    SC1                5.073      0.080     63.475      0.000
+    TI1                1.494      0.024     61.607      0.000
+
+ Variances
+    RI_TI              1.000      0.000    999.000    999.000
+    RI_SC              1.000      0.000    999.000    999.000
+    CTI1               1.000      0.000    999.000    999.000
+    CSC1               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    SC4                0.000    999.000    999.000    999.000
+    TI4                0.000    999.000    999.000    999.000
+    SC3                0.000    999.000    999.000    999.000
+    TI3                0.000    999.000    999.000    999.000
+    SC2                0.000    999.000    999.000    999.000
+    TI2                0.000    999.000    999.000    999.000
+    SC1                0.000    999.000    999.000    999.000
+    TI1                0.000    999.000    999.000    999.000
+    CTI2               0.962      0.028     34.811      0.000
+    CTI3               0.810      0.054     15.105      0.000
+    CTI4               0.874      0.043     20.226      0.000
+    CSC2               0.906      0.039     23.438      0.000
+    CSC3               0.802      0.056     14.428      0.000
+    CSC4               0.816      0.053     15.328      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    SC4                1.000    999.000    999.000    999.000
+    TI4                1.000    999.000    999.000    999.000
+    SC3                1.000    999.000    999.000    999.000
+    TI3                1.000    999.000    999.000    999.000
+    SC2                1.000    999.000    999.000    999.000
+    TI2                1.000    999.000    999.000    999.000
+    SC1                1.000    999.000    999.000    999.000
+    TI1                1.000    999.000    999.000    999.000
+
+! The R-sq is much lower here than in the CLPM. That's
+! because the CLPM is explaining BOTH the within
+! and the between person variance, without separating the two,
+! giving the impression that R2 for the within-person component 
+! is larger than it should be. RI-CLPM refers only to the within person R2.
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    CTI2               0.038      0.028      1.364      0.173
+    CTI3               0.190      0.054      3.545      0.000
+    CTI4               0.126      0.043      2.916      0.004
+    CSC2               0.094      0.039      2.437      0.015
+    CSC3               0.198      0.056      3.556      0.000
+    CSC4               0.184      0.053      3.467      0.001
+
+
+CONFIDENCE INTERVALS OF MODEL RESULTS
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ RI_TI    BY
+    TI1              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    TI2              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    TI3              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    TI4              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ RI_SC    BY
+    SC1              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    SC2              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    SC3              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    SC4              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CTI1     BY
+    TI1              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CTI2     BY
+    TI2              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CTI3     BY
+    TI3              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CTI4     BY
+    TI4              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CSC1     BY
+    SC1              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CSC2     BY
+    SC2              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CSC3     BY
+    SC3              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CSC4     BY
+    SC4              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CTI2     ON
+    CTI1            -0.049       0.001       0.026       0.158       0.290       0.316       0.365
+    CSC1            -0.156      -0.133      -0.121      -0.061       0.000       0.011       0.034
+
+ CSC2     ON
+    CTI1            -0.440      -0.385      -0.357      -0.210      -0.063      -0.035       0.020
+    CSC1             0.073       0.112       0.132       0.235       0.338       0.357       0.396
+
+ CTI3     ON
+    CTI2             0.275       0.317       0.338       0.451       0.564       0.585       0.628
+    CSC2            -0.129      -0.104      -0.090      -0.021       0.048       0.062       0.087
+
+ CSC3     ON
+    CTI2            -0.415      -0.359      -0.331      -0.181      -0.032      -0.003       0.053
+    CSC2             0.208       0.251       0.272       0.385       0.497       0.519       0.561
+
+ CTI4     ON
+    CTI3             0.138       0.175       0.194       0.294       0.394       0.413       0.450
+    CSC3            -0.171      -0.146      -0.132      -0.064       0.005       0.018       0.044
+
+ CSC4     ON
+    CTI3            -0.176      -0.132      -0.109       0.009       0.128       0.150       0.195
+    CSC3             0.252       0.289       0.308       0.408       0.507       0.526       0.563
+
+ RI_SC    WITH
+    RI_TI           -0.072      -0.065      -0.061      -0.043      -0.025      -0.021      -0.014
+
+ CTI1     WITH
+    CSC1            -0.090      -0.083      -0.079      -0.060      -0.041      -0.037      -0.030
+
+ CTI2     WITH
+    CSC2            -0.110      -0.102      -0.098      -0.076      -0.055      -0.051      -0.043
+
+ CTI3     WITH
+    CSC3            -0.086      -0.080      -0.077      -0.061      -0.045      -0.041      -0.035
+
+ CTI4     WITH
+    CSC4            -0.071      -0.065      -0.062      -0.047      -0.032      -0.029      -0.023
+
+ Intercepts
+    SC4              3.132       3.145       3.152       3.186       3.220       3.227       3.240
+    TI4              0.824       0.833       0.838       0.863       0.888       0.893       0.902
+    SC3              3.199       3.213       3.221       3.258       3.296       3.303       3.317
+    TI3              0.719       0.730       0.735       0.763       0.790       0.795       0.806
+    SC2              3.274       3.288       3.295       3.332       3.369       3.376       3.390
+    TI2              0.704       0.714       0.719       0.744       0.770       0.775       0.785
+    SC1              3.462       3.471       3.476       3.501       3.525       3.530       3.539
+    TI1              0.610       0.616       0.619       0.634       0.649       0.652       0.658
+
+ Variances
+    RI_TI            0.025       0.030       0.033       0.048       0.062       0.065       0.071
+    RI_SC            0.043       0.057       0.065       0.104       0.143       0.150       0.165
+    CTI1             0.109       0.115       0.118       0.132       0.147       0.150       0.156
+    CSC1             0.308       0.323       0.331       0.372       0.414       0.422       0.437
+
+ Residual Variances
+    SC4              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    TI4              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    SC3              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    TI3              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    SC2              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    TI2              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    SC1              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    TI1              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    CTI2             0.121       0.128       0.131       0.149       0.167       0.171       0.177
+    CTI3             0.118       0.124       0.127       0.142       0.158       0.161       0.166
+    CTI4             0.116       0.121       0.124       0.139       0.154       0.156       0.162
+    CSC2             0.248       0.263       0.271       0.310       0.349       0.357       0.372
+    CSC3             0.226       0.238       0.244       0.276       0.308       0.315       0.327
+    CSC4             0.210       0.220       0.225       0.250       0.276       0.281       0.290
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ RI_TI    BY
+    TI1              0.396       0.424       0.439       0.515       0.590       0.605       0.633
+    TI2              0.362       0.391       0.406       0.485       0.564       0.579       0.608
+    TI3              0.348       0.375       0.389       0.462       0.535       0.549       0.577
+    TI4              0.369       0.396       0.409       0.481       0.552       0.565       0.592
+
+ RI_SC    BY
+    SC1              0.332       0.364       0.381       0.467       0.553       0.570       0.602
+    SC2              0.334       0.370       0.388       0.482       0.577       0.595       0.631
+    SC3              0.334       0.369       0.387       0.481       0.575       0.593       0.628
+    SC4              0.362       0.395       0.413       0.503       0.593       0.610       0.644
+
+ CTI1     BY
+    TI1              0.786       0.803       0.812       0.857       0.903       0.912       0.929
+
+ CTI2     BY
+    TI2              0.806       0.822       0.831       0.874       0.918       0.927       0.943
+
+ CTI3     BY
+    TI3              0.827       0.841       0.849       0.887       0.925       0.932       0.947
+
+ CTI4     BY
+    TI4              0.816       0.831       0.838       0.877       0.916       0.923       0.938
+
+ CSC1     BY
+    SC1              0.813       0.830       0.839       0.884       0.930       0.939       0.956
+
+ CSC2     BY
+    SC2              0.794       0.814       0.824       0.876       0.928       0.938       0.958
+
+ CSC3     BY
+    SC3              0.796       0.815       0.825       0.877       0.928       0.938       0.957
+
+ CSC4     BY
+    SC4              0.782       0.802       0.812       0.864       0.917       0.927       0.946
+
+ CTI2     ON
+    CTI1            -0.043       0.003       0.026       0.146       0.267       0.290       0.335
+    CSC1            -0.243      -0.207      -0.189      -0.094       0.001       0.019       0.054
+
+ CSC2     ON
+    CTI1            -0.274      -0.240      -0.222      -0.131      -0.039      -0.021       0.013
+    CSC1             0.083       0.122       0.142       0.245       0.348       0.368       0.406
+
+ CTI3     ON
+    CTI2             0.259       0.299       0.319       0.424       0.529       0.549       0.588
+    CSC2            -0.181      -0.145      -0.126      -0.029       0.068       0.086       0.123
+
+ CSC3     ON
+    CTI2            -0.279      -0.241      -0.222      -0.122      -0.021      -0.002       0.035
+    CSC2             0.209       0.251       0.272       0.383       0.494       0.516       0.557
+
+ CTI4     ON
+    CTI3             0.145       0.184       0.204       0.309       0.414       0.434       0.474
+    CSC3            -0.251      -0.214      -0.194      -0.094       0.007       0.026       0.064
+
+ CSC4     ON
+    CTI3            -0.133      -0.100      -0.083       0.007       0.097       0.114       0.147
+    CSC3             0.271       0.309       0.329       0.432       0.535       0.555       0.593
+
+ RI_SC    WITH
+    RI_TI           -0.871      -0.808      -0.776      -0.609      -0.442      -0.410      -0.348
+
+ CTI1     WITH
+    CSC1            -0.384      -0.357      -0.343      -0.270      -0.197      -0.183      -0.156
+
+ CTI2     WITH
+    CSC2            -0.483      -0.453      -0.437      -0.355      -0.273      -0.257      -0.227
+
+ CTI3     WITH
+    CSC3            -0.419      -0.392      -0.378      -0.305      -0.233      -0.219      -0.192
+
+ CTI4     WITH
+    CSC4            -0.369      -0.341      -0.327      -0.252      -0.177      -0.163      -0.135
+
+ Intercepts
+    SC4              4.644       4.723       4.763       4.972       5.181       5.221       5.300
+    TI4              1.771       1.802       1.817       1.900       1.982       1.997       2.028
+    SC3              4.521       4.603       4.646       4.866       5.087       5.129       5.211
+    TI3              1.500       1.527       1.541       1.613       1.686       1.700       1.727
+    SC2              4.654       4.734       4.775       4.989       5.203       5.244       5.324
+    TI2              1.540       1.567       1.581       1.653       1.726       1.739       1.766
+    SC1              4.867       4.916       4.941       5.073       5.204       5.230       5.279
+    TI1              1.431       1.446       1.454       1.494       1.534       1.541       1.556
+
+ Variances
+    RI_TI            1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RI_SC            1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    CTI1             1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    CSC1             1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    SC4            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    TI4            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    SC3            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    TI3            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    SC2            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    TI2            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    SC1            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    TI1            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    CTI2             0.891       0.908       0.917       0.962       1.008       1.016       1.033
+    CTI3             0.672       0.705       0.722       0.810       0.898       0.915       0.948
+    CTI4             0.763       0.789       0.803       0.874       0.945       0.959       0.985
+    CSC2             0.806       0.830       0.842       0.906       0.969       0.982       1.005
+    CSC3             0.659       0.693       0.711       0.802       0.894       0.911       0.945
+    CSC4             0.679       0.711       0.728       0.816       0.903       0.920       0.953
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+                  1             2             3             4             5
+
+
+           NU
+              TI2           SC1           TI1
+              ________      ________      ________
+                  6             7             8
+
+
+           LAMBDA
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ SC4                0             0             0             0             0
+ TI4                0             0             0             0             0
+ SC3                0             0             0             0             0
+ TI3                0             0             0             0             0
+ SC2                0             0             0             0             0
+ TI2                0             0             0             0             0
+ SC1                0             0             0             0             0
+ TI1                0             0             0             0             0
+
+
+           LAMBDA
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ SC4                0             0             0             0             0
+ TI4                0             0             0             0             0
+ SC3                0             0             0             0             0
+ TI3                0             0             0             0             0
+ SC2                0             0             0             0             0
+ TI2                0             0             0             0             0
+ SC1                0             0             0             0             0
+ TI1                0             0             0             0             0
+
+
+           THETA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4                0
+ TI4                0             0
+ SC3                0             0             0
+ TI3                0             0             0             0
+ SC2                0             0             0             0             0
+ TI2                0             0             0             0             0
+ SC1                0             0             0             0             0
+ TI1                0             0             0             0             0
+
+
+           THETA
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2                0
+ SC1                0             0
+ TI1                0             0             0
+
+
+           ALPHA
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+                  0             0             0             0             0
+
+
+           ALPHA
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+                  0             0             0             0             0
+
+
+           BETA
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI              0             0             0             0             0
+ RI_SC              0             0             0             0             0
+ CTI1               0             0             0             0             0
+ CTI2               0             0             9             0             0
+ CTI3               0             0             0            11             0
+ CTI4               0             0             0             0            13
+ CSC1               0             0             0             0             0
+ CSC2               0             0            15             0             0
+ CSC3               0             0             0            17             0
+ CSC4               0             0             0             0            19
+
+
+           BETA
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ RI_TI              0             0             0             0             0
+ RI_SC              0             0             0             0             0
+ CTI1               0             0             0             0             0
+ CTI2               0            10             0             0             0
+ CTI3               0             0            12             0             0
+ CTI4               0             0             0            14             0
+ CSC1               0             0             0             0             0
+ CSC2               0            16             0             0             0
+ CSC3               0             0            18             0             0
+ CSC4               0             0             0            20             0
+
+
+           PSI
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI             21
+ RI_SC             22            23
+ CTI1               0             0            24
+ CTI2               0             0             0            25
+ CTI3               0             0             0             0            26
+ CTI4               0             0             0             0             0
+ CSC1               0             0            28             0             0
+ CSC2               0             0             0            30             0
+ CSC3               0             0             0             0            32
+ CSC4               0             0             0             0             0
+
+
+           PSI
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4              27
+ CSC1               0            29
+ CSC2               0             0            31
+ CSC3               0             0             0            33
+ CSC4              34             0             0             0            35
+
+
+     STARTING VALUES
+
+
+           NU
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+                3.197         0.860         3.283         0.752         3.356
+
+
+           NU
+              TI2           SC1           TI1
+              ________      ________      ________
+                0.737         3.501         0.634
+
+
+           LAMBDA
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ SC4            0.000         1.000         0.000         0.000         0.000
+ TI4            1.000         0.000         0.000         0.000         0.000
+ SC3            0.000         1.000         0.000         0.000         0.000
+ TI3            1.000         0.000         0.000         0.000         1.000
+ SC2            0.000         1.000         0.000         0.000         0.000
+ TI2            1.000         0.000         0.000         1.000         0.000
+ SC1            0.000         1.000         0.000         0.000         0.000
+ TI1            1.000         0.000         1.000         0.000         0.000
+
+
+           LAMBDA
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ SC4            0.000         0.000         0.000         0.000         1.000
+ TI4            1.000         0.000         0.000         0.000         0.000
+ SC3            0.000         0.000         0.000         1.000         0.000
+ TI3            0.000         0.000         0.000         0.000         0.000
+ SC2            0.000         0.000         1.000         0.000         0.000
+ TI2            0.000         0.000         0.000         0.000         0.000
+ SC1            0.000         1.000         0.000         0.000         0.000
+ TI1            0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            0.000
+ TI4            0.000         0.000
+ SC3            0.000         0.000         0.000
+ TI3            0.000         0.000         0.000         0.000
+ SC2            0.000         0.000         0.000         0.000         0.000
+ TI2            0.000         0.000         0.000         0.000         0.000
+ SC1            0.000         0.000         0.000         0.000         0.000
+ TI1            0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2            0.000
+ SC1            0.000         0.000
+ TI1            0.000         0.000         0.000
+
+
+           ALPHA
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI          0.000         0.000         0.000         0.000         0.000
+ RI_SC          0.000         0.000         0.000         0.000         0.000
+ CTI1           0.000         0.000         0.000         0.000         0.000
+ CTI2           0.000         0.000         0.000         0.000         0.000
+ CTI3           0.000         0.000         0.000         0.000         0.000
+ CTI4           0.000         0.000         0.000         0.000         0.000
+ CSC1           0.000         0.000         0.000         0.000         0.000
+ CSC2           0.000         0.000         0.000         0.000         0.000
+ CSC3           0.000         0.000         0.000         0.000         0.000
+ CSC4           0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ RI_TI          0.000         0.000         0.000         0.000         0.000
+ RI_SC          0.000         0.000         0.000         0.000         0.000
+ CTI1           0.000         0.000         0.000         0.000         0.000
+ CTI2           0.000         0.000         0.000         0.000         0.000
+ CTI3           0.000         0.000         0.000         0.000         0.000
+ CTI4           0.000         0.000         0.000         0.000         0.000
+ CSC1           0.000         0.000         0.000         0.000         0.000
+ CSC2           0.000         0.000         0.000         0.000         0.000
+ CSC3           0.000         0.000         0.000         0.000         0.000
+ CSC4           0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI          0.050
+ RI_SC          0.000         0.050
+ CTI1           0.000         0.000         0.050
+ CTI2           0.000         0.000         0.000         0.050
+ CTI3           0.000         0.000         0.000         0.000         0.050
+ CTI4           0.000         0.000         0.000         0.000         0.000
+ CSC1           0.000         0.000         0.000         0.000         0.000
+ CSC2           0.000         0.000         0.000         0.000         0.000
+ CSC3           0.000         0.000         0.000         0.000         0.000
+ CSC4           0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4           0.050
+ CSC1           0.000         0.050
+ CSC2           0.000         0.000         0.050
+ CSC3           0.000         0.000         0.000         0.050
+ CSC4           0.000         0.000         0.000         0.000         0.050
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+                1.000         1.000         1.000         1.000         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+                1.000         1.000         1.000         1.000         1.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI          0.048
+ RI_SC         -0.043         0.104
+ CTI1           0.000         0.000         0.132
+ CTI2           0.000         0.000         0.025         0.155
+ CTI3           0.000         0.000         0.012         0.072         0.176
+ CTI4           0.000         0.000         0.005         0.025         0.058
+ CSC1           0.000         0.000        -0.060        -0.032        -0.017
+ CSC2           0.000         0.000        -0.042        -0.089        -0.047
+ CSC3           0.000         0.000        -0.021        -0.062        -0.092
+ CSC4           0.000         0.000        -0.008        -0.025        -0.036
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4           0.159
+ CSC1          -0.008         0.372
+ CSC2          -0.023         0.100         0.342
+ CSC3          -0.049         0.044         0.148         0.345
+ CSC4          -0.066         0.018         0.060         0.140         0.307
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI          0.009
+ RI_SC          0.011         0.024
+ CTI1           0.000         0.000         0.009
+ CTI2           0.000         0.000         0.012         0.014
+ CTI3           0.000         0.000         0.007         0.014         0.014
+ CTI4           0.000         0.000         0.003         0.008         0.012
+ CSC1           0.000         0.000         0.012         0.016         0.010
+ CSC2           0.000         0.000         0.015         0.018         0.019
+ CSC3           0.000         0.000         0.009         0.019         0.018
+ CSC4           0.000         0.000         0.004         0.012         0.017
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4           0.011
+ CSC1           0.005         0.025
+ CSC2           0.010         0.029         0.034
+ CSC3           0.017         0.018         0.033         0.034
+ CSC4           0.013         0.009         0.020         0.030         0.026
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI          5.387
+ RI_SC         -3.845         4.383
+ CTI1           0.000         0.000        14.679
+ CTI2           0.000         0.000         2.064        11.245
+ CTI3           0.000         0.000         1.758         4.960        12.481
+ CTI4           0.000         0.000         1.606         3.062         4.609
+ CSC1           0.000         0.000        -5.112        -2.028        -1.676
+ CSC2           0.000         0.000        -2.859        -5.030        -2.492
+ CSC3           0.000         0.000        -2.295        -3.330        -5.137
+ CSC4           0.000         0.000        -1.849        -2.145        -2.110
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4          14.376
+ CSC1          -1.645        14.807
+ CSC2          -2.253         3.471        10.090
+ CSC3          -2.927         2.455         4.440        10.009
+ CSC4          -4.964         1.951         2.952         4.687        11.784
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI          0.000
+ RI_SC          0.000         0.000
+ CTI1           1.000         1.000         0.000
+ CTI2           1.000         1.000         0.039         0.000
+ CTI3           1.000         1.000         0.079         0.000         0.000
+ CTI4           1.000         1.000         0.108         0.002         0.000
+ CSC1           1.000         1.000         0.000         0.043         0.094
+ CSC2           1.000         1.000         0.004         0.000         0.013
+ CSC3           1.000         1.000         0.022         0.001         0.000
+ CSC4           1.000         1.000         0.065         0.032         0.035
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4           0.000
+ CSC1           0.100         0.000
+ CSC2           0.024         0.001         0.000
+ CSC3           0.003         0.014         0.000         0.000
+ CSC4           0.000         0.051         0.003         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI          1.000
+ RI_SC         -0.609         1.000
+ CTI1           0.000         0.000         1.000
+ CTI2           0.000         0.000         0.172         1.000
+ CTI3           0.000         0.000         0.079         0.435         1.000
+ CTI4           0.000         0.000         0.033         0.160         0.344
+ CSC1           0.000         0.000        -0.270        -0.134        -0.065
+ CSC2           0.000         0.000        -0.197        -0.386        -0.193
+ CSC3           0.000         0.000        -0.096        -0.270        -0.373
+ CSC4           0.000         0.000        -0.041        -0.114        -0.154
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4           1.000
+ CSC1          -0.032         1.000
+ CSC2          -0.100         0.280         1.000
+ CSC3          -0.209         0.124         0.430         1.000
+ CSC4          -0.301         0.053         0.185         0.429         1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI          0.000
+ RI_SC          0.102         0.000
+ CTI1           0.000         0.000         0.000
+ CTI2           0.000         0.000         0.074         0.000
+ CTI3           0.000         0.000         0.041         0.061         0.000
+ CTI4           0.000         0.000         0.019         0.044         0.061
+ CSC1           0.000         0.000         0.044         0.061         0.037
+ CSC2           0.000         0.000         0.062         0.058         0.071
+ CSC3           0.000         0.000         0.037         0.068         0.057
+ CSC4           0.000         0.000         0.021         0.048         0.068
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4           0.000
+ CSC1           0.018         0.000
+ CSC2           0.041         0.063         0.000
+ CSC3           0.065         0.042         0.064         0.000
+ CSC4           0.052         0.024         0.050         0.062         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI        999.000
+ RI_SC         -6.003       999.000
+ CTI1           0.000         0.000       999.000
+ CTI2           0.000         0.000         2.333       999.000
+ CTI3           0.000         0.000         1.929         7.096       999.000
+ CTI4           0.000         0.000         1.725         3.645         5.653
+ CSC1           0.000         0.000        -6.093        -2.176        -1.762
+ CSC2           0.000         0.000        -3.175        -6.682        -2.722
+ CSC3           0.000         0.000        -2.584        -3.979        -6.535
+ CSC4           0.000         0.000        -2.001        -2.376        -2.266
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4         999.000
+ CSC1          -1.726       999.000
+ CSC2          -2.439         4.445       999.000
+ CSC3          -3.194         2.909         6.737       999.000
+ CSC4          -5.742         2.191         3.719         6.920       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              RI_TI         RI_SC         CTI1          CTI2          CTI3
+              ________      ________      ________      ________      ________
+ RI_TI          0.000
+ RI_SC          0.000         0.000
+ CTI1           1.000         1.000         0.000
+ CTI2           1.000         1.000         0.020         0.000
+ CTI3           1.000         1.000         0.054         0.000         0.000
+ CTI4           1.000         1.000         0.085         0.000         0.000
+ CSC1           1.000         1.000         0.000         0.030         0.078
+ CSC2           1.000         1.000         0.001         0.000         0.006
+ CSC3           1.000         1.000         0.010         0.000         0.000
+ CSC4           1.000         1.000         0.045         0.018         0.023
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              CTI4          CSC1          CSC2          CSC3          CSC4
+              ________      ________      ________      ________      ________
+ CTI4           0.000
+ CSC1           0.084         0.000
+ CSC2           0.015         0.000         0.000
+ CSC3           0.001         0.004         0.000         0.000
+ CSC4           0.000         0.028         0.000         0.000         0.000
+
+
+     Beginning Time:  09:45:26
+        Ending Time:  09:45:26
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2021 Muthen & Muthen

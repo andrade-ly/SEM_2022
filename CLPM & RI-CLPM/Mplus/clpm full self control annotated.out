@@ -1,0 +1,830 @@
+Mplus VERSION 8.7
+MUTHEN & MUTHEN
+04/07/2022  10:20 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE: CLPM with self-control and technology impairtment;
+
+  DATA:FILE IS MPlus3.csv;
+  VARIABLE:   Names are RAISEID ext read math inctile Gender Age1 frl_cat
+  race_cat SC1 INH1 INI1 CON1 TI1 SC2 INH2 INI2 CON2 TI2 SC3 INH3 INI3 CON3
+  TI3 SC4 INH4 INI4 CON4 TI4;
+
+  Missing are ALL (-999);
+
+  USEVARIABLES ARE
+  SC4 TI4 SC3 TI3 SC2 TI2 SC1 TI1;
+
+  Analysis:
+  Estimator = MLR;
+
+  MODEL:
+
+  ! Estimate the lagged effects between the variables
+  SC2 TI2 ON SC1 TI1;
+  SC3 TI3 ON SC2 TI2;
+  SC4 TI4 ON SC3 TI3;
+
+  ! Estimate the covariances between the residuals
+  SC2 WITH TI2;
+  SC4 WITH TI4;
+  SC3 WITH TI3;
+
+  ! Estimate the covariance between the within-person
+  ! variables at the first wave
+  TI1 WITH SC1;
+
+  OUTPUT: TECH1 STDYX SAMPSTAT CINTERVAL;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+CLPM with self-control and technology impairtment;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2104
+
+Number of dependent variables                                    6
+Number of independent variables                                  2
+Number of continuous latent variables                            0
+
+Observed dependent variables
+
+  Continuous
+   SC4         TI4         SC3         TI3         SC2         TI2
+
+Observed independent variables
+   SC1         TI1
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  MPlus3.csv
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            23
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            0.412
+ TI4            0.394         0.394
+ SC3            0.266         0.260         0.332
+ TI3            0.263         0.258         0.324         0.325
+ SC2            0.273         0.266         0.261         0.259         0.347
+ TI2            0.273         0.267         0.262         0.259         0.347
+ SC1            0.412         0.394         0.332         0.325         0.347
+ TI1            0.412         0.394         0.331         0.325         0.346
+
+
+           Covariance Coverage
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2            0.347
+ SC1            0.347         1.000
+ TI1            0.347         1.000         1.000
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+                3.187         0.862         3.255         0.763         3.331
+
+
+           Means
+              TI2           SC1           TI1
+              ________      ________      ________
+                0.745         3.501         0.634
+
+
+           Covariances
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            0.412
+ TI4           -0.109         0.205
+ SC3            0.251        -0.099         0.459
+ TI3           -0.081         0.108        -0.141         0.230
+ SC2            0.202        -0.070         0.261        -0.094         0.457
+ TI2           -0.099         0.091        -0.115         0.126        -0.139
+ SC1            0.101        -0.038         0.171        -0.060         0.207
+ TI1           -0.047         0.042        -0.083         0.072        -0.086
+
+
+           Covariances
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2            0.210
+ SC1           -0.078         0.473
+ TI1            0.075        -0.102         0.179
+
+
+           Correlations
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            1.000
+ TI4           -0.376         1.000
+ SC3            0.578        -0.323         1.000
+ TI3           -0.263         0.496        -0.436         1.000
+ SC2            0.465        -0.229         0.570        -0.291         1.000
+ TI2           -0.336         0.437        -0.370         0.574        -0.450
+ SC1            0.229        -0.122         0.367        -0.181         0.444
+ TI1           -0.173         0.221        -0.290         0.356        -0.302
+
+
+           Correlations
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2            1.000
+ SC1           -0.248         1.000
+ TI1            0.386        -0.349         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -6212.782
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     SC4                   3.197       0.076       1.000    0.12%       2.667      3.000      3.222
+             867.000       0.401       0.083       5.000    0.35%       3.333      3.667
+     TI4                   0.860       0.161       0.000    4.22%       0.500      0.667      0.833
+             830.000       0.204      -0.416       2.000    1.45%       1.000      1.167
+     SC3                   3.283      -0.005       1.111    0.14%       2.667      3.111      3.333
+             698.000       0.458       0.076       5.000    1.15%       3.444      3.778
+     TI3                   0.752       0.412       0.000    9.06%       0.333      0.667      0.667
+             684.000       0.230      -0.260       2.000    2.05%       0.833      1.167
+     SC2                   3.356      -0.088       1.111    0.14%       2.778      3.222      3.333
+             730.000       0.466      -0.152       5.000    0.41%       3.556      3.889
+     TI2                   0.737       0.396       0.000    6.57%       0.333      0.500      0.667
+             731.000       0.210      -0.383       2.000    0.96%       0.833      1.167
+     SC1                   3.501      -0.111       1.000    0.05%       2.889      3.333      3.444
+            2104.000       0.473      -0.201       5.000    1.33%       3.667      4.111
+     TI1                   0.634       0.570       0.000    9.03%       0.333      0.500      0.500
+            2103.000       0.179      -0.087       2.000    0.48%       0.667      1.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+! Notice that we have 3 fewer free parameters than in the RI-CLPM
+! These are the: 1) covariance between the random intercepts;
+! 2) variance of intercept of SC; 3) variance of intercept of TI 
+Number of Free Parameters                       32
+
+Loglikelihood
+
+          H0 Value                       -6255.405
+          H0 Scaling Correction Factor      1.1350
+            for MLR
+          H1 Value                       -6212.782
+          H1 Scaling Correction Factor      1.1375
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   12574.810
+          Bayesian (BIC)                 12755.661
+          Sample-Size Adjusted BIC       12653.994
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             74.498*
+          Degrees of Freedom                    12
+          P-Value                           0.0000
+          Scaling Correction Factor         1.1443
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.050
+          90 Percent C.I.                    0.039  0.061
+          Probability RMSEA <= .05           0.492
+! Fit is lower in the CLPM, potentially because we are 
+! treating all variance as within-subject 
+CFI/TLI
+
+          CFI                                0.950
+          TLI                                0.887
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           1271.824
+          Degrees of Freedom                    27
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.045
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+! These are the autoregressive paths and cross-lagged paths
+! Check out the p-values and compare them with the RI-CLPM. 
+! Most of the paths are significant in this case, which would
+! suggest that we have cross-lagged associations between 
+! SC and TI. However, we are not accounting for the possibility 
+! of between-person effects, which means some of these effects
+! may not be accurate. This is the criticism Hamaker et al (2015)
+! make in their paper.
+ SC2      ON
+    SC1                0.389      0.033     11.702      0.000
+    TI1               -0.274      0.053     -5.197      0.000
+
+ TI2      ON
+    SC1               -0.086      0.024     -3.595      0.000
+    TI1                0.386      0.042      9.252      0.000
+
+ SC3      ON
+    SC2                0.522      0.040     13.183      0.000
+    TI2               -0.216      0.061     -3.550      0.000
+
+ TI3      ON
+    SC2               -0.031      0.028     -1.085      0.278
+    TI2                0.589      0.042     13.870      0.000
+
+ SC4      ON
+    SC3                0.539      0.037     14.739      0.000
+    TI3               -0.026      0.051     -0.504      0.614
+
+ TI4      ON
+    SC3               -0.078      0.030     -2.636      0.008
+    TI3                0.428      0.044      9.697      0.000
+
+! The covariances between our variables
+ SC2      WITH
+    TI2               -0.088      0.011     -7.985      0.000
+
+ SC4      WITH
+    TI4               -0.052      0.010     -5.494      0.000
+
+ SC3      WITH
+    TI3               -0.065      0.010     -6.712      0.000
+
+ TI1      WITH
+    SC1               -0.102      0.007    -15.099      0.000
+
+! The mean structure
+ Means
+    SC1                3.501      0.015    233.358      0.000
+    TI1                0.634      0.009     68.693      0.000
+
+ Intercepts
+    SC4                1.455      0.142     10.247      0.000
+    TI4                0.789      0.119      6.629      0.000
+    SC3                1.681      0.166     10.143      0.000
+    TI3                0.427      0.114      3.740      0.000
+    SC2                2.143      0.136     15.764      0.000
+    TI2                0.801      0.100      8.016      0.000
+
+ Variances
+! Because SC2-SC4 and TI2-TI4 are endogenous, we only have
+! variances for the time 1's variables TI1 and SC1, and 
+! residual variances for the remaining variables.
+    SC1                0.473      0.014     34.203      0.000
+    TI1                0.179      0.005     33.157      0.000
+
+ Residual Variances
+    SC4                0.270      0.016     16.544      0.000
+    TI4                0.150      0.009     15.904      0.000
+    SC3                0.298      0.020     15.215      0.000
+    TI3                0.151      0.010     15.265      0.000
+    SC2                0.353      0.021     17.161      0.000
+    TI2                0.174      0.009     19.132      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.423E-03
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ SC2      ON
+    SC1                0.395      0.031     12.545      0.000
+    TI1               -0.171      0.033     -5.165      0.000
+
+ TI2      ON
+    SC1               -0.128      0.036     -3.600      0.000
+    TI1                0.355      0.037      9.654      0.000
+
+ SC3      ON
+    SC2                0.519      0.036     14.338      0.000
+    TI2               -0.146      0.040     -3.620      0.000
+
+ TI3      ON
+    SC2               -0.044      0.040     -1.089      0.276
+    TI2                0.564      0.037     15.409      0.000
+
+ SC4      ON
+    SC3                0.574      0.032     17.764      0.000
+    TI3               -0.019      0.038     -0.504      0.614
+
+ TI4      ON
+    SC3               -0.118      0.044     -2.678      0.007
+    TI3                0.453      0.045     10.103      0.000
+
+ SC2      WITH
+    TI2               -0.356      0.037     -9.720      0.000
+
+ SC4      WITH
+    TI4               -0.260      0.042     -6.178      0.000
+
+ SC3      WITH
+    TI3               -0.305      0.040     -7.570      0.000
+
+ TI1      WITH
+    SC1               -0.349      0.020    -17.318      0.000
+
+ Means
+    SC1                5.087      0.079     64.231      0.000
+    TI1                1.498      0.024     62.187      0.000
+
+ Intercepts
+    SC4                2.275      0.251      9.080      0.000
+    TI4                1.743      0.261      6.673      0.000
+    SC3                2.467      0.266      9.288      0.000
+    TI3                0.890      0.240      3.705      0.000
+    SC2                3.161      0.239     13.246      0.000
+    TI2                1.742      0.220      7.929      0.000
+
+ Variances
+    SC1                1.000      0.000    999.000    999.000
+    TI1                1.000      0.000    999.000    999.000
+
+ Residual Variances
+    SC4                0.660      0.034     19.521      0.000
+    TI4                0.734      0.037     19.838      0.000
+    SC3                0.641      0.030     21.514      0.000
+    TI3                0.657      0.036     18.241      0.000
+    SC2                0.768      0.026     29.190      0.000
+    TI2                0.826      0.026     32.039      0.000
+
+
+R-SQUARE
+! The R-sq is much higher here than in the RI-CLPM. That's
+! because the CLPM is explaining BOTH the within
+! and the between person variance, without separating the two,
+! giving the impression that R2 is larger.
+! RI-CLPM refers only to the within person R2.
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    SC4                0.340      0.034     10.047      0.000
+    TI4                0.266      0.037      7.205      0.000
+    SC3                0.359      0.030     12.072      0.000
+    TI3                0.343      0.036      9.504      0.000
+    SC2                0.232      0.026      8.841      0.000
+    TI2                0.174      0.026      6.770      0.000
+
+
+CONFIDENCE INTERVALS OF MODEL RESULTS
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ SC2      ON
+    SC1              0.303       0.324       0.334       0.389       0.444       0.454       0.475
+    TI1             -0.410      -0.378      -0.361      -0.274      -0.188      -0.171      -0.138
+
+ TI2      ON
+    SC1             -0.147      -0.132      -0.125      -0.086      -0.046      -0.039      -0.024
+    TI1              0.278       0.304       0.317       0.386       0.454       0.467       0.493
+
+ SC3      ON
+    SC2              0.420       0.445       0.457       0.522       0.587       0.600       0.624
+    TI2             -0.373      -0.336      -0.316      -0.216      -0.116      -0.097      -0.059
+
+ TI3      ON
+    SC2             -0.104      -0.086      -0.077      -0.031       0.016       0.025       0.042
+    TI2              0.479       0.505       0.519       0.589       0.658       0.672       0.698
+
+ SC4      ON
+    SC3              0.445       0.467       0.479       0.539       0.599       0.610       0.633
+    TI3             -0.158      -0.126      -0.110      -0.026       0.059       0.075       0.106
+
+ TI4      ON
+    SC3             -0.155      -0.137      -0.127      -0.078      -0.029      -0.020      -0.002
+    TI3              0.314       0.342       0.355       0.428       0.501       0.515       0.542
+
+ SC2      WITH
+    TI2             -0.117      -0.110      -0.107      -0.088      -0.070      -0.067      -0.060
+
+ SC4      WITH
+    TI4             -0.077      -0.071      -0.068      -0.052      -0.037      -0.034      -0.028
+
+ SC3      WITH
+    TI3             -0.089      -0.083      -0.080      -0.065      -0.049      -0.046      -0.040
+
+ TI1      WITH
+    SC1             -0.119      -0.115      -0.113      -0.102      -0.091      -0.088      -0.084
+
+ Means
+    SC1              3.462       3.471       3.476       3.501       3.525       3.530       3.539
+    TI1              0.610       0.616       0.619       0.634       0.649       0.652       0.658
+
+ Intercepts
+    SC4              1.089       1.177       1.221       1.455       1.689       1.733       1.821
+    TI4              0.482       0.556       0.593       0.789       0.985       1.022       1.095
+    SC3              1.254       1.356       1.409       1.681       1.954       2.006       2.108
+    TI3              0.133       0.203       0.239       0.427       0.614       0.650       0.721
+    SC2              1.793       1.876       1.919       2.143       2.366       2.409       2.493
+    TI2              0.543       0.605       0.636       0.801       0.965       0.996       1.058
+
+ Variances
+    SC1              0.438       0.446       0.451       0.473       0.496       0.501       0.509
+    TI1              0.165       0.169       0.170       0.179       0.188       0.190       0.193
+
+ Residual Variances
+    SC4              0.228       0.238       0.243       0.270       0.297       0.302       0.312
+    TI4              0.126       0.132       0.135       0.150       0.166       0.169       0.175
+    SC3              0.247       0.259       0.265       0.298       0.330       0.336       0.348
+    TI3              0.126       0.132       0.135       0.151       0.167       0.170       0.177
+    SC2              0.300       0.312       0.319       0.353       0.387       0.393       0.406
+    TI2              0.151       0.157       0.159       0.174       0.189       0.192       0.198
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ SC2      ON
+    SC1              0.314       0.333       0.343       0.395       0.447       0.457       0.476
+    TI1             -0.257      -0.236      -0.226      -0.171      -0.117      -0.106      -0.086
+
+ TI2      ON
+    SC1             -0.220      -0.198      -0.187      -0.128      -0.070      -0.058      -0.036
+    TI1              0.261       0.283       0.295       0.355       0.416       0.427       0.450
+
+ SC3      ON
+    SC2              0.426       0.448       0.460       0.519       0.579       0.590       0.613
+    TI2             -0.250      -0.225      -0.212      -0.146      -0.080      -0.067      -0.042
+
+ TI3      ON
+    SC2             -0.147      -0.122      -0.109      -0.044       0.022       0.035       0.059
+    TI2              0.470       0.493       0.504       0.564       0.625       0.636       0.659
+
+ SC4      ON
+    SC3              0.491       0.511       0.521       0.574       0.627       0.638       0.657
+    TI3             -0.118      -0.095      -0.083      -0.019       0.044       0.056       0.080
+
+ TI4      ON
+    SC3             -0.231      -0.204      -0.190      -0.118      -0.046      -0.032      -0.005
+    TI3              0.338       0.366       0.380       0.453       0.527       0.541       0.569
+
+ SC2      WITH
+    TI2             -0.451      -0.428      -0.417      -0.356      -0.296      -0.284      -0.262
+
+ SC4      WITH
+    TI4             -0.369      -0.343      -0.329      -0.260      -0.191      -0.178      -0.152
+
+ SC3      WITH
+    TI3             -0.408      -0.383      -0.371      -0.305      -0.238      -0.226      -0.201
+
+ TI1      WITH
+    SC1             -0.400      -0.388      -0.382      -0.349      -0.315      -0.309      -0.297
+
+ Means
+    SC1              4.883       4.932       4.957       5.087       5.218       5.243       5.291
+    TI1              1.436       1.450       1.458       1.498       1.537       1.545       1.560
+
+ Intercepts
+    SC4              1.630       1.784       1.863       2.275       2.687       2.766       2.921
+    TI4              1.070       1.231       1.313       1.743       2.173       2.255       2.416
+    SC3              1.782       1.946       2.030       2.467       2.903       2.987       3.151
+    TI3              0.271       0.419       0.495       0.890       1.285       1.361       1.509
+    SC2              2.546       2.693       2.768       3.161       3.553       3.628       3.775
+    TI2              1.176       1.311       1.380       1.742       2.103       2.172       2.308
+
+ Variances
+    SC1              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    TI1              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    SC4              0.573       0.594       0.605       0.660       0.716       0.726       0.747
+    TI4              0.638       0.661       0.673       0.734       0.794       0.806       0.829
+    SC3              0.564       0.582       0.592       0.641       0.690       0.699       0.717
+    TI3              0.565       0.587       0.598       0.657       0.717       0.728       0.750
+    SC2              0.700       0.716       0.724       0.768       0.811       0.819       0.835
+    TI2              0.759       0.775       0.783       0.826       0.868       0.876       0.892
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+                  0             0             0             0             0
+
+
+           NU
+              TI2           SC1           TI1
+              ________      ________      ________
+                  0             0             0
+
+
+           LAMBDA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4                0             0             0             0             0
+ TI4                0             0             0             0             0
+ SC3                0             0             0             0             0
+ TI3                0             0             0             0             0
+ SC2                0             0             0             0             0
+ TI2                0             0             0             0             0
+ SC1                0             0             0             0             0
+ TI1                0             0             0             0             0
+
+
+           LAMBDA
+              TI2           SC1           TI1
+              ________      ________      ________
+ SC4                0             0             0
+ TI4                0             0             0
+ SC3                0             0             0
+ TI3                0             0             0
+ SC2                0             0             0
+ TI2                0             0             0
+ SC1                0             0             0
+ TI1                0             0             0
+
+
+           THETA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4                0
+ TI4                0             0
+ SC3                0             0             0
+ TI3                0             0             0             0
+ SC2                0             0             0             0             0
+ TI2                0             0             0             0             0
+ SC1                0             0             0             0             0
+ TI1                0             0             0             0             0
+
+
+           THETA
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2                0
+ SC1                0             0
+ TI1                0             0             0
+
+
+           ALPHA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+                  1             2             3             4             5
+
+
+           ALPHA
+              TI2           SC1           TI1
+              ________      ________      ________
+                  6             7             8
+
+
+           BETA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4                0             0             9            10             0
+ TI4                0             0            11            12             0
+ SC3                0             0             0             0            13
+ TI3                0             0             0             0            15
+ SC2                0             0             0             0             0
+ TI2                0             0             0             0             0
+ SC1                0             0             0             0             0
+ TI1                0             0             0             0             0
+
+
+           BETA
+              TI2           SC1           TI1
+              ________      ________      ________
+ SC4                0             0             0
+ TI4                0             0             0
+ SC3               14             0             0
+ TI3               16             0             0
+ SC2                0            17            18
+ TI2                0            19            20
+ SC1                0             0             0
+ TI1                0             0             0
+
+
+           PSI
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4               21
+ TI4               22            23
+ SC3                0             0            24
+ TI3                0             0            25            26
+ SC2                0             0             0             0            27
+ TI2                0             0             0             0            28
+ SC1                0             0             0             0             0
+ TI1                0             0             0             0             0
+
+
+           PSI
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2               29
+ SC1                0            30
+ TI1                0            31            32
+
+
+     STARTING VALUES
+
+
+           NU
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              TI2           SC1           TI1
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           LAMBDA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            1.000         0.000         0.000         0.000         0.000
+ TI4            0.000         1.000         0.000         0.000         0.000
+ SC3            0.000         0.000         1.000         0.000         0.000
+ TI3            0.000         0.000         0.000         1.000         0.000
+ SC2            0.000         0.000         0.000         0.000         1.000
+ TI2            0.000         0.000         0.000         0.000         0.000
+ SC1            0.000         0.000         0.000         0.000         0.000
+ TI1            0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              TI2           SC1           TI1
+              ________      ________      ________
+ SC4            0.000         0.000         0.000
+ TI4            0.000         0.000         0.000
+ SC3            0.000         0.000         0.000
+ TI3            0.000         0.000         0.000
+ SC2            0.000         0.000         0.000
+ TI2            1.000         0.000         0.000
+ SC1            0.000         1.000         0.000
+ TI1            0.000         0.000         1.000
+
+
+           THETA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            0.000
+ TI4            0.000         0.000
+ SC3            0.000         0.000         0.000
+ TI3            0.000         0.000         0.000         0.000
+ SC2            0.000         0.000         0.000         0.000         0.000
+ TI2            0.000         0.000         0.000         0.000         0.000
+ SC1            0.000         0.000         0.000         0.000         0.000
+ TI1            0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2            0.000
+ SC1            0.000         0.000
+ TI1            0.000         0.000         0.000
+
+
+           ALPHA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+                3.197         0.860         3.283         0.752         3.356
+
+
+           ALPHA
+              TI2           SC1           TI1
+              ________      ________      ________
+                0.737         3.501         0.634
+
+
+           BETA
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            0.000         0.000         0.000         0.000         0.000
+ TI4            0.000         0.000         0.000         0.000         0.000
+ SC3            0.000         0.000         0.000         0.000         0.000
+ TI3            0.000         0.000         0.000         0.000         0.000
+ SC2            0.000         0.000         0.000         0.000         0.000
+ TI2            0.000         0.000         0.000         0.000         0.000
+ SC1            0.000         0.000         0.000         0.000         0.000
+ TI1            0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              TI2           SC1           TI1
+              ________      ________      ________
+ SC4            0.000         0.000         0.000
+ TI4            0.000         0.000         0.000
+ SC3            0.000         0.000         0.000
+ TI3            0.000         0.000         0.000
+ SC2            0.000         0.000         0.000
+ TI2            0.000         0.000         0.000
+ SC1            0.000         0.000         0.000
+ TI1            0.000         0.000         0.000
+
+
+           PSI
+              SC4           TI4           SC3           TI3           SC2
+              ________      ________      ________      ________      ________
+ SC4            0.201
+ TI4            0.000         0.102
+ SC3            0.000         0.000         0.229
+ TI3            0.000         0.000         0.000         0.115
+ SC2            0.000         0.000         0.000         0.000         0.233
+ TI2            0.000         0.000         0.000         0.000         0.000
+ SC1            0.000         0.000         0.000         0.000         0.000
+ TI1            0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              TI2           SC1           TI1
+              ________      ________      ________
+ TI2            0.105
+ SC1            0.000         0.237
+ TI1            0.000         0.000         0.090
+
+
+     Beginning Time:  10:20:51
+        Ending Time:  10:20:51
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2021 Muthen & Muthen

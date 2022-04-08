@@ -1,0 +1,62 @@
+TITLE: RI-CLPM with self-control, technology impairment,
+and gender as a time-invariant covariate;
+
+DATA:FILE IS MPlus3.csv;
+        
+VARIABLE:   Names are RAISEID ext read math inctile Gender Age1 frl_cat 
+race_cat SC1 INH1 INI1 CON1 TI1 SC2 INH2 INI2 CON2 TI2 SC3 INH3 INI3 CON3
+TI3 SC4 INH4 INI4 CON4 TI4;
+  Missing are ALL (-999);
+
+USEVARIABLES ARE 
+Gender SC4 TI4 SC3 TI3 SC2 TI2 SC1 TI1;
+
+Analysis: 
+Estimator = MLR;
+MODEL = NOCOV; ! Sets all default covariances to zero 
+! This command is to override Mplus' defaults. You don't
+! need to use it. If you don't, make sure to check your parameters and
+! dfs, because you may need to fix more paths than you expected
+
+MODEL: 
+! Create two individual factors (random intercepts)
+RI_TI BY TI1@1 TI2@1 TI3@1 TI4@1;
+RI_SC BY SC1@1 SC2@1 SC3@1 SC4@1;
+
+! Create within-person centered variables
+cTI1 BY TI1@1; 
+cTI2 BY TI2@1; 
+cTI3 BY TI3@1; 
+cTI4 BY TI4@1; 
+cSC1 BY SC1@1; 
+cSC2 BY SC2@1; 
+cSC3 BY SC3@1; 
+cSC4 BY SC4@1;
+
+! Constrain the measurement error variances to zero
+SC4-TI1@0;
+
+! Estimate the covariance between the random intercepts
+RI_SC WITH RI_TI;
+
+! Estimate the lagged effects between  
+! the within-person centered variables
+cTI2 cSC2 ON cTI1 cSC1;
+cTI3 cSC3 ON cTI2 cSC2;
+cTI4 cSC4 on cTI3 cSC3; 
+
+! Adding effects of the covariate on the intercept
+RI_TI RI_SC on Gender;
+
+! Estimate the covariance between the within-person
+! centered variables at the first wave  
+cTI1 WITH cSC1;
+             
+! Estimate the covariances between the residuals of
+! the within-person centered variables (the innovations)
+cTI2 WITH cSC2; 
+cTI3 WITH cSC3; 
+cTI4 WITH cSC4;
+             
+OUTPUT: TECH1 TECH4 STDYX SAMPSTAT CINTERVAL;
+

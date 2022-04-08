@@ -1,0 +1,467 @@
+---
+title: "CLPM and RI-CLPM in lavaan"
+---
+
+*Credit: All lavaan script comes from https://jeroendmulder.github.io/RI-CLPM/lavaan.html, created by Jeroen Mulder and Ellen Hamaker. 
+I strongly recommend checking their webpage. It has code for different forms of RI-CLPM in Mplus and lavaan, based on this paper: https://doi.org/10.1080/10705511.2020.1784738.* 
+
+```{r Packages}
+library(psych)
+library(dplyr)
+library(lavaan)
+```
+
+## Load the data file
+
+We're using a different code to replace the missing data today, which is using the function ```na_if()```. Here, all you need is the name of the dataset or the variables you want to replace the values, and the value you want to replace with NA.
+
+```{r Loading files}
+Mplusdata <- read.csv("Mplus3.csv", header = FALSE)
+Mplusdata <- na_if(Mplusdata, -999)
+```
+
+## Add column names
+
+```{r}
+colnames(Mplusdata) <- c("RAISEID",
+                       "ext",
+                       "read", 
+                       "math",
+                       "inctile", 
+                       "Gender", 
+                       'Age1', 
+                       "frl_cat", 
+                       "race_cat", 
+                       "SC1",
+                       "INH1", 
+                       "INI1", 
+                       "CON1", 
+                       "TI1", 
+                       "SC2", 
+                       "INH2", 
+                       "INI2", 
+                       "CON2", 
+                       "TI2", 
+                       "SC3", 
+                       "INH3", 
+                       "INI3", 
+                       "CON3",
+                       "TI3", 
+                       "SC4", 
+                       "INH4", 
+                       "INI4", 
+                       "CON4", 
+                       "TI4"
+                        )
+```
+
+# The CLPM
+
+For comparison, we'll first estimate the CLPM.
+
+## Specify the CLPM
+
+```{r}
+CLPM <- '
+  # Estimate the lagged effects between the observed variables.
+  TI2 + SC2 ~ TI1 + SC1
+  TI3 + SC3 ~ TI2 + SC2
+  TI4 + SC4 ~ TI3 + SC3
+
+  # Estimate the covariance between the observed variables at the first wave. 
+  TI1 ~~ SC1 # Covariance
+  
+  # Estimate the covariances between the residuals of the observed variables.
+  TI2 ~~ SC2
+  TI3 ~~ SC3
+  TI4 ~~ SC4
+  
+  # Estimate the (residual) variance of the observed variables.
+  TI1 ~~ TI1 # Variances
+  SC1 ~~ SC1 
+  TI2 ~~ TI2 # Residual variances
+  SC2 ~~ SC2 
+  TI3 ~~ TI3 
+  SC3 ~~ SC3 
+  TI4 ~~ TI4 
+  SC4 ~~ SC4 
+'
+```
+
+## Fit the CLPM
+
+```{r}
+CLPM.fit <- lavaan(CLPM, 
+                   data = Mplusdata, 
+                   estimator = "MLR",
+                   missing = "FIML", 
+                   meanstructure = T, 
+                   int.ov.free = T)
+```
+
+## Get the output
+
+This model has 32 degrees of freedom. Fit is low for the TLI, but a within acceptable range for other indices. 
+
+These are the autoregressive paths and cross-lagged paths. Check out the p-values so we can compare them with the RI-CLPM later. Most of the paths are significant in the CLPM, which would suggest that we have within-person cross-lagged associations between SC and TI. However, we are not accounting for the possibility of between-person effects, which means some of these effects may not be accurate. This is the criticism Hamaker et al (2015) make in their paper. As we'll see later, almost all cross-lagged paths are NS when we separate the variance into between and within-person in the RI-CLPM.
+
+These are examples of autoregressive paths.
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  TI2 ~                                                                 
+    TI1               0.386    0.042    9.252    0.000    0.386    0.355
+  SC2 ~                                                                 
+    SC1               0.389    0.033   11.702    0.000    0.389    0.395
+  TI3 ~                                                                 
+    TI2               0.589    0.042   13.870    0.000    0.589    0.564
+```
+
+These are examples of cross-lagged paths. 
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  TI2 ~                                                                 
+    SC1              -0.086    0.024   -3.595    0.000   -0.086   -0.128
+  SC2 ~                                                                 
+    TI1              -0.274    0.053   -5.197    0.000   -0.274   -0.171
+  TI3 ~                                                                 
+    SC2              -0.031    0.028   -1.085    0.278   -0.031   -0.044
+```
+
+An example of covariances between the within-person variables:
+
+```
+  TI1 ~~                                                                
+    SC1              -0.102    0.007  -15.099    0.000   -0.102   -0.349
+```
+
+And the variances. Because SC2-SC4 and TI2-TI4 are endogenous, we only have variances for the time 1's variables TI1 and SC1, and residual variances for the remaining variables. Remember than lavaan indicates residual variances by putting a ```.``` before the variable name in the output.
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    TI1               0.179    0.005   33.157    0.000    0.179    1.000
+    SC1               0.473    0.014   34.203    0.000    0.473    1.000
+   .TI2               0.174    0.009   19.132    0.000    0.174    0.826
+   .SC2               0.353    0.021   17.161    0.000    0.353    0.768
+   .TI3               0.151    0.010   15.265    0.000    0.151    0.657
+   .SC3               0.298    0.020   15.215    0.000    0.298    0.641
+   .TI4               0.150    0.009   15.904    0.000    0.150    0.734
+   .SC4               0.270    0.016   16.544    0.000    0.270    0.660
+```
+
+The r-square in the CLPM is explaining BOTH the within and the between person variance, without separating the two. If we have between-person differences, not accounting for them gives the impression that r-square is larger. RI-CLPM refers only to the within person r-square.
+
+```
+R-Square:
+                   Estimate
+    TI2               0.174
+    SC2               0.232
+    TI3               0.343
+    SC3               0.359
+    TI4               0.266
+    SC4               0.340
+```
+
+```{r}
+summary(CLPM.fit, 
+        fit.measures = T,
+        standardized = T,
+        rsquare = T)
+```
+
+# The RI-CLPM 
+
+The RI-CLPM syntax in lavaan is a bit different from Mplus because we don't have the option to remove all covariances in the model. We can remove all covariances betwen latent variables, but that won't be enough for this model. 
+
+What we need to specify is:
++ The between-person components (the random intercepts) with loadings fixed to 1
++ The within-person centered variables with loadings fixed to 1 - they are perfect indicators of the observed variables
++ The lagged effects between the within-person variables
++ The covariance between the between the within-person centered variables at the first wave
++ The covariances between the residuals of the within-person centered variables
++ The variance and covariance of the random intercepts
++ The (residual) variance of the within-person centered variables
+
+## Specify the RI-CLPM  
+
+```{r}
+RICLPM <- '
+  # Create between components (random intercepts)
+  RI_TI =~ 1*TI1 + 1*TI2 + 1*TI3 + 1*TI4
+  RI_SC =~ 1*SC1 + 1*SC2 + 1*SC3 + 1*SC4
+  
+  # Create within-person centered variables
+  cTI1 =~ 1*TI1
+  cTI2 =~ 1*TI2
+  cTI3 =~ 1*TI3 
+  cTI4 =~ 1*TI4
+  cSC1 =~ 1*SC1
+  cSC2 =~ 1*SC2
+  cSC3 =~ 1*SC3
+  cSC4 =~ 1*SC4
+  
+  # Estimate the lagged effects between the within-person centered variables.
+  cTI2 + cSC2 ~ cTI1 + cSC1
+  cTI3 + cSC3 ~ cTI2 + cSC2
+  cTI4 + cSC4 ~ cTI3 + cSC3
+  
+  # Estimate the covariance between the within-person centered variables at the first wave. 
+  cTI1 ~~ cSC1 # Covariance
+  
+  # Estimate the covariances between the residuals of the within-person centered variables (the innovations).
+  cTI2 ~~ cSC2
+  cTI3 ~~ cSC3
+  cTI4 ~~ cSC4
+  
+  # Estimate the variance and covariance of the random intercepts. 
+  RI_SC ~~ RI_SC
+  RI_TI ~~ RI_TI
+  RI_SC ~~ RI_TI
+  
+  # Estimate the (residual) variance of the within-person centered variables.
+  cTI1 ~~ cTI1 # Variances
+  cSC1 ~~ cSC1 
+  cTI2 ~~ cTI2 # Residual variances
+  cSC2 ~~ cSC2 
+  cTI3 ~~ cTI3 
+  cSC3 ~~ cSC3 
+  cTI4 ~~ cTI4 
+  cSC4 ~~ cSC4 
+'
+```
+
+## Fit the RI-CLPM 
+
+```{r}
+RICLPM.fit <- lavaan(RICLPM, 
+                     data = Mplusdata, 
+                     estimator = "MLR",
+                     missing = "FIML", 
+                     int.ov.free = T) # This line tells lavaan to free the intercepts of the observed variables (i.e., the mean structure of the observed variables; if ignored, the default is to fix them to 0)
+```
+
+## Get the RI-CLPM output
+
+Model fit is acceptable and higher than in the CLPM. 
+
+We also have 3 fewer degrees of freedom (3 more estimated parameters) than in the CLPM. That's because we estimated the: 1) covariance between the random intercepts; 2) variance of intercept of SC; 3) variance of intercept of TI. 
+
+To the model parameter output:
+These are the loadings of the observed variables on the random intercepts
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)
+  RI_TI =~                                                              
+    TI1               1.000                           
+    TI2               1.000                           
+    TI3               1.000                           
+    TI4               1.000                           
+  RI_SC =~                                                              
+    SC1               1.000                           
+    SC2               1.000                           
+    SC3               1.000                           
+    SC4               1.000                           
+```
+    
+If you scroll down more, you'll notice the Regressions. These are the autoregressive paths and cross-lagged paths. Almost all autoregressive paths are significant, and only one cross-lagged path is significant (from TI1 on SC2).
+
+
+This is an example of an auto-regressive path from cTI1 to cTI2.
+```
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  cTI2 ~                                                                
+    cTI1              0.158    0.080    1.967    0.049    0.146    0.146
+```
+
+And this is an example of a cross-lagged path from cTI1 to cSC2.
+
+```
+  cSC2 ~                                                                
+    cTI1             -0.210    0.089   -2.347    0.019   -0.131   -0.131
+```
+
+The covariances include a lot of important information. The significant covariance between the intercepts of SC and TI indicates that adolescents lower in self-control, on average, report more disruptive technology use.
+
+```
+  RI_TI ~~                                                              
+    RI_SC            -0.043    0.011   -3.844    0.000   -0.609   -0.609
+```
+
+We also see the covariances between the uniquenesses of the within-person variables, one for each wave or time point.
+
+```
+ CTI1     WITH
+    CSC1              -0.060      0.012     -5.112      0.000
+```
+
+Next, to the variances. The variance of TI is significant, which means that there is a non-zero amount of stable between-person variability that the CLPM cannot account for. If this had been non-significant, it would mean little between-person variability and this model would be redundant with the CLPM (which assumes that there is no between-person variance to be accounted for).
+
+```
+    RI_SC             0.104    0.024    4.383    0.000    1.000    1.000
+    RI_TI             0.048    0.009    5.387    0.000    1.000    1.000
+```    
+
+Finally, check out the R-square. The R-square values are much lower here than in the CLPM. That's because the CLPM is explaining BOTH the within
+and the between person variance, without separating the two, giving the impression that R2 for the within-person component is larger than it should be. In RI-CLPM, the R-square refers only to the within person R2.
+
+```
+                   Estimate
+    cTI2              0.038
+    cSC2              0.094
+    cTI3              0.190
+    cSC3              0.198
+    cTI4              0.126
+    cSC4              0.184
+```
+
+```{r}
+summary(RICLPM.fit, 
+        fit.measures = T,
+        standardized = T,
+        rsquare = T)
+```
+
+# Comparing the CLPM and RI-CLPM
+
+There is a code in R created by Rebecca M. Kuiper for comparing these two models. The code below is tailored to your model, so it requires you to do a few things: 
+
++ Install the package devtools (if you don't have it already), then download the package created by Rebecca Kuiper. These are the first three lines of the chunk below. Remove the ```#``` to run that code. 
++ Make sure that the names of your fitted model are the same names as in the code below, or change the names below. For example, the code 
+```vcov(RICLPM.fit)``` will not run if your RI-CLPM fitted model has a different name from what is on the chunk below.
++ You need to check the order in which your intercepts appear in the variance/covariance matrix to call them in the code below. To do this, check the variance/covariance matrix that the output will give you when you run this chunk, and then count the variables until you get to the random intercepts. In this case, they were the 17th and 18th variables on the left column of the matrix.
+
+As you can see by the chi-square test, the RI-CLPM is a better fit to the data than the CLPM.
+
+```{r}
+# Install and load the required packages. 
+#install.packages("devtools")
+#library(devtools)
+#install_github("rebeccakuiper/ChiBarSq.DiffTest")
+library(ChiBarSq.DiffTest)
+
+# Step 1
+## Fit the RI-CLPM (RICLPM.fit) and the CLPM (CLPM.fit).
+
+# Step 2
+## Check which indices you need to get the covariance matrix of the random intercepts. 
+vcov(RICLPM.fit) # Full covariance matrix
+
+## The 17th and the 18th indices regard the random intercepts
+indices <- c(17, 18) 
+q <- length(indices) # Number of random intercepts
+S <- vcov(RICLPM.fit)[indices, indices] # Extract full covariance matrix of the random intercepts
+
+# Step 3
+Chi2_clpm <- summary(CLPM.fit, fit.measures = TRUE)[1]$FIT[c("chisq")] # Extract chi-square value of CLPM
+Chi2_riclpm <- summary(RICLPM.fit, fit.measures = TRUE)[1]$FIT[c("chisq")] # Extract chi-square value of RI-CLPM
+
+df_clpm <- summary(CLPM.fit, fit.measures = TRUE)[1]$FIT[c("df")] # Extract df of CLPM
+df_riclpm <- summary(RICLPM.fit, fit.measures = TRUE)[1]$FIT[c("df")] # Extract df of RI-CLPM
+
+# Step 4
+## Run function to do chi-bar-square test (and also obtain Chi-bar-square weigths)
+ChiBar2DiffTest <- ChiBarSq.DiffTest(q, S, Chi2_clpm, Chi2_riclpm, df_clpm, df_riclpm)
+ChiBar2DiffTest
+ChiBar2DiffTest$p_value
+```
+
+# RI-CLPM with gender as a time-invariant covariate
+
+The only difference here is that we're adding gender as covariate. Because we are treating it as time-invariant (i.e., it doesn't change over time, at least in this example), we're regressing the random-intercepts on the gender variable.
+
+## Specify the model
+
+```{r}
+RICLPM2 <- '
+  # Create between components (random intercepts)
+  RI_TI =~ 1*TI1 + 1*TI2 + 1*TI3 + 1*TI4
+  RI_SC =~ 1*SC1 + 1*SC2 + 1*SC3 + 1*SC4
+  
+  # Estimate the variance and covariance of the random intercepts. 
+  RI_SC ~~ RI_SC
+  RI_TI ~~ RI_TI
+  RI_SC ~~ RI_TI
+  
+  # Regression of random intercepts on Gender. 
+  RI_SC + RI_TI ~ Gender # Constrained over time. 
+  
+  # Create within-person centered variables
+  cTI1 =~ 1*TI1
+  cTI2 =~ 1*TI2
+  cTI3 =~ 1*TI3 
+  cTI4 =~ 1*TI4
+  
+  cSC1 =~ 1*SC1
+  cSC2 =~ 1*SC2
+  cSC3 =~ 1*SC3
+  cSC4 =~ 1*SC4
+  
+  # Estimate the lagged effects between the within-person centered variables.
+  cTI2 + cSC2 ~ cTI1 + cSC1
+  cTI3 + cSC3 ~ cTI2 + cSC2
+  cTI4 + cSC4 ~ cTI3 + cSC3
+  
+  # Estimate the covariance between the within-person centered variables at the first wave. 
+  cTI1 ~~ cSC1 # Covariance
+  
+  # Estimate the covariances between the residuals of the within-person centered variables (the innovations).
+  cTI2 ~~ cSC2
+  cTI3 ~~ cSC3
+  cTI4 ~~ cSC4
+  
+  # Estimate the (residual) variance of the within-person centered variables.
+  cTI1 ~~ cTI1 # Variances
+  cSC1 ~~ cSC1 
+  cTI2 ~~ cTI2 # Residual variances
+  cSC2 ~~ cSC2 
+  cTI3 ~~ cTI3 
+  cSC3 ~~ cSC3 
+  cTI4 ~~ cTI4 
+  cSC4 ~~ cSC4 
+'
+```
+
+## Fit the model
+
+```{r}
+RICLPM2.fit <- lavaan(RICLPM2, 
+                     data = Mplusdata, 
+                     estimator = "MLR",
+                     missing = "FIML", 
+                     meanstructure = T, 
+                     int.ov.free = T) 
+```
+
+## Request the output
+
+Model fit improved more here.
+
+The part that we're interested in is the regression path from gender to the random intercepts, which we'll find under the Regressions section of the output.
+
+```
+Regressions:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  RI_SC ~                                                               
+    Gender            0.021    0.025    0.813    0.416    0.064    0.032
+  RI_TI ~                                                               
+    Gender            0.070    0.016    4.313    0.000    0.319    0.159
+```
+
+It looks like the average level of technology impairment differs by gender, but that self-control doesn't. We could have also checked if the structural paths from the within-person part of the model differ by gender using a multi-group RI-CLPM.   
+
+Although gender appears to be related to technology impairment, the gender explained a very small portion of the variance in technology impairment.
+
+```
+R-Square:
+                   Estimate
+    RI_SC             0.001
+    RI_TI             0.025
+```
+
+```{r}
+summary(RICLPM2.fit, 
+        fit.measures = T,
+        standardized = T,
+        rsquare = T)
+```

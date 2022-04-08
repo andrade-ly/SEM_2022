@@ -1,0 +1,444 @@
+---
+title: "Latent Growth Model in lavaan"
+output:  html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+```{r Packages}
+library(psych)
+library(dplyr)
+library(lavaan)
+```
+
+## Load the Dataset
+
+```{r Loading files}
+hkcancer <- read.table("hkcancer_red2.dat")
+hkcancer <- data.frame(lapply(hkcancer, function(x) as.numeric(as.character(x))))
+```
+
+## Add variable names
+
+```{r}
+colnames(hkcancer) <- c('AGE_GP',
+                       'SURG_TX',
+                       'mood2',
+                       'mood3',
+                       'mood4',
+                       'socadj2', 
+                       'socadj3', 
+                       'socadj4',
+                       'age',
+                       'age2', 
+                       'surg_tx2'
+                        )
+```
+
+# Latent Curve Models
+
+## Missing data patterns
+
+We'll first check our missing data patterns using the ```mdpattern()``` function of the *mice* package.
+
+The number of rows in each of the output windows indicates the number of missing data pattenrs. The second window, with the blue and red graphic, makes it easier to visualize the patterns. The first row, with all blue columns refer to the patter in which we have no missing data (307 cases).
+
+We can also see that 12 out of 405 were missing the mood and social adjustment outcome at the third time point (i.e., missing MOOD4 & SOCADJ4). This information is helpful for reporting attrition and missingness in your data in a write-up.
+
+```{r}
+library(mice)
+md.pattern(hkcancer)
+```
+
+## Model 1
+
+We can specity LGM in lavaan in the same way we do in Mplus: by creating an intercept and a slope latent factor. 
+
+This measurement model is basically a factor analysis with 2 special features: (1) all loadings are fixed; (2) pattern of factor loadings & mean structure allows us to interpret as slope & intercept factors.
+
+We'll end up with matrices/vectors which include: (1) constants & known time values invariant across individuals; (2) individual growth parameters (w/in person true change); (3) residuals of outcomes (w/in person noise).
+
+```{r}
+
+Model1 <- "
+           # Intercept and slope of mood and social adjustment
+           I1 =~ 1*mood2 + 1*mood3 + 1*mood4
+           S1 =~ 0*mood2 + 1*mood3 + 2.33*mood4
+           I2 =~ 1*socadj2 + 1*socadj3 + 1*socadj4
+           S2 =~ 0*socadj2 + 1*socadj3 + 2.33*socadj4
+           
+           # factor covariances
+           I1 ~~ S1
+           I2 ~~ S2
+           
+           # intercept of observed variables fixed to 0 
+           mood2 + mood3 + mood4 ~ 0*1
+           socadj2 + socadj3 + socadj4 ~ 0*1
+           
+           I1 ~~ I1
+           S1 ~~ S1
+           I2 ~~ I2
+           S2 ~~ S2
+          "
+```
+
+## Fit the model
+
+```{r}
+Model1.fit <-
+  growth(
+    model = Model1,
+    data = hkcancer,
+    missing = "FIML",
+    estimator = "MLR",
+    meanstructure = TRUE
+  )
+```
+
+## Request the output
+
+Fit is inadequate in terms of RMSEA, SRMR and CFI. 
+
+```{r}
+summary(Model1.fit, 
+        fit.measures = T, 
+        standardized = T)
+```
+
+## Request the top 5 largest MIs
+
+Before we interpret the model, we'll check if there are any changes that we need to make.
+
+It looks like the residual covariance between mood and social adjustment at time 3 should be freed.
+
+```
+mood3	~~	socadj3	29.565	-9.637	-9.637
+```
+
+```{r}
+modindices(Model1.fit, # model name
+           sort = TRUE, # sort in descending order
+           maximum.number = 5 # show only the 5 largest MIs
+           )
+```
+
+We can also request the coverage. This information tells us what proportion of the sample has data on a given variable or combination of variables. Too little coverage (e.g., lower than 0.10) can be a problem for estimation. This often happens in models with zero inflated variables, such as alcohol use or deviant behavior in children. 
+
+```{r}
+coverage <- lavInspect(Model1.fit, what = "coverage")
+coverage
+```
+## Model 2
+
+Model 2 is the same as Model 1, except forthe added covariance between modd3 and socadj3 (based on the MIs for the previous model).
+
+```{r}
+
+Model2 <- "
+           # intercepts and slopes
+           I1 =~ 1*mood2 + 1*mood3 + 1*mood4
+           S1 =~ 0*mood2 + 1*mood3 + 2.33*mood4
+           I2 =~ 1*socadj2 + 1*socadj3 + 1*socadj4
+           S2 =~ 0*socadj2 + 1*socadj3 + 2.33*socadj4
+           
+           # Covariance between intercept and slope
+           I1 ~~ S1
+           I2 ~~ S2
+           
+           # Covariance between socadj3 and mood3
+           socadj3 ~~ mood3
+           
+           # Intercepts of observed variables fixed to 0
+           mood2 + mood3 + mood4 ~ 0*1
+           socadj2 + socadj3 + socadj4 ~ 0*1
+           
+           # Variances of the slopes and intercepts
+           I1 ~~ I1
+           S1 ~~ S1
+           I2 ~~ I2
+           S2 ~~ S2
+          "
+```
+
+## Fit the model
+
+```{r}
+Model2.fit <-
+    growth(
+    model = Model2,
+    data = hkcancer,
+    missing = "FIML",
+    estimator = "MLR",
+    meanstructure = TRUE
+    )
+```
+
+## Request the output
+
+The fit has improved from Model 1 to Model 2 (with the freed residual covariance). 
+
+The first part of the output refers to the factor loadings, which we fixed to create the intercept and the slope factors. The second part of the output refers to the covariances. 
+
+The covariance between the slope and intercept of mood is not significant, which suggests that participants' average mood is not related to the extent to which their mood changes over time.
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)
+  I1 ~~                                               
+    S1               -1.958    1.642   -1.193    0.233
+```
+
+The covariance between the slope and intercept of social adjustment is significant. This suggests that participants' average level of social adjustment is  related to the extent to which their social adjustment changes over time. Because this relationship is negative, it indicates that participants generally higher in social adjustment tend to have more stable (less changeable) social adjustment over time.
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)
+  I2 ~~                                               
+    S2              -15.482    4.530   -3.418    0.001
+```
+
+There's also a significant covariance between the intercept of mood and social adjustment, such that people higher in mood also tend to be higher in social adjustment.
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)
+  I1 ~~                                               
+    I2              -22.352    4.002   -5.585    0.000
+```
+
+Finally, the following covariances are non-significant (in order): 
+1) the covariance between the intercept of mood and the variance of social adjustment; 
+2) the covariance between the slope of mood and the intercept of social adjustment
+3) the slope of mood and the slope of social adjustment.
+
+We will remove these non-significant covariances from our final model for parsimony.
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)
+  I1 ~~
+    S2                1.999    1.584    1.262    0.207
+  S1 ~~                                               
+    I2                1.917    1.737    1.103    0.270
+    S2               -1.426    0.750   -1.902    0.057
+```
+
+```{r}
+summary(
+  Model2.fit,
+  fit.measures = T
+  )
+```
+
+## Request modification indices
+
+We can request the MIs again to see if there are any parameters that would improve fit if changed. 
+
+All MIs are pretty low, so it doesn't look like any changes would substantially improve fit.
+
+```{r}
+modindices(Model2.fit, # model name
+           sort = TRUE, # sort in descending order
+           maximum.number = 5 # show only the 5 largest MIs
+           )
+```
+
+## Model 3
+
+In the third model, we'll remove the non-significant covariances by fixing them to 0.
+
+```{r}
+Model3 <- "
+           # slopes and intercepts
+           I1 =~ 1*mood2 + 1*mood3 + 1*mood4
+           S1 =~ 0*mood2 + 1*mood3 + 2.33*mood4
+           I2 =~ 1*socadj2 + 1*socadj3 + 1*socadj4
+           S2 =~ 0*socadj2 + 1*socadj3 + 2.33*socadj4
+           
+           # NS Covariances fixed to 0
+           # lavaan by default estimates covariances between exogenous variables. Even if they don't appear here, they will still be estimated.
+           I1 ~~ 0*S1
+           I2 ~~ 0*S1
+           S2 ~~ 0*I1
+           S2 ~~ 0*S1
+           
+           # Covariance between socadj3 and mood3
+           socadj3 ~~ mood3
+           
+           # Intercepts of observed variables fixed to 0
+           mood2 + mood3 + mood4 ~ 0*1
+           socadj2 + socadj3 + socadj4 ~ 0*1
+           
+           # Variances of the slopes and intercepts
+           I1 ~~ I1
+           S1 ~~ S1
+           I2 ~~ I2
+           S2 ~~ S2
+          "
+```
+
+## Fit the model
+
+```{r}
+Model3.fit <-
+  growth(
+    model = Model3,
+    data = hkcancer,
+    missing = "FIML",
+    estimator = "MLR",
+    meanstructure = TRUE
+    )
+```
+
+## Request the output
+
+We'll first look at the intercepts.
+
+```
+Intercepts:
+            Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+
+    I1       21.397    0.313   68.313    0.000     4.566    4.566
+    S1       -0.550    0.131   -4.188    0.000    -0.584   -0.584
+    I2       100.926   0.503  200.673    0.000    11.052   11.052
+    S2       -0.268    0.207   -1.293    0.196    -0.076   -0.076
+```
+
+The intercepts of the growth parameters (intercept and slope) refer to the average self-reported mood and social adjustment at the first time point in the model (i.e., where the slope was fixed to 0, which is at month 1 - this could be changed to any month).
+
+The intercept of I1 means that the average self-reported mood at 1 month was 21.397 (here, lower value = better mood).
+
+The intercept of S1 indicates the mood score decreased by .55, on average, as time since surgery increased, gradually more positive mood.
+
+The intercept of I2 indicates that the average level of social adjustment at 1 month was 100.93.
+
+The slope of S2 is not significant, which means that there was negligible change in social adjustment over the 8-month time period.
+
+We should also interpret the variances of the growth factors, like we did above (when looking for non-significant variances.
+
+```
+Variances:
+             Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    I1         21.962    2.722    8.068    0.000    1.000    1.000
+    S1          0.887    0.763    1.163    0.245    1.000    1.000
+    I2         83.396   13.060    6.385    0.000    1.000    1.000
+    S2         12.490    3.429    3.643    0.000    1.000    1.000
+```
+
+The variance of I1 means that there are significant inter-individual differences in initial status on mood.
+
+The variance of S1 means that there are non-significant inter-individual slope (change) in mood.
+
+The variance of I2 means that there are significant inter-individual differences in initial status on social adjustment.
+
+!The variance of S2 means that there are significant inter-individual differences in slope (change) in social adjustment.
+
+Because we have significant inter-individual differences, we want to try to explain those in subsequent analyses with predictors. That is, what is contributing to these differences? To do that, we'll add predictors to our model.
+
+```{r}
+summary(
+  Model3.fit,
+  fit.measures = T,
+  standardized = T
+)
+```
+
+## Model with Covariates
+
+```{r}
+covModel <- "
+           # slopes and intercepts
+           I1 =~ 1*mood2 + 1*mood3 + 1*mood4
+           S1 =~ 0*mood2 + 1*mood3 + 2.33*mood4
+           I2 =~ 1*socadj2 + 1*socadj3 + 1*socadj4
+           S2 =~ 0*socadj2 + 1*socadj3 + 2.33*socadj4
+           
+           # non-significant covariances fixed to 0
+           I1 ~~ 0*S1
+           I2 ~~ 0*S1
+           S2 ~~ 0*I1
+           S2 ~~ 0*S1
+           
+           # freed covariance between socadj3 and mood3
+           socadj3 ~~ mood3
+           
+           # intercepts fixed to 0
+           mood2 + mood 3 + mood 4 ~ 0*1
+           socadj2 + socadj3 + socadj4 ~ 0*1
+           
+           # variances of the growth parameters
+           I1 ~~ I1
+           S1 ~~ S1
+           I2 ~~ I2
+           S2 ~~ S2
+           
+           # regression paths
+           I1 + S1 ~ age2 + surg_tx2
+           I2 + S2 ~ age2 + surg_tx2
+          "
+
+```
+
+## Fit the model
+
+```{r}
+covModel.fit <-
+  growth(
+    model = covModel,
+    data = hkcancer,
+    missing = "FIML",
+    estimator = "MLR",
+    meanstructure = TRUE
+    )
+```
+
+## Request the output
+
+Fit is very good when we include the predictors/covariates in the model.
+
+All parts of the output are the same, except that now we also have regression parameters. 
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv
+  I1 ~                                                         
+    age2             -1.637    0.618   -2.647    0.008   -0.350
+    surg_tx2         -0.027    0.750   -0.036    0.972   -0.006
+```
+
+This output indicates that age is a significant predictor of initial mood, such that mood scores are lower for older women at time 1 (lower mood scores = more positive mood). However, mood scores didn't vary  based on type of surgery.
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv
+  S1 ~                                                         
+    age2             -0.207    0.260   -0.795    0.427   -0.239
+    surg_tx2         -0.339    0.337   -1.006    0.315   -0.392
+```
+
+Here we see that the differences in slopes (i.e., rate of change) of mood were not significant across age groups or surgery type.
+
+```
+  I2 ~                                                         
+    age2             -0.968    0.989   -0.979    0.328   -0.106
+    surg_tx2         -3.327    1.056   -3.151    0.002   -0.364
+```
+The first line above indicates that age is not a significant predictor of initial status on soc adjustment. The second line indicates that surgery type *is* a significant predictor of initial status on social adjustment, such that those undergoing a mastectomy had lower social adjustment than those not undergoing a mastectomy.
+
+```
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv
+  S2 ~                                                         
+    age2              0.405    0.405    1.000    0.318    0.114
+    surg_tx2          1.253    0.486    2.577    0.010    0.354
+```
+
+The first line of the output above indicates that age is not a significant predictor of slopes (i.e., rate of change) on social adjustment.
+The second line indicates that surgery type is a significant predictor. Those undergoing mastectomy had faster rate of change in social adjustment relative to other surgery.
+
+```{r}
+summary(
+  covModel.fit,
+  fit.measures = T,
+  standardized = T,
+  rsquare = T
+)
+```
+

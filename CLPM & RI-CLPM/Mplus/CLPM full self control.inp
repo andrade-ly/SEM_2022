@@ -1,0 +1,32 @@
+TITLE: CLPM with self-control and technology impairtment;
+
+DATA:FILE IS MPlus3.csv;        
+VARIABLE:   Names are RAISEID ext read math inctile Gender Age1 frl_cat 
+race_cat SC1 INH1 INI1 CON1 TI1 SC2 INH2 INI2 CON2 TI2 SC3 INH3 INI3 CON3
+TI3 SC4 INH4 INI4 CON4 TI4;
+
+Missing are ALL (-999);
+
+USEVARIABLES ARE 
+SC4 TI4 SC3 TI3 SC2 TI2 SC1 TI1;
+
+Analysis:
+Estimator = MLR; 
+
+MODEL: 
+
+! Estimate the lagged effects between the variables
+SC2 TI2 ON SC1 TI1;
+SC3 TI3 ON SC2 TI2; 
+SC4 TI4 ON SC3 TI3;
+
+! Estimate the covariances between the residuals
+SC2 WITH TI2;
+SC4 WITH TI4;
+SC3 WITH TI3;
+
+! Estimate the covariance between the within-person
+! variables at the first wave
+TI1 WITH SC1;
+           
+OUTPUT: TECH1 STDYX SAMPSTAT CINTERVAL;  
